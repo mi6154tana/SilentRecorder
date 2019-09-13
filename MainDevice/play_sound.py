@@ -91,7 +91,7 @@ class PlaySound:
             count += 1
         return '-1'# NoHit
 
-    def change_sound(self, last_fin, now_fin):
+    def _change_sound(self, last_fin, now_fin):
         if(last_fin != now_fin):
             if last_fin != -1:
                 self.sound_list[last_fin].stop()
@@ -110,7 +110,7 @@ class PlaySound:
     def sr_play(self, fin_tmp):#モジュールとして呼び出されたとき
         self.last_fin = self.now_fin
         self.now_fin = fin_tmp
-        self.change_sound(self.last_fin, self.now_fin)
+        self._change_sound(self.last_fin, self.now_fin)
 
 def main():
 
