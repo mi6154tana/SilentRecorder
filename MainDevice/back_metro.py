@@ -20,7 +20,7 @@ class BackMetro:
         self.sound_metro_1 = pygame.mixer.Sound(self.metro_fname_1)
         self.sound_metro_2 = pygame.mixer.Sound(self.metro_fname_1)
 
-    def play_metronome(self, tempo):
+    def _play_metronome(self, tempo):
         last_time = time.time()
         ob_flag = 0
         while 1:
@@ -44,7 +44,7 @@ class BackMetro:
     def metro_start(self, bpm):
         self.mflag = 1
         tempo = float(60/bpm)
-        thread_metro = threading.Thread(target=BackMetro.play_metronome, args=(self, tempo, ))#並行処理でメトロノームを流す
+        thread_metro = threading.Thread(target=BackMetro._play_metronome, args=(self, tempo, ))#並行処理でメトロノームを流す
         thread_metro.start()
 
     def metro_stop(self):

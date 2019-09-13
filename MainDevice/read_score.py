@@ -1,7 +1,7 @@
 import numpy as np
 #from play_sound import PlaySound as ps
 
-def data_conv(data):
+def _data_conv(data):
     model = ['.', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
     for i in range(len(model)):
         if data == model[i]:
@@ -39,7 +39,7 @@ def read_score(music_name):
         data = line.split()#改行を消去
         for i in range(int((hScore/4)*mag[int(data[1])])):
             fScore.write(data[0]+'\n')
-            music_data.append(data_conv(data[0]))
+            music_data.append(_data_conv(data[0]))
         dt = (mag[int(data[1])]*NoteLength)#その音符の長さ（秒）
         #無音処理
         for i in np.arange(t, t+dt, (1/hRecorder)):

@@ -46,16 +46,16 @@ class DrawScore:
         self.music_deta = l_music_data
         for i in self.music_deta:
             print(i)
-        self.root.after(10, self.draw_score_line)
+        self.root.after(10, self._draw_score_line)
         self.root.mainloop()
 
-    def reset_labels(self):
+    def _reset_labels(self):
         self.labals_update = 1
         for i in range(len(self.labels)):
             self.labels[i].place_forget()
         self.labels.clear()
 
-    def draw_score_line(self):
+    def _draw_score_line(self):
         x = 0
         now_time = time.time()
         interval = now_time - self.last_time
@@ -68,9 +68,9 @@ class DrawScore:
                 print("end of draw_score_line")
                 self.root.destroy()
                 return
-            self.reset_labels()
+            self._reset_labels()
         elif self.labals_update == -1:#要改良
-            self.reset_labels()      
+            self._reset_labels()      
         else:
             self.labals_update = 0
         
@@ -126,7 +126,7 @@ class DrawScore:
             #print("flag of draw_score_line")
             self.end_flag = 1
         
-        self.root.after(10, self.draw_score_line)
+        self.root.after(10, self._draw_score_line)
 
 if __name__ == "__main__":
     sound_score = DrawScore('君が代')

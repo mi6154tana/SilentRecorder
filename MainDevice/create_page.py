@@ -16,11 +16,11 @@ class CreatePage:
         #self.cv.create_rectangle(0, 0, 800, 450, fill = 'green')#塗りつぶし
         #キャンバスバインド
         self.cv.place(x=0, y=0)
-        self.create_cons(root, contents)
+        self._create_cons(root, contents)
         #self.p_frame.pack()
         self.p_frame.grid(row=0, column=0, sticky="nsew")
 
-    def create_cons(self, root, contents):
+    def _create_cons(self, root, contents):
         name_label_font  = ("Helevetice", 14)
         name_label = ttk.Label(self.p_frame, text = self.p_name, font = name_label_font)
         name_label.grid(row=4, column=0)
