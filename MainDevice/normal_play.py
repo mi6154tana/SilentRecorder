@@ -6,14 +6,14 @@ import threading
 # from udp_com import UdpCom as uc
 from play_sound import PlaySound as ps
 from ope_recording import OpeRecording as o_re
-#from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
+from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 
 class NormalPlay:
     def __init__(self, cv, root):
         self.cv = cv
         self.root = root
         self.flag = 0
-        #self.button = gi()#PaspberryPiでの動作確認
+        self.button = gi()#PaspberryPiでの動作確認
 
         # 再帰回数の設定
         sys.setrecursionlimit(6000)
@@ -49,17 +49,17 @@ class NormalPlay:
         return sound_data
 
     def __draw_recorder(self, sdi=0):
-        '''
+        
         if self.button.gpio_input() == 0:#PaspberryPiでの動作確認
-            udp_data.play_stop()
+            #udp_data.play_stop()
             if self.write_rec_flag == 1:
                 self.write_rec.write_stop('user')
             self.root.quit()
             return
             
-        '''
+        
 
-        """
+        
         if self.button.gpio_input() == 3:#PaspberryPiでの動作確認
             with open("config.json","r") as json_file:
                 config_dict = json.load(json_file)
@@ -70,7 +70,7 @@ class NormalPlay:
 
             with open("config.json","w") as json_file:
                 json.dump(config_dict,json_file)
-        """
+        
 
         if sdi >= len(self.sound_data) and self.flag == 0:
             sdi = sdi - 1
@@ -144,7 +144,7 @@ class NormalPlay:
         # 枠表示
         self.cv.create_rectangle(220, 40, 300, 120)
         # on,offの表示
-        self.cv.create_text(260, 80, font=("Purisa", 36), text='記録\n'+rf_text['record_flag'], tag='rf_text')
+        self.cv.create_text(260, 80, font=("Purisa", 20), text='記録\n'+rf_text['record_flag'], tag='rf_text')
         #記録のオンオフ
         if self.write_rec_flag == 0 and rf_text['record_flag'] == 'ON':
             self.write_rec_flag = 1
@@ -179,7 +179,7 @@ class NormalPlay:
             # 枠の表示
             self.cv.create_rectangle(230, 130, 290, 170)
             # 音階の表示
-            self.cv.create_text(260, 150, font=("Purisa", 36), text=fingering_models[hole_data], tag='recorder')
+            self.cv.create_text(260, 150, font=("Purisa", 20), text=fingering_models[hole_data], tag='recorder')
         except:
             pass
 

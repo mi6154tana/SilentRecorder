@@ -4,7 +4,7 @@
 import tkinter as tk
 import time
 from PIL import Image, ImageTk
-#from gpio_in import GpioIn as gi
+from gpio_in import GpioIn as gi
 from create_page import CreatePage as cp
 from ope_recording import OpeRecording as o_re
 import page_func as pf
@@ -49,8 +49,8 @@ se_file = ''
 def change_page(button_in):
     global p_position, c_select, se_file
     
-    button_in = int(input('>>'))#PCでの動作確認
-    #button_in = button.gpio_input()#PaspberryPiでの動作確認
+    #button_in = int(input('>>'))#PCでの動作確認
+    button_in = button.gpio_input()#PaspberryPiでの動作確認
     
     if button_in == 0:#左
         pages[trans_list[p_position][0]].raise_page()
@@ -166,14 +166,14 @@ def change_page(button_in):
     if button_in == 7777:
         root.destroy()
     else:
-        root.after(100, change_page, -1)#PCでの動作確認
-        #root.after(100, change_page, button.gpio_input())#PaspberryPiでの動作確認
+        #root.after(100, change_page, -1)#PCでの動作確認
+        root.after(100, change_page, button.gpio_input())#PaspberryPiでの動作確認
 
 def main():
     global root, pages, button
 
     #gpio_init()
-    #button = gi()
+    button = gi()
     
     root = tk.Tk()
 
