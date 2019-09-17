@@ -14,38 +14,56 @@ page_names = [
     'JUDGE_PLAY',
     'RECORDING_LIST',
     'PLAY_RECORDING',
-    'SETTING'
+    'SETTING',
+    'POWER'
 ]
-'''
-page_cons = [
-    ['通常演奏', '正確性診断', '記録', '設定'],
-    ['A', 'B', 'C'],
-    ['君が代', '体の芯からまだ燃えているんだ'],
-    ['E', 'F'],
-    ['G'],
-    ['H', 'I'],
-    ['J']
-]
-'''
+
 trans_list = [#行はpagesに格納されているインデックス番号に対応、配列の中身は移動先のページのインデックス番号
-        [0, 1, 2, 4, 6],#0:ホーム　最左列は戻る（左ボタン）での対応先、コンテンツは１～番号が振られており、選択されていればそこに移動
+        [0, 1, 2, 4, 6, 7],#0:ホーム　最左列は戻る（左ボタン）での対応先、コンテンツは１～番号が振られており、選択されていればそこに移動
         [0],            #1:通常演奏　用意されていなければ、先に進めない
         [0, 3],         #2:楽譜リスト
         [2],            #3:正確性診断
         [0, 5],         #4:演奏記録一覧
         [4],            #5:演奏記録再生
-        [0]             #6:設定
+        [0],            #6:設定
+        [0]             #7:電源
     ]
 
 p_position = 0
+c_select = 1
 
 def change_page():
-    global p_position
+    global p_position, c_select
     
     gpio_in = int(input('>>'))#PCでの動作確認 4という入力があった場合は、コンテンツ４が選択された状態で右ボタンが押されたとき
-    if gpio_in + 1 <= len(trans_list[p_position]):
-        pages[trans_list[p_position][gpio_in]].raise_page()
-        p_position = trans_list[p_position][gpio_in]
+    
+    if gpio_in == 0:
+        pages[trans_list[p_position][0]].raise_page()
+        pages[trans_list[p_position][0]].draw_select(1)
+        p_position = trans_list[p_position][0]
+        c_select = 1
+    elif gpio_in == 1:
+        if c_select != 1:
+            c_select -= 1
+        pages[p_position].draw_select(c_select)
+    elif gpio_in == 2:
+        if c_select != 5:
+            c_select += 1
+        pages[p_position].draw_select(c_select)
+    elif gpio_in == 3:
+        if len(trans_list[p_position]) == 2:#移動先が一つだけの時
+            get_con = pages[p_position].contents[pages[p_position].d_positoin + c_select - 1]#要改良
+            print('select : ' + get_con)
+
+            pages[trans_list[p_position][1]].raise_page()
+            pages[trans_list[p_position][1]].draw_select(1)
+            p_position = trans_list[p_position][1]
+        else:
+            pages[trans_list[p_position][c_select]].raise_page()
+            pages[trans_list[p_position][c_select]].draw_select(1)
+            p_position = trans_list[p_position][c_select]
+        c_select = 1
+    
     if gpio_in == 7777:
         root.destroy()
     else:
