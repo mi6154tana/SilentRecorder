@@ -29,28 +29,36 @@ trans_list = [#行はpagesに格納されているインデックス番号に対
         [0]             #7:電源
     ]
 
-p_position = 0
+p_position = 0#現在のページ
 c_select = 1
 
 def change_page():
     global p_position, c_select
     
-    gpio_in = int(input('>>'))#PCでの動作確認 4という入力があった場合は、コンテンツ４が選択された状態で右ボタンが押されたとき
+    gpio_in = int(input('>>'))#PCでの動作確認
     
-    if gpio_in == 0:
+    if gpio_in == 0:#左
         pages[trans_list[p_position][0]].raise_page()
         pages[trans_list[p_position][0]].draw_select(1)
         p_position = trans_list[p_position][0]
         c_select = 1
-    elif gpio_in == 1:
-        if c_select != 1:
+    elif gpio_in == 1:#上
+        if c_select == 1 and pages[p_position].d_positoin > 0:
+            pages[p_position].d_positoin -= 1
+            pages[p_position].draw_cons() 
+        elif c_select != 1:
             c_select -= 1
         pages[p_position].draw_select(c_select)
-    elif gpio_in == 2:
-        if c_select != 5:
+    elif gpio_in == 2:#下
+        if len(pages[p_position].contents) >= c_select + 1:
             c_select += 1
+            if c_select > 5:
+                c_select = 5
+                if len(pages[p_position].contents) >= pages[p_position].d_positoin + 6:
+                    pages[p_position].d_positoin += 1
+            pages[p_position].draw_cons()
         pages[p_position].draw_select(c_select)
-    elif gpio_in == 3:
+    elif gpio_in == 3:#右
         if len(trans_list[p_position]) == 2:#移動先が一つだけの時
             get_con = pages[p_position].contents[pages[p_position].d_positoin + c_select - 1]#要改良
             print('select : ' + get_con)

@@ -57,16 +57,17 @@ class CreatePage:
             return ['None']
     
     def draw_cons(self):
-        
         for i in range(len(self.cons_labels)):
             self.cons_labels[i].place_forget()
         self.cons_labels.clear()
 
+        counter = 0
         for i in range(self.d_positoin, self.d_positoin+5):
             if i > len(self.contents)-1:
                 break
             self.cons_labels.append(tk.Label(self.p_frame, text = self.contents[i], foreground = 'white', background = 'blue',font = ("",40,"bold")))
-            self.cons_labels[i].place(x = 100, y = 115+i*100)
+            self.cons_labels[counter].place(x = 100, y = 115 + counter*100)
+            counter += 1
 
     def draw_select(self, c_num):
         c_num -= 1 #都合
@@ -76,7 +77,8 @@ class CreatePage:
         self.cv.create_polygon(100,100+c_num*100, 934,100+c_num*100, 934,110+c_num*100, 100,110+c_num*100, fill = 'red',tag = 'select')
         self.cv.create_polygon(100,190+c_num*100, 934,190+c_num*100, 934,200+c_num*100, 100,200+c_num*100, fill = 'red',tag = 'select')
     
-    def raise_page(self):     
+    def raise_page(self):
+        self.d_positoin = 0   
         self.p_frame.tkraise()
         self.draw_cons()
         self.draw_select(1)
