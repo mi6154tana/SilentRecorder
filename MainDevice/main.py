@@ -16,6 +16,7 @@ page_names = [
     'PLAY_RECORDING',
     'SETTING'
 ]
+'''
 page_cons = [
     ['通常演奏', '正確性診断', '記録', '設定'],
     ['A', 'B', 'C'],
@@ -25,13 +26,14 @@ page_cons = [
     ['H', 'I'],
     ['J']
 ]
+'''
 trans_list = [#行はpagesに格納されているインデックス番号に対応、配列の中身は移動先のページのインデックス番号
         [0, 1, 2, 4, 6],#0:ホーム　最左列は戻る（左ボタン）での対応先、コンテンツは１～番号が振られており、選択されていればそこに移動
         [0],            #1:通常演奏　用意されていなければ、先に進めない
         [0, 3],         #2:楽譜リスト
         [2],            #3:正確性診断
-        [0, 5],            #4:演奏記録一覧
-        [4],          #5:演奏記録再生
+        [0, 5],         #4:演奏記録一覧
+        [4],            #5:演奏記録再生
         [0]             #6:設定
     ]
 
@@ -65,7 +67,7 @@ def main():
 
     #home = cp(root, 'HOME', home_cons)
     for i in range(len(page_names)):
-        pages.append(cp(root, page_names[i], page_cons[i]))
+        pages.append(cp(root, page_names[i], i))
 
     pages[0].raise_page()
 
