@@ -1,4 +1,5 @@
-# GUIを扱う
+# -*- coding: utf-8 -*-
+#This is Prototype Silent Recorder's code.
 import tkinter as tk
 from tkinter import ttk
 from time import sleep
@@ -39,7 +40,7 @@ class CreatePage:
         for i in range(len(self.contents)):
             if i > 4:
                 break #仮
-            self.cv.create_polygon(100,110+i*100, 924,110+i*100, 924,190+i*100, 100,190+i*100, fill = 'blue',)
+            self.cv.create_polygon(100,90+i*100, 924,90+i*100, 924,170+i*100, 100,170+i*100, fill = 'blue',)
 
     def _get_list_cons(self, p_num):
         if p_num == 0:
@@ -66,16 +67,16 @@ class CreatePage:
             if i > len(self.contents)-1:
                 break
             self.cons_labels.append(tk.Label(self.p_frame, text = self.contents[i], foreground = 'white', background = 'blue',font = ("",40,"bold")))
-            self.cons_labels[counter].place(x = 100, y = 115 + counter*100)
+            self.cons_labels[counter].place(x = 100, y = 95 + counter*100)
             counter += 1
 
     def draw_select(self, c_num):
         c_num -= 1 #都合
         self.cv.delete('select')
-        self.cv.create_polygon(90,100+c_num*100, 100,100+c_num*100, 100,200+c_num*100, 90,200+c_num*100, fill = 'red',tag = 'select')
-        self.cv.create_polygon(924,100+c_num*100, 934,100+c_num*100, 934,200+c_num*100, 924,200+c_num*100, fill = 'red',tag = 'select')
-        self.cv.create_polygon(100,100+c_num*100, 934,100+c_num*100, 934,110+c_num*100, 100,110+c_num*100, fill = 'red',tag = 'select')
-        self.cv.create_polygon(100,190+c_num*100, 934,190+c_num*100, 934,200+c_num*100, 100,200+c_num*100, fill = 'red',tag = 'select')
+        self.cv.create_polygon(90,80+c_num*100, 100,80+c_num*100, 100,180+c_num*100, 90,180+c_num*100, fill = 'red',tag = 'select')
+        self.cv.create_polygon(924,80+c_num*100, 934,80+c_num*100, 934,180+c_num*100, 924,180+c_num*100, fill = 'red',tag = 'select')
+        self.cv.create_polygon(100,80+c_num*100, 934,80+c_num*100, 934,90+c_num*100, 100,90+c_num*100, fill = 'red',tag = 'select')
+        self.cv.create_polygon(100,170+c_num*100, 934,170+c_num*100, 934,180+c_num*100, 100,180+c_num*100, fill = 'red',tag = 'select')
     
     def raise_page(self):
         self.d_positoin = 0   

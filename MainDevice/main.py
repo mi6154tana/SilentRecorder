@@ -1,5 +1,6 @@
-# GUIを扱う
-#import RPi.GPIO as GPIO
+# -*- coding: utf-8 -*-
+#This is Prototype Silent Recorder's code.
+import RPi.GPIO as GPIO
 import tkinter as tk
 import time
 from PIL import Image, ImageTk
@@ -31,11 +32,36 @@ trans_list = [#行はpagesに格納されているインデックス番号に対
 
 p_position = 0#現在のページ
 c_select = 1
+def gpio_init():
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(4,GPIO.OUT)
+    GPIO.setup(18,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(23,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(24,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(25,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
+
+def gpio_input():
+    if GPIO.input(18) == GPIO.HIGH:
+        print(0)
+        return 0
+    elif GPIO.input(23) == GPIO.HIGH:
+        print(1)
+        return 1
+    elif GPIO.input(24) == GPIO.HIGH:
+        print(2)
+        return 2
+    elif GPIO.input(25) == GPIO.HIGH:
+        print(3)
+        return 3
+    else:
+        print(-1)
+        return -1
 
 def change_page():
     global p_position, c_select
     
-    gpio_in = int(input('>>'))#PCでの動作確認
+    #gpio_in = int(input('>>'))#PCでの動作確認
+    gpio_in = gpio_input()
     
     if gpio_in == 0:#左
         pages[trans_list[p_position][0]].raise_page()
@@ -59,6 +85,10 @@ def change_page():
             pages[p_position].draw_cons()
         pages[p_position].draw_select(c_select)
     elif gpio_in == 3:#右
+        if p_position == 7:#仮の終了
+            root.destroy()
+            return
+
         if len(trans_list[p_position]) == 2:#移動先が一つだけの時
             get_con = pages[p_position].contents[pages[p_position].d_positoin + c_select - 1]#要改良
             print('select : ' + get_con)
@@ -79,6 +109,9 @@ def change_page():
 
 def main():
     global root, pages
+
+    gpio_init()
+    
     root = tk.Tk()
 
     # ウィンドウタイトルを決定

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#This is Prototype Silent Recorder's code.
 import numpy as np
 #from play_sound import PlaySound as ps
 
