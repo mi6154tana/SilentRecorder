@@ -5,9 +5,10 @@ from tkinter import ttk
 from time import sleep
 from PIL import Image, ImageTk
 import os
+from normal_play import NormalPlay
 
 class CreatePage:
-    
+
     def __init__(self, root, name, p_num):
         self.p_frame = tk.Frame(root)
         self.p_name = name
@@ -42,6 +43,8 @@ class CreatePage:
     def _get_list_cons(self, p_num):
         if p_num == 0:
             return ['通常演奏', '正確性診断', '記録', '設定', '終了']
+        elif p_num == 1:
+            return []
         elif p_num == 2 or p_num == 4:
             if p_num == 2:
                 path = './Score'
@@ -58,6 +61,10 @@ class CreatePage:
             return ['None']
     
     def draw_cons(self):
+        if self.p_name == 'NORMAL_PLAY':
+            norply = NormalPlay(self.cv)
+            norply.npmain()
+            
         for i in range(len(self.cons_labels)):
             self.cons_labels[i].place_forget()
         self.cons_labels.clear()
@@ -94,4 +101,6 @@ class CreatePage:
         self.d_positoin = 0   
         self.p_frame.tkraise()
         self.draw_cons()
-        self.draw_select(1)
+        print(self.p_name)
+        if self.p_name != 'NORMAL_PLAY':
+            self.draw_select(1)
