@@ -5,11 +5,9 @@ from tkinter import ttk
 from time import sleep
 from PIL import Image, ImageTk
 import os
+from normal_play import NormalPlay
 
 class CreatePage:
-    p_frame = None
-    p_name = None
-    cv = None
     contents = []
     cons_labels = []
     d_positoin = 0
@@ -45,6 +43,8 @@ class CreatePage:
     def _get_list_cons(self, p_num):
         if p_num == 0:
             return ['通常演奏', '正確性診断', '記録', '設定', '終了']
+        elif p_num == 1:
+            return []
         elif p_num == 2 or p_num == 4:
             if p_num == 2:
                 path = './Score'
@@ -61,17 +61,22 @@ class CreatePage:
             return ['None']
     
     def draw_cons(self):
-        for i in range(len(self.cons_labels)):
-            self.cons_labels[i].place_forget()
-        self.cons_labels.clear()
+        if self.p_name == 'NORMAL_PLAY':
+            norply = NormalPlay(self.cv)
+            norply.npmain()
+        else:
+                
+            for i in range(len(self.cons_labels)):
+                self.cons_labels[i].place_forget()
+            self.cons_labels.clear()
 
-        counter = 0
-        for i in range(self.d_positoin, self.d_positoin+5):
-            if i > len(self.contents)-1:
-                break
-            self.cons_labels.append(tk.Label(self.p_frame, text = self.contents[i], foreground = 'white', background = 'blue',font = ("",20,"bold")))
-            self.cons_labels[counter].place(x = 50, y = 47 + counter*50)
-            counter += 1
+            counter = 0
+            for i in range(self.d_positoin, self.d_positoin+5):
+                if i > len(self.contents)-1:
+                    break
+                self.cons_labels.append(tk.Label(self.p_frame, text = self.contents[i], foreground = 'white', background = 'blue',font = ("",20,"bold")))
+                self.cons_labels[counter].place(x = 50, y = 47 + counter*50)
+                counter += 1
 
     def draw_select(self, c_num):
         c_num -= 1 #都合
@@ -85,4 +90,6 @@ class CreatePage:
         self.d_positoin = 0   
         self.p_frame.tkraise()
         self.draw_cons()
-        self.draw_select(1)
+        print(self.p_name)
+        if self.p_name != 'NORMAL_PLAY':
+            self.draw_select(1)

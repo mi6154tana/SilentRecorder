@@ -11,7 +11,7 @@ root = None
 pages = []
 page_names = [
     'HOME',
-    'NORAL_PLAY',
+    'NORMAL_PLAY',
     'SCORE_LIST',
     'JUDGE_PLAY',
     'RECORDING_LIST',
@@ -70,14 +70,14 @@ def change_page():
         pages[trans_list[p_position][0]].draw_select(1)
         p_position = trans_list[p_position][0]
         c_select = 1
-    elif gpio_in == 1:#上
+    elif gpio_in == 1 and p_position != 1:#上
         if c_select == 1 and pages[p_position].d_positoin > 0:
             pages[p_position].d_positoin -= 1
             pages[p_position].draw_cons() 
         elif c_select != 1:
             c_select -= 1
         pages[p_position].draw_select(c_select)
-    elif gpio_in == 2:#下
+    elif gpio_in == 2 and p_position != 1:#下
         if len(pages[p_position].contents) >= c_select + 1: 
             c_select += 1
             if c_select > 5:
@@ -98,12 +98,12 @@ def change_page():
             pages[trans_list[p_position][1]].raise_page()
             pages[trans_list[p_position][1]].draw_select(1)
             p_position = trans_list[p_position][1]
-            pf.select_func(p_position, get_con)#そのページ専用関数を発動
+            # pf.select_func(p_position, get_con)#そのページ専用関数を発動
         elif len(trans_list[p_position]) != 1:#移動先がない
             pages[trans_list[p_position][c_select]].raise_page()
-            pages[trans_list[p_position][c_select]].draw_select(1)
+            #pages[trans_list[p_position][c_select]].draw_select(1)
             p_position = trans_list[p_position][c_select]
-            pf.select_func(p_position, 'None')#そのページ専用関数を発動
+            # pf.select_func(p_position, 'None')#そのページ専用関数を発動
         c_select = 1
     
     if gpio_in == 7777:
