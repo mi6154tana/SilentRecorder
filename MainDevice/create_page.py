@@ -25,6 +25,7 @@ class CreatePage:
         self._create_cons(root, p_num)
         #self.p_frame.pack()
         self.p_frame.grid(row=0, column=0, sticky="nsew")
+    
 
     def _create_cons(self, root, p_num):
         name_label_font  = ("Helevetice", 14)
@@ -69,9 +70,21 @@ class CreatePage:
         for i in range(self.d_positoin, self.d_positoin+5):
             if i > len(self.contents)-1:
                 break
+            #listbox.insert(tk.END,self.contents[i])#tk.Label(self.p_frame, text = self.contents[i], foreground = 'white', background = 'blue',font = ("",20,"bold")))
             self.cons_labels.append(tk.Label(self.p_frame, text = self.contents[i], foreground = 'white', background = 'blue',font = ("",20,"bold")))
             self.cons_labels[counter].place(x = 50, y = 47 + counter*50)
             counter += 1
+        
+        #scrollbarの処理
+        scrollbar = tk.Scrollbar(self.p_frame)
+        scrollbar.place(relx = 0.9,relheight=1.0)
+        scroll_unit = 1/(1+abs(5-len(self.contents))) 
+        #print("contents:",scroll_unit)
+        #print([scroll_unit*self.d_positoin,scroll_unit+scroll_unit*self.d_positoin])
+        if len(self.contents) > 5:
+             scrollbar.set(scroll_unit*self.d_positoin,scroll_unit+scroll_unit*self.d_positoin)
+        else:
+            scrollbar.set(0,1.0)
 
     def draw_select(self, c_num):
         c_num -= 1 #都合
