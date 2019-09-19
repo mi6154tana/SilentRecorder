@@ -21,6 +21,7 @@ def play_sound_start():
             
             fin_tmp = int(input('ps >>'))
             if fin_tmp == 7777:
+                del sound
                 break
             fin_tmp -= 1
             if fin_tmp < 0 or fin_tmp > 8:
