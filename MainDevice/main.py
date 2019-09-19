@@ -5,6 +5,7 @@ import tkinter as tk
 import time
 from PIL import Image, ImageTk
 from create_page import CreatePage as cp
+import page_func as pf
 
 root = None
 pages = []
@@ -76,7 +77,7 @@ def change_page():
             c_select -= 1
         pages[p_position].draw_select(c_select)
     elif gpio_in == 2:#下
-        if len(pages[p_position].contents) >= c_select + 1:
+        if len(pages[p_position].contents) >= c_select + 1: 
             c_select += 1
             if c_select > 5:
                 c_select = 5
@@ -96,10 +97,12 @@ def change_page():
             pages[trans_list[p_position][1]].raise_page()
             pages[trans_list[p_position][1]].draw_select(1)
             p_position = trans_list[p_position][1]
+            pf.select_func(p_position, get_con)#そのページ専用関数を発動
         elif len(trans_list[p_position]) != 1:#移動先がない
             pages[trans_list[p_position][c_select]].raise_page()
             pages[trans_list[p_position][c_select]].draw_select(1)
             p_position = trans_list[p_position][c_select]
+            pf.select_func(p_position, 'None')#そのページ専用関数を発動
         c_select = 1
     
     if gpio_in == 7777:
