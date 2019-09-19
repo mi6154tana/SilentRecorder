@@ -8,52 +8,40 @@ import time
 import sys
 
 class PlaySound:
-    sound_list = []
-    sound_fname = [#サンプリング音源のファイル名
-        './SoundDatas/do.wav',
-        './SoundDatas/re.wav',
-        './SoundDatas/mi.wav',
-        './SoundDatas/fa.wav',
-        './SoundDatas/sol.wav',
-        './SoundDatas/la.wav',
-        './SoundDatas/si.wav',
-        './SoundDatas/do8va.wav',
-        './SoundDatas/re8va.wav'
-    ]
-
-    '''
-    fingering_models = [#運指　試験用
-        '00000000',#do
-        '00000010',#re
-        '00000110',#mi
-        '00001110',#fa
-        '00011110',#sol
-        '00111110',#la
-        '01111110',#si
-        '10111110',#do8va
-        '10111111' #re8va
-    ]
-    '''
-    fingering_models = [
-        '11111111',
-        '01111111',
-        '00111111',
-        '00011111',
-        '00001111',
-        '00000111',
-        '00000101',
-        '00000100',
-        '00111110'
-    ]
-
-    #in_gpiopin = [4, 17, 27, 22, 5, 6, 13, 19]#GPIO運指検知テスト用ピン
-    last_fin = -1
-    now_fin = -1
 
     def __init__(self):
         #pygame.init()
         pygame.mixer.quit()
         pygame.mixer.init()
+
+        self.sound_list = []
+        self.sound_fname = [#サンプリング音源のファイル名
+            './SoundDatas/do.wav',
+            './SoundDatas/re.wav',
+            './SoundDatas/mi.wav',
+            './SoundDatas/fa.wav',
+            './SoundDatas/sol.wav',
+            './SoundDatas/la.wav',
+            './SoundDatas/si.wav',
+            './SoundDatas/do8va.wav',
+            './SoundDatas/re8va.wav'
+        ]
+        self.ingering_models = [
+            '11111111',#do
+            '01111111',#re
+            '00111111',#mi
+            '00011111',#fa
+            '00001111',#sol
+            '00000111',#la
+            '00000101',#si
+            '00000100',#do8va
+            '00111110' #re8va
+        ]
+
+        #in_gpiopin = [4, 17, 27, 22, 5, 6, 13, 19]#GPIO運指検知テスト用ピン
+        self.last_fin = -1
+        self.now_fin = -1
+
         for i in range(9):
             self.sound_list.append(None)
             self.sound_list[i] = pygame.mixer.Sound(self.sound_fname[i])
@@ -99,6 +87,8 @@ class PlaySound:
                 self.sound_list[now_fin].play(-1)
                 volume = self.sound_list[now_fin].get_volume() # 音量取得
                 print(volume)
+            else:
+                self.sound_list[last_fin].stop()
 
     '''
     def ChangeVolume():
@@ -111,6 +101,10 @@ class PlaySound:
         self.last_fin = self.now_fin
         self.now_fin = fin_tmp
         self._change_sound(self.last_fin, self.now_fin)
+
+    def __del__(self):
+        self._change_sound(self.now_fin, -1)
+
 
 def main():
 

@@ -7,16 +7,12 @@ from PIL import Image, ImageTk
 import os
 
 class CreatePage:
-    p_frame = None
-    p_name = None
-    cv = None
-    contents = []
-    cons_labels = []
-    d_positoin = 0
-
+    
     def __init__(self, root, name, p_num):
         self.p_frame = tk.Frame(root)
         self.p_name = name
+        self.cons_labels = []
+        self.d_positoin = 0
         #キャンバスを作る
         self.cv = tk.Canvas(self.p_frame,width = 512, height = 300)
         #self.cv.create_rectangle(0, 0, 800, 450, fill = 'green')#塗りつぶし
@@ -55,7 +51,7 @@ class CreatePage:
             files_file = [f for f  in files if os.path.isfile(os.path.join(path, f))]
             return files_file
         elif p_num == 6:
-            return ['メトロノーム', '正確性診断中の記録', '演奏デバイスの調整']
+            return ['メトロノーム:OFF', '正確性診断中の記録:OFF', '演奏デバイスの調整:A']
         elif p_num == 7:
             return ['電源を切る']
         else:
