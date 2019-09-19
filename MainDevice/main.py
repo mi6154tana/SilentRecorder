@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #This is Prototype Silent Recorder's code.
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 import tkinter as tk
 import time
 from PIL import Image, ImageTk
@@ -60,8 +60,8 @@ def gpio_input():
 def change_page():
     global p_position, c_select
     
-    #gpio_in = int(input('>>'))#PCでの動作確認
-    gpio_in = gpio_input()
+    gpio_in = int(input('>>'))#PCでの動作確認
+    #gpio_in = gpio_input()
     
     if gpio_in == 0:#左
         pages[trans_list[p_position][0]].raise_page()
@@ -96,7 +96,7 @@ def change_page():
             pages[trans_list[p_position][1]].raise_page()
             pages[trans_list[p_position][1]].draw_select(1)
             p_position = trans_list[p_position][1]
-        else:
+        elif len(trans_list[p_position]) != 1:#移動先がない
             pages[trans_list[p_position][c_select]].raise_page()
             pages[trans_list[p_position][c_select]].draw_select(1)
             p_position = trans_list[p_position][c_select]
@@ -110,7 +110,7 @@ def change_page():
 def main():
     global root, pages
 
-    gpio_init()
+    #gpio_init()
     
     root = tk.Tk()
 

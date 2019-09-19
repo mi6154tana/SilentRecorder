@@ -52,8 +52,11 @@ class CreatePage:
                 path = './Memory'
             files = os.listdir(path)
             files_file = [f for f  in files if os.path.isfile(os.path.join(path, f))]
-
             return files_file
+        elif p_num == 6:
+            return ['メトロノーム', '正確性診断中の記録', '演奏デバイスの調整']
+        elif p_num == 7:
+            return ['電源を切る']
         else:
             return ['None']
     
