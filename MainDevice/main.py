@@ -33,6 +33,7 @@ trans_list = [#行はpagesに格納されているインデックス番号に対
 
 p_position = 0#現在のページ
 c_select = 1
+
 def gpio_init():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(4,GPIO.OUT)

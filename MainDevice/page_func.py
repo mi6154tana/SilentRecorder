@@ -2,9 +2,12 @@
 #This is Prototype Silent Recorder's code.
 
 import threading
-from  play_sound import PlaySound as ps
+from play_sound import PlaySound as ps
 from back_metro import BackMetro as bm
 import time
+
+metro_on = 0#メトロノームを流すか
+record_on = 0#正確性診断中の演奏を記録するか
 
 def select_func(p_position, select_con):
     if p_position == 1:#通常演奏
@@ -39,6 +42,7 @@ def play_sound_start():
             #device input!
             #fin_tmp = int(ps.FingeringCheck(ifingering)) 
             sound.sr_play(fin_tmp)
+            
             
             time.sleep(0.1)
     except KeyboardInterrupt:
