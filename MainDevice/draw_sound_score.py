@@ -70,12 +70,12 @@ class DrawScore:
         interval = now_time - self.last_time
         if interval >= self.bpm*self.measure*2:
             self.draw_point += 32*2#だと思う
-            seek_point = 10#最も左のシーク位置
+            seek_point = 5#最も左のシーク位置
             self.last_time = time.time()
             if self.end_flag == 1:
                 print("interval : " + str(interval))
                 print("end of draw_score_line")
-                self.root.destroy()
+                #self.root.destroy()
                 return
             self._reset_labels()
         elif self.labals_update == -1:#要改良
@@ -83,43 +83,43 @@ class DrawScore:
         else:
             self.labals_update = 0
         
-        seek_point = 10.0+ 1000.0*float(interval/(self.bpm*self.measure*2))
+        seek_point = 5.0+ 500.0*float(interval/(self.bpm*self.measure*2))
         self.last_seek = time.time()
 
         self.cv.delete("all")
-        self.cv.create_polygon(0, 0, 1024, 0, 1024, 600, 0, 600, fill = "white")
+        self.cv.create_polygon(0, 0, 512, 0, 512, 300, 0, 300, fill = "white")
         #五線譜の表示
         #五線譜の表示
         for i in range(0,5):
-            i = i * 20
-            self.cv.create_line(10,160+i,1010,160+i)
+            i = i * 10
+            self.cv.create_line(5,80+i,505,80+i)
         #小節毎の区切りの線
-        self.cv.create_line(10,160,10,240)
-        self.cv.create_line(510,160,510,240)
-        self.cv.create_line(1010,160,1010,240)
+        self.cv.create_line(5,80,5,120)
+        self.cv.create_line(255,80,255,120)
+        self.cv.create_line(505,80,505,120)
 
-        m_p = [255,245,235,225,215,205,195,185,175]#音階の描画位置
+        m_p = [127.5,122.5,117.5,112.5,107.5,102.5,97.5,92.5,87.5]#音階の描画位置
         count = 0
         old_m = -1
-        old_change = 10
+        old_change = 5
         for j in self.music_deta:#range(draw_point, draw_point + 16):
             if self.draw_point <= count and self.draw_point + 32*2 > count:
                 if count > len(self.music_deta):
                     break
                 #print(str(j) + ':' + str(draw_point))
-                x1=x * 1000/(32*2)#x1 = x * 62.5
+                x1=x * 500/(32*2)#x1 = x * 62.5
                 #self.cv.create_polygon(x1 + 10,M_s[j],72.5 + x1,M_s[j],72.5 + x1,M_s[j] + 10,x1 + 10,M_s[j] + 10 , tag ="polygon")
-                self.cv.create_polygon(x1 + 10,m_p[j],10 + 1000/(32*2) + x1,m_p[j],10 + 1000/(32*2) + x1,m_p[j] + 10,x1 + 10,m_p[j] + 10 , tag ="polygon")
+                self.cv.create_polygon(x1 + 5,m_p[j],5 + 500/(32*2) + x1,m_p[j],5 + 500/(32*2) + x1,m_p[j] + 5,x1 + 5,m_p[j] + 5 , tag ="polygon")
 
                 #音階が変わったかを検知
                 if count == self.draw_point:
                     old_m = j
                 if self.labals_update == 1:
                     if j != old_m or count == self.draw_point + 32*2-1 or count == len(self.music_deta)-1:
-                        self.labels.append(tk.Label(text = self.music_sound[old_m],background = "white",font = ("",20,"bold")))
-                        self.labels[len(self.labels)-1].place(x = (old_change + x1 )/2 - 10,y = 300)
+                        self.labels.append(tk.Label(text = self.music_sound[old_m],background = "white",font = ("",10,"bold")))
+                        self.labels[len(self.labels)-1].place(x = (old_change + x1 )/2 - 5,y = 150)
                         old_m = j
-                        old_change = x1 + 10
+                        old_change = x1 + 5
 
                 #cv.update()
                 x = x + 1
@@ -130,7 +130,7 @@ class DrawScore:
                 break
             count += 1
     
-        self.cv.create_polygon(seek_point-2, 100, seek_point+2, 100, seek_point + 2, 280, seek_point -2, 280, fill = "red")#シーク線
+        self.cv.create_polygon(seek_point-2, 50, seek_point+2, 50, seek_point + 2, 140, seek_point -2, 140, fill = "red")#シーク線
         if self.draw_point + 32*2 >= len(self.music_deta):
             #print("flag of draw_score_line")
             self.end_flag = 1
