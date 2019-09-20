@@ -7,6 +7,7 @@ from PIL import Image, ImageTk
 import os
 from normal_play import NormalPlay
 from draw_sound_score import DrawScore as DS
+import json
 
 class CreatePage:
 
@@ -54,8 +55,17 @@ class CreatePage:
             files = os.listdir(path)
             files_file = [f for f  in files if os.path.isfile(os.path.join(path, f))]
             return files_file
-        elif p_num == 6:
-            return ['メトロノーム:OFF', '正確性診断中の記録:OFF', '演奏デバイスの調整:A']
+
+        elif p_num == 6: #設定の描画処理
+            view_text = []
+            config_text_list = ["メトロノーム:","正確性診断の記録:","演奏デバイスの調整:"]
+            with open("./config.json","r") as config_file:
+                config_obj = json.load(config_file)
+            for config_value,config_text in zip(config_obj.values(),config_text_list):
+                view_text.append(config_text+config_value)
+            #print("view:",view_text)
+            return view_text
+
         elif p_num == 7:
             return ['電源を切る']
         else:
@@ -77,6 +87,7 @@ class CreatePage:
         self.cons_labels.clear()
 
         counter = 0
+        #self.contents = self._get_list_cons(p_num)
         for i in range(self.d_positoin, self.d_positoin+5):
             if i > len(self.contents)-1:
                 break

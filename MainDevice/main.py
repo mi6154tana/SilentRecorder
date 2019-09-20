@@ -6,6 +6,8 @@ import time
 from PIL import Image, ImageTk
 from create_page import CreatePage as cp
 import page_func as pf
+import json
+from collections import OrderedDict
 
 root = None
 pages = []
@@ -93,19 +95,61 @@ def change_page():
         if p_position == 7:#仮の終了
             root.destroy()
             return
+
+        if p_position == 6:
+            #設定ファイル書き換え
+            with open("./config.json") as config_file:
+                json_obj = json.load(config_file,object_pairs_hook=OrderedDict)
+
+            if c_select == 1:
+                if json_obj["metronom"] == "ON":
+                    json_obj["metronom"] = "OFF"
+                else:
+                    json_obj["metronom"] = "ON"
+
+            if c_select == 2:
+                if json_obj["match_check"] == "ON":
+                    json_obj["match_check"] = "OFF"
+                else:
+                    json_obj["match_check"] = "ON"
+
+            if c_select == 3:
+                if json_obj["Mode"] == "A":
+                    json_obj["Mode"] = "B"
+                else:
+                    json_obj["Mode"] = "A"
+
+            with open("./config.json","w") as writing_config_file:
+                json.dump(json_obj,writing_config_file,ensure_ascii=False)
+
+            #test
+            # print("==============================================================")
+            # test = open("./config.json","r")
+            # print(json.load(test))
+            # test.close()
+            # print("==============================================================")
+
+            #contents更新
+            pages[p_position].contents = pages[p_position]._get_list_cons(p_position)
+            pages[p_position].draw_cons()
+            #print(pages[p_position].contents)
+
+
         if len(trans_list[p_position]) == 2:#移動先が一つだけの時
             get_con = pages[p_position].contents[pages[p_position].d_positoin + c_select - 1]#要改良
             print('select : ' + get_con)
             pages[trans_list[p_position][1]].raise_page()
             pages[trans_list[p_position][1]].draw_select(1)
             p_position = trans_list[p_position][1]
+            c_select = 1
             # pf.select_func(p_position, get_con)#そのページ専用関数を発動
-        elif len(trans_list[p_position]) != 1:#移動先がない
+        elif len(trans_list[p_position]) != 1:#???
             pages[trans_list[p_position][c_select]].raise_page()
             #pages[trans_list[p_position][c_select]].draw_select(1)
             p_position = trans_list[p_position][c_select]
             # pf.select_func(p_position, 'None')#そのページ専用関数を発動
-        c_select = 1
+            c_select = 1
+
     
     if gpio_in == 7777:
         root.destroy()
