@@ -1,6 +1,6 @@
 import tkinter as tk
 import time
-import threading
+import json
 import sys
 
 class NormalPlay:
@@ -66,10 +66,12 @@ class NormalPlay:
             return
 
     def __draw_onoff_label(self):
-        pass
+        with open('config.json', 'r') as f:
+            conf_data = json.load(f)
+        self.cv.create_text(250, 30, text=conf_data['match_check'])
 
     def npmain(self):
-        # for sdi in range(len(self.sound_data)):
+        self.__draw_onoff_label()
         self.__draw_recorder()
         print('end')
         # for sd in self.sound_data:
