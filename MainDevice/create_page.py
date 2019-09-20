@@ -78,7 +78,13 @@ class CreatePage:
 
         if self.p_name == 'JUDGE_PLAY':
             print("JUDGE PLAY")
-            DS("君が代",self.cv,self.p_frame)
+            DS("君が代",self.cv,self.p_frame,"JUDGE_PLAY")
+
+        if self.p_name == "PLAY_RECORDING":
+            print("Play_recoding")
+            DS("君が代",self.cv,self.p_frame,"PLAY_RECORDING")
+
+
 
 
             
