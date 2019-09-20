@@ -6,6 +6,7 @@ from time import sleep
 from PIL import Image, ImageTk
 import os
 from normal_play import NormalPlay
+from draw_sound_score import DrawScore as DS
 
 class CreatePage:
 
@@ -64,6 +65,12 @@ class CreatePage:
         if self.p_name == 'NORMAL_PLAY':
             norply = NormalPlay(self.cv)
             norply.npmain()
+
+        if self.p_name == 'JUDGE_PLAY':
+            print("JUDGE PLAY")
+            DS("君が代",self.cv,self.p_frame)
+
+
             
         for i in range(len(self.cons_labels)):
             self.cons_labels[i].place_forget()

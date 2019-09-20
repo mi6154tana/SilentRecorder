@@ -23,7 +23,7 @@ class DrawScore:
     ]
     '''
     music_deta = []
-    root = tk.Tk("1024x600")
+    #root = tk.Tk("1024x600")
     last_time = time.time()
     draw_point = 0
     seek_point = 10
@@ -34,11 +34,13 @@ class DrawScore:
     music_sound = ["ド","レ","ミ","ファ","ソ","ラ","シ","ド","レ"]
     labals_update = -1
     labels = []
-    cv = tk.Canvas(root,width = 1024,height = 600)
+    #cv = tk.Canvas(root,width = 1024,height = 600)
     sound = ps()
 
-    def __init__(self, music_name):
-        self.cv.pack()
+    def __init__(self, music_name,cv,p_frame):
+        self.cv = cv
+        self.root = p_frame
+        #self.cv.pack()
         l_music_data = rs.read_score(music_name)
         self.bpm = l_music_data[0]
         self.measure = l_music_data[1]
