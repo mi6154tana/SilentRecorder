@@ -73,7 +73,8 @@ class CreatePage:
     
     def draw_cons(self):
         if self.p_name == 'NORMAL_PLAY':
-            norply = NormalPlay(self.cv)
+            print('Go to NormalPlay!')
+            norply = NormalPlay(self.cv, self.p_frame)
             norply.npmain()
 
         if self.p_name == 'JUDGE_PLAY':
@@ -83,10 +84,6 @@ class CreatePage:
         if self.p_name == "PLAY_RECORDING":
             print("Play_recoding")
             DS("君が代",self.cv,self.p_frame,"PLAY_RECORDING")
-
-
-
-
             
         for i in range(len(self.cons_labels)):
             self.cons_labels[i].place_forget()
