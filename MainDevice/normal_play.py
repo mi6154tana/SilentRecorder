@@ -68,7 +68,7 @@ class NormalPlay:
     def __draw_onoff_label(self):
         with open('config.json', 'r') as f:
             conf_data = json.load(f)
-        self.cv.create_text(250, 30, text=conf_data['match_check'])
+        self.cv.create_text(250, 30, text=conf_data['record_flag'])
 
     def npmain(self):
         self.__draw_onoff_label()

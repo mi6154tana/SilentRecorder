@@ -108,10 +108,10 @@ def change_page():
                     json_obj["metronom"] = "ON"
 
             if c_select == 2:
-                if json_obj["match_check"] == "ON":
-                    json_obj["match_check"] = "OFF"
+                if json_obj["record_flag"] == "ON":
+                    json_obj["record_flag"] = "OFF"
                 else:
-                    json_obj["match_check"] = "ON"
+                    json_obj["record_flag"] = "ON"
 
             if c_select == 3:
                 if json_obj["Mode"] == "A":
