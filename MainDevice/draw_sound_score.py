@@ -37,19 +37,26 @@ class DrawScore:
     #cv = tk.Canvas(root,width = 1024,height = 600)
     sound = ps()
 
-    def __init__(self, music_name,cv,p_frame):
+    def __init__(self, music_name,cv,p_frame,mode_name):
         self.cv = cv
         self.root = p_frame
+        self.mode_name =mode_name
         #self.cv.pack()
-        l_music_data = rs.read_score(music_name)
-        self.bpm = l_music_data[0]
-        self.measure = l_music_data[1]
-        del l_music_data[0:2]
-        self.music_deta = l_music_data
-        for i in self.music_deta:
-            print(i)
-        self.root.after(10, self._draw_score_line)
-        self.root.mainloop()
+        if self.mode_name == "PLAY_RECORDING":
+            l_music_data = rs.read_score(music_name)
+            self.bpm = l_music_data[0]
+            self.measure = l_music_data[1]
+            del l_music_data[0:2]
+            self.music_deta = l_music_data
+            for i in self.music_deta:
+                print(i)
+            self.root.after(10, self._draw_score_line)
+            self.root.mainloop()
+
+        else:
+            None
+
+    
 
     def _reset_labels(self):
         self.labals_update = 1
