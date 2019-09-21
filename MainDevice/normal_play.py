@@ -3,7 +3,7 @@ import time
 import json
 import sys
 import threading
-from udprcv import UdpRcv as ur
+from udp_com import UdpCom as uc
 from play_sound import PlaySound as ps
 #from gpio_in import GpioIn as gi
 
@@ -21,7 +21,7 @@ class NormalPlay:
         self.sound_data = self.__read_file()
 
         # 受信の準備
-        self.rcv_data = ur()
+        self.udp_data = uc()
         # 音を出す準備
         self.sound = ps()
 
@@ -77,8 +77,14 @@ class NormalPlay:
         if self.sound_data[sdi]['hole_data'][7] == '0':
             self.cv.create_oval(62.5-10, 63-10, 62.5+10, 63+10, tag='recorder')
         
+        #受信
+        rcv_data = self.udp_data.rcv_input()
+        rcv_data_s = rcv_data.split(':')
+        self.sound_data[sdi]['volume'] = rcv_data_s[0]
+        self.sound_data[sdi]['hole_data'] = rcv_data_s[1]
+
         #音を出す
-        #self.sound.sr_play(self.rcv_data.return_input())#通信時
+        #self.sound.sr_play(self.udp_data.return_input())#通信時
         self.sound.sr_play(self.sound_data[sdi]['hole_data'], int(self.sound_data[sdi]['volume']))
 
         if self.flag == 0:
@@ -122,6 +128,7 @@ class NormalPlay:
 
     def npmain(self):
         #self.thread_wi.start()
+        self.udp_data.zero_start(1)#演奏デバイスに送信指示
         self.__draw_onoff_label()
         self.__draw_recorder()
         self.root.mainloop()
