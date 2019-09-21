@@ -2,6 +2,7 @@ import tkinter as tk
 import time
 import json
 import sys
+import threading
 
 class NormalPlay:
     def __init__(self, cv, root):
@@ -14,6 +15,8 @@ class NormalPlay:
 
         # sound dataの読み込み
         self.sound_data = self.__read_file()
+
+        self.thread_wi = threading.Thread(target=self.__wait_input)#並行処理で入力を待つ
 
     def __read_file(self):
         with open('Recorder.txt', 'r') as f:
@@ -65,18 +68,40 @@ class NormalPlay:
         elif self.flag == 1:
             return
 
-    def __draw_onoff_label(self):
+    def __write_record_flag(self, json_obj):
+        with open('config.json', 'w') as f:
+            json.dump(json_obj,f,ensure_ascii=False)
+
+    def __get_record_flag(self):
         with open('config.json', 'r') as f:
             conf_data = json.load(f)
-        self.cv.create_text(250, 30, text=conf_data['record_flag'])
+        return conf_data
+
+    def __draw_onoff_label(self):
+        rf_text = self.__get_record_flag()
+        self.cv.create_text(250, 30, text=rf_text['record_flag'], tag='rf_text')
+
+    def __wait_input(self):
+        while 1:
+            print('>>')
+            input_num = int(sys.stdin.readline().rstrip())
+            if input_num == 0:
+                #self.thread_wi.join()
+                #self.thread_wi = None
+                break
+            if input_num == 3:
+                rf_text = self.__get_record_flag()
+                if rf_text['record_flag'] == 'OK':
+                    rf_text['record_flag'] == 'OFF'
+                elif rf_text['record_flag'] == 'OFF':
+                    rf_text['record_flag'] == 'ON'
+                self.__write_record_flag(rf_text)
+                self.cv.delete('rf_text')
+                self.__draw_onoff_label()
+
 
     def npmain(self):
+        self.thread_wi.start()
         self.__draw_onoff_label()
         self.__draw_recorder()
         print('end')
-        # for sd in self.sound_data:
-        #     self.__draw_recorder(sd)
-        # self.__draw_recorder({'volume': 1, 'hole_data': '00001111'})
-        # self.__draw_recorder({'volume': 1, 'hole_data': '00001011'})
-        # self.__draw_recorder({'volume': 1, 'hole_data': '00101111'})
-        # self.__draw_recorder({'volume': 1, 'hole_data': '00001110'})
