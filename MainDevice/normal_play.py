@@ -3,12 +3,14 @@ import time
 import json
 import sys
 import threading
+#from gpio_in import GpioIn as gi
 
 class NormalPlay:
     def __init__(self, cv, root):
         self.cv = cv
         self.root = root
         self.flag = 0
+        self.button = gi()
 
         # 再帰回数の設定
         sys.setrecursionlimit(6000)
@@ -34,6 +36,12 @@ class NormalPlay:
         return sound_data
 
     def __draw_recorder(self, sdi=0):
+        '''
+        if self.button.gpio_input() == 0:
+            self.root.quit()
+            return
+        '''
+
         if sdi >= len(self.sound_data) and self.flag == 0:
             sdi = sdi - 1
             self.flag = 1
