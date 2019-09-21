@@ -24,25 +24,27 @@ class PlaySound:
             './SoundDatas/la.wav',
             './SoundDatas/si.wav',
             './SoundDatas/do8va.wav',
-            './SoundDatas/re8va.wav'
+            './SoundDatas/re8va.wav',
+            './SoundDatas/mi8va.wav'
         ]
-        self.ingering_models = [
+        self.fingering_models = [
             '11111111',#do
             '01111111',#re
             '00111111',#mi
             '00011111',#fa
             '00001111',#sol
             '00000111',#la
-            '00000101',#si
-            '00000100',#do8va
-            '00111110' #re8va
+            '00000011',#si
+            '00000101',#do8va
+            '00000100',#re8va
+            '00111110' #mi8va
         ]
 
         #in_gpiopin = [4, 17, 27, 22, 5, 6, 13, 19]#GPIO運指検知テスト用ピン
         self.last_fin = -1
         self.now_fin = -1
 
-        for i in range(9):
+        for i in range(10):
             self.sound_list.append(None)
             self.sound_list[i] = pygame.mixer.Sound(self.sound_fname[i])
     
@@ -79,16 +81,22 @@ class PlaySound:
             count += 1
         return '-1'# NoHit
 
-    def _change_sound(self, last_fin, now_fin):
+    def _change_sound(self, last_fin, now_fin, volume):
         if(last_fin != now_fin):
             if last_fin != -1:
                 self.sound_list[last_fin].stop()
             if now_fin != -1:
+                #pygame.mixer.music.set_volume(volume)
+                self.sound_list[now_fin].set_volume(float(1/200 * volume))
                 self.sound_list[now_fin].play(-1)
-                volume = self.sound_list[now_fin].get_volume() # 音量取得
-                print(volume)
+                p_volume = self.sound_list[now_fin].get_volume() # 音量取得
+                print(p_volume)
             else:
                 self.sound_list[last_fin].stop()
+        else:
+            self.sound_list[now_fin].set_volume(float(1/200 * volume))
+            p_volume = self.sound_list[now_fin].get_volume() # 音量取得
+            print(p_volume)
 
     '''
     def ChangeVolume():
@@ -97,13 +105,15 @@ class PlaySound:
         channel.set_volume(0.5)
     '''
 
-    def sr_play(self, fin_tmp):#モジュールとして呼び出されたとき
+    def sr_play(self, i_fin, volume):#呼び出されたとき
+        #data = rcv_data.split(':')
+        fin_tmp = int(self.fingering_check(i_fin))
         self.last_fin = self.now_fin
         self.now_fin = fin_tmp
-        self._change_sound(self.last_fin, self.now_fin)
+        self._change_sound(self.last_fin, self.now_fin, volume)
 
     def __del__(self):
-        self._change_sound(self.now_fin, -1)
+        self._change_sound(self.now_fin, -1, 0)
 
 
 def main():

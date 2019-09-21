@@ -76,6 +76,7 @@ class CreatePage:
             print('Go to NormalPlay!')
             norply = NormalPlay(self.cv, self.p_frame)
             norply.npmain()
+            return
 
         if self.p_name == 'JUDGE_PLAY':
             print("JUDGE PLAY")

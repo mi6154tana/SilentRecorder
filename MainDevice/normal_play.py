@@ -3,6 +3,8 @@ import time
 import json
 import sys
 import threading
+from udprcv import UdpRcv as ur
+from play_sound import PlaySound as ps
 #from gpio_in import GpioIn as gi
 
 class NormalPlay:
@@ -10,15 +12,20 @@ class NormalPlay:
         self.cv = cv
         self.root = root
         self.flag = 0
-        self.button = gi()
+        #self.button = gi()
 
         # 再帰回数の設定
         sys.setrecursionlimit(6000)
 
-        # sound dataの読み込み
+        # sound dataの読み込み_試験用
         self.sound_data = self.__read_file()
 
-        self.thread_wi = threading.Thread(target=self.__wait_input)#並行処理で入力を待つ
+        # 受信の準備
+        self.rcv_data = ur()
+        # 音を出す準備
+        self.sound = ps()
+
+        #self.thread_wi = threading.Thread(target=self.__wait_input)#並行処理で入力を待つ
 
     def __read_file(self):
         with open('Recorder.txt', 'r') as f:
@@ -70,10 +77,15 @@ class NormalPlay:
         if self.sound_data[sdi]['hole_data'][7] == '0':
             self.cv.create_oval(62.5-10, 63-10, 62.5+10, 63+10, tag='recorder')
         
+        #音を出す
+        #self.sound.sr_play(self.rcv_data.return_input())#通信時
+        self.sound.sr_play(self.sound_data[sdi]['hole_data'], int(self.sound_data[sdi]['volume']))
+
         if self.flag == 0:
-            self.root.after(10, self.__draw_recorder, sdi+1)
-            self.root.mainloop()
+            self.root.after(100, self.__draw_recorder, sdi+1)
         elif self.flag == 1:
+            del self.sound
+            self.root.quit()
             return
 
     def __write_record_flag(self, json_obj):
@@ -109,7 +121,8 @@ class NormalPlay:
 
 
     def npmain(self):
-        self.thread_wi.start()
+        #self.thread_wi.start()
         self.__draw_onoff_label()
         self.__draw_recorder()
+        self.root.mainloop()
         print('end')
