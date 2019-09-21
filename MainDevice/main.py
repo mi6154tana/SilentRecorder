@@ -8,6 +8,7 @@ from PIL import Image, ImageTk
 from create_page import CreatePage as cp
 import page_func as pf
 import json
+import os
 from collections import OrderedDict
 
 root = None
@@ -98,6 +99,8 @@ def change_page(button_in):
     elif button_in == 3:#右
         if p_position == 7:#仮の終了
             root.destroy()
+            if c_select == 1:
+                os.system('sudo shutdown -h now')
             return
 
         if p_position == 6:
