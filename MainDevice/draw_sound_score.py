@@ -3,7 +3,7 @@ import math
 import time
 import numpy as np
 import read_score as rs
-
+#from gpio_in import GpioIn as gi
 from play_sound import PlaySound as ps
 
 class DrawScore:
@@ -41,6 +41,7 @@ class DrawScore:
         self.cv = cv
         self.root = p_frame
         self.mode_name =mode_name
+        #self.button = gi()
         #self.cv.pack()
         if self.mode_name == "PLAY_RECORDING":
             l_music_data = rs.read_score(music_name)
@@ -65,6 +66,11 @@ class DrawScore:
         self.labels.clear()
 
     def _draw_score_line(self):
+        '''
+        if self.button.gpio_input() == 0:
+            self.root.quit()
+            return
+        '''
         x = 0
         now_time = time.time()
         interval = now_time - self.last_time
@@ -76,6 +82,7 @@ class DrawScore:
                 print("interval : " + str(interval))
                 print("end of draw_score_line")
                 #self.root.destroy()
+                self.root.quit()
                 return
             self._reset_labels()
         elif self.labals_update == -1:#要改良

@@ -80,10 +80,12 @@ class CreatePage:
         if self.p_name == 'JUDGE_PLAY':
             print("JUDGE PLAY")
             DS("君が代",self.cv,self.p_frame,"JUDGE_PLAY")
+            return
 
         if self.p_name == "PLAY_RECORDING":
             print("Play_recoding")
             DS("君が代",self.cv,self.p_frame,"PLAY_RECORDING")
+            return
             
         for i in range(len(self.cons_labels)):
             self.cons_labels[i].place_forget()
@@ -123,5 +125,5 @@ class CreatePage:
         self.p_frame.tkraise()
         self.draw_cons()
         print(self.p_name)
-        if self.p_name != 'NORMAL_PLAY':
+        if self.p_name != 'NORMAL_PLAY' and self.p_name != 'PLAY_RECORDING' and self.p_name != 'JUDGE_PLAY':
             self.draw_select(1)

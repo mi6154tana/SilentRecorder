@@ -4,7 +4,7 @@
 import tkinter as tk
 import time
 from PIL import Image, ImageTk
-from gpio_in import GpioIn as gi
+#from gpio_in import GpioIn as gi
 from create_page import CreatePage as cp
 import page_func as pf
 import json
@@ -65,7 +65,7 @@ def gpio_input():
         return -1
 '''
 
-def change_page():
+def change_page(button_in):
     global p_position, c_select
     
     button_in = int(input('>>'))#PCでの動作確認
@@ -143,7 +143,8 @@ def change_page():
             get_con = pages[p_position].contents[pages[p_position].d_positoin + c_select - 1]#要改良
             print('select : ' + get_con)
             pages[trans_list[p_position][1]].raise_page()
-            pages[trans_list[p_position][1]].draw_select(1)
+            if trans_list[p_position][1] != 1 and trans_list[p_position][1] != 3 and trans_list[p_position][1] != 5:
+                pages[trans_list[p_position][1]].draw_select(1)
             p_position = trans_list[p_position][1]
             c_select = 1
             # pf.select_func(p_position, get_con)#そのページ専用関数を発動
@@ -158,13 +159,14 @@ def change_page():
     if button_in == 7777:
         root.destroy()
     else:
-        root.after(1000, change_page)
+        root.after(100, change_page, -1)#PCでの動作確認
+        #root.after(100, change_page, button.gpio_input())
 
 def main():
     global root, pages, button
 
     #gpio_init()
-    button = gi()
+    #button = gi()
     
     root = tk.Tk()
 
@@ -184,7 +186,7 @@ def main():
 
     pages[0].raise_page()
 
-    root.after(1000, change_page)
+    root.after(1000, change_page, -1)
     #change_page()
     #test_p.raise_page()
     root.mainloop()
