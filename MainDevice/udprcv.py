@@ -7,7 +7,7 @@ from contextlib import closing
 
 class UdpRcv:
     
-    def __init__(self):               
+    def __init__(self):
         self.UDP_IP = ""
         self.UDP_PORT = 60000
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -19,7 +19,8 @@ class UdpRcv:
         return data
 
     def close_sock(self):
-        with closing(self.sock):
-            print('close connection...')
+        #with closing(self.sock):
+        self.sock.close()
+        print('close connection...')
 
 
