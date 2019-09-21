@@ -17,6 +17,8 @@ class UdpCom:
         self.sock_send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock_rcv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock_rcv.bind((self.RCV_IP, self.RCV_PORT))
+
+        #self.sock_rcv.setblocking(0)#いるかも
     
     def zero_start(self, mode):
         #mode == 0 shutdown
