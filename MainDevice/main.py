@@ -4,6 +4,7 @@
 import tkinter as tk
 import time
 from PIL import Image, ImageTk
+from gpio_in import GpioIn as gi
 from create_page import CreatePage as cp
 import page_func as pf
 import json
@@ -33,9 +34,11 @@ trans_list = [#行はpagesに格納されているインデックス番号に対
         [0]             #7:電源
     ]
 
+button = None
 p_position = 0#現在のページ
 c_select = 1
 
+'''
 def gpio_init():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(4,GPIO.OUT)
@@ -60,20 +63,21 @@ def gpio_input():
     else:
         print(-1)
         return -1
+'''
 
 def change_page():
     global p_position, c_select
     
-    gpio_in = int(input('>>'))#PCでの動作確認
-    #gpio_in = gpio_input()
+    button_in = int(input('>>'))#PCでの動作確認
+    #button_in = button.gpio_input()
     
-    if gpio_in == 0:#左
+    if button_in == 0:#左
         pages[trans_list[p_position][0]].raise_page()
         pages[trans_list[p_position][0]].draw_select(1)
         p_position = trans_list[p_position][0]
         c_select = 1
 
-    elif gpio_in == 1 and p_position != 1:#上
+    elif button_in == 1 and p_position != 1:#上
         if c_select == 1 and pages[p_position].d_positoin > 0:
             pages[p_position].d_positoin -= 1
             pages[p_position].draw_cons() 
@@ -81,7 +85,7 @@ def change_page():
             c_select -= 1
         pages[p_position].draw_select(c_select)
 
-    elif gpio_in == 2 and p_position != 1:#下
+    elif button_in == 2 and p_position != 1:#下
         if len(pages[p_position].contents) >= c_select + 1: 
             c_select += 1
             if c_select > 5:
@@ -91,7 +95,7 @@ def change_page():
             pages[p_position].draw_cons()
         pages[p_position].draw_select(c_select)
     
-    elif gpio_in == 3:#右
+    elif button_in == 3:#右
         if p_position == 7:#仮の終了
             root.destroy()
             return
@@ -151,15 +155,16 @@ def change_page():
             c_select = 1
 
     
-    if gpio_in == 7777:
+    if button_in == 7777:
         root.destroy()
     else:
         root.after(1000, change_page)
 
 def main():
-    global root, pages
+    global root, pages, button
 
     #gpio_init()
+    button = gi()
     
     root = tk.Tk()
 
