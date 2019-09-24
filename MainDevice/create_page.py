@@ -67,7 +67,7 @@ class CreatePage:
             return view_text
 
         elif p_num == 7:
-            return ['電源を切る']
+            return ['電源を切る', 'プログラム終了']
         else:
             return ['None']
     
