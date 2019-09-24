@@ -24,7 +24,7 @@ class UdpCom:
         #mode == 0 shutdown
         #mode == 1 play_start
         mode_s = struct.pack('>i', mode)
-        self.sock_send.sendto(mode_s, (HOST, SEND_PORT))
+        self.sock_send.sendto(mode_s, (self.HOST, self.SEND_PORT))
 
     def rcv_input(self):
         b_data, addr = self.sock_rcv.recvfrom(1024)
@@ -34,7 +34,7 @@ class UdpCom:
         return data_s
 
     def play_stop(self):
-        sock_send.sendto('stop', (HOST, SEND_PORT))
+        sock_send.sendto('stop', (self.HOST, self.SEND_PORT))
 
     def close_sock(self):
         #with closing(self.sock):

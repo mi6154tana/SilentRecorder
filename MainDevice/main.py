@@ -102,20 +102,14 @@ def change_page(button_in):
         pages[p_position].draw_select(c_select)
     
     elif button_in == 3:#右
-        if p_position == 4:
-            if len(pages[p_position].contents) > 0:
-                se_file = pages[p_position].contents[pages[p_position].d_positoin + c_select - 1] + '.txt'#要改良
-            else:
-                se_file = ''
 
-        elif p_position == 8 and c_select == 2:#記録を消す
+        if p_position == 8 and c_select == 2:#記録を消す
             ope = o_re()
             ope.del_recording(se_file)
             pages[trans_list[p_position][0]].raise_page()
             pages[trans_list[p_position][0]].draw_select(1)
             p_position = trans_list[p_position][0]
             c_select = 1
-            return
 
         elif p_position == 7:#仮の終了
             root.destroy()
@@ -169,6 +163,13 @@ def change_page(button_in):
             #print(pages[p_position].contents)
 
         else:
+            if p_position == 4:
+                if len(pages[p_position].contents) > 0:
+                    se_file = pages[p_position].contents[pages[p_position].d_positoin + c_select - 1]#要改良
+                    pages[8].set_file_name(se_file)
+                    se_file += '.txt'
+                else:
+                    se_file = ''
             if len(trans_list[p_position]) == 2:#移動先が一つだけの時
                 if len(pages[p_position].contents) > 0:
                     get_con = pages[p_position].contents[pages[p_position].d_positoin + c_select - 1]#要改良

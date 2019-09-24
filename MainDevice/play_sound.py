@@ -80,7 +80,7 @@ class PlaySound:
         count = 0
         for m in self.fingering_models:
             if m == ifingering:
-                print('play sound !!')
+                # print('play sound !!')
                 return str(count)
             count += 1
         return '-1'# NoHit
@@ -94,13 +94,13 @@ class PlaySound:
                 self.sound_list[now_fin].set_volume(float(1/self.volume_max * volume))
                 self.sound_list[now_fin].play(-1)
                 p_volume = self.sound_list[now_fin].get_volume() # 音量取得
-                print(p_volume)
+                # print(p_volume)
             else:
                 self.sound_list[last_fin].stop()
         else:
             self.sound_list[now_fin].set_volume(float(1/200 * volume))
             p_volume = self.sound_list[now_fin].get_volume() # 音量取得
-            print(p_volume)
+            # print(p_volume)
 
     '''
     def ChangeVolume():
