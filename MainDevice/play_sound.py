@@ -44,6 +44,8 @@ class PlaySound:
         self.last_fin = -1
         self.now_fin = -1
 
+        self.volume_max = 4096 #200 in test
+
         for i in range(10):
             self.sound_list.append(None)
             self.sound_list[i] = pygame.mixer.Sound(self.sound_fname[i])
@@ -87,7 +89,7 @@ class PlaySound:
                 self.sound_list[last_fin].stop()
             if now_fin != -1:
                 #pygame.mixer.music.set_volume(volume)
-                self.sound_list[now_fin].set_volume(float(1/200 * volume))
+                self.sound_list[now_fin].set_volume(float(1/self.volume_max * volume))
                 self.sound_list[now_fin].play(-1)
                 p_volume = self.sound_list[now_fin].get_volume() # 音量取得
                 print(p_volume)
