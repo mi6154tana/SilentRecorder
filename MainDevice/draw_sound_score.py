@@ -5,6 +5,7 @@ import numpy as np
 import read_score as rs
 #from gpio_in import GpioIn as gi
 from play_sound import PlaySound as ps
+import judgement_score as j_s
 
 class DrawScore:
     '''
@@ -30,6 +31,7 @@ class DrawScore:
     end_flag = 0
     bpm = 0
     measure = 0
+    
 
     music_sound = ["ド","レ","ミ","ファ","ソ","ラ","シ","ド","レ"]
     labals_update = -1
@@ -55,7 +57,15 @@ class DrawScore:
             self.root.mainloop()
 
         else:
-            None
+            l_music_data = rs.read_score(music_name)
+            self.bpm = l_music_data[0]
+            self.measure = l_music_data[1]
+            del l_music_data[0:2]
+            self.music_deta = l_music_data
+            for i in self.music_deta:
+                print(i)
+            self.root.after(10, self._draw_score_line)
+            self.root.mainloop()
 
     
 
@@ -79,6 +89,14 @@ class DrawScore:
             seek_point = 5#最も左のシーク位置
             self.last_time = time.time()
             if self.end_flag == 1:
+                print("OKOKOKO")
+                self.ans = j_s.judgement_score()
+                print("ANS_e:", self.ans)
+                self.label = tk.Label(self.root,text = "正答率" + str(round(self.ans,1)) + "%" ,background = "white",font = ("",20,"bold"))
+                self.label.place(x = 300, y = 240)
+                self.root.update()
+                
+                time.sleep(3)
                 print("interval : " + str(interval))
                 print("end of draw_score_line")
                 #self.root.destroy()
@@ -141,10 +159,11 @@ class DrawScore:
         if self.draw_point + 32*2 >= len(self.music_deta):
             #print("flag of draw_score_line")
             self.end_flag = 1
+            
         
         self.root.after(10, self._draw_score_line)
 
 if __name__ == "__main__":
-    sound_score = DrawScore('君が代')
+    #sound_score = DrawScore('君が代')
 
     print('finish')
