@@ -19,6 +19,7 @@ class CreatePage:
         self.cons_labels = []
         self.d_positoin = 0
         self.my_num = p_num
+        self.selected_fname = ''
         #キャンバスを作る
         self.cv = tk.Canvas(self.p_frame,width = 512, height = 300)
         #self.cv.create_rectangle(0, 0, 800, 450, fill = 'green')#塗りつぶし
@@ -80,9 +81,12 @@ class CreatePage:
         elif p_num == 7:
             return ['電源を切る', 'プログラム終了']
         elif p_num == 8:
-            return ['記録を再生', '記録を消す']
+            return [self.selected_fname + 'を再生', self.selected_fname + 'を消す']
         else:
             return ['None']
+
+    def set_file_name(self, name):
+        self.selected_fname = name
 
     def draw_cons(self):
         if self.p_name == 'NORMAL_PLAY':
