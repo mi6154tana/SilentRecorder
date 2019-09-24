@@ -66,6 +66,12 @@ class NormalPlay:
         # リコーダー本体(裏)
         self.cv.create_polygon(30, 40, 30, 280, 100, 280, 100, 40, fill="blue", tag='recorder')
         
+        #受信
+        rcv_data = self.udp_data.rcv_input()
+        rcv_data_s = rcv_data.split(':')
+        self.sound_data[sdi]['volume'] = rcv_data_s[0]
+        self.sound_data[sdi]['hole_data'] = rcv_data_s[1]
+
         # リコーダー穴(表)
         for i,hd in zip(range(7), self.sound_data[sdi]['hole_data'][0:7][::-1]):
             if hd == '1':
@@ -77,12 +83,6 @@ class NormalPlay:
             self.cv.create_oval(62.5-10, 63-10, 62.5+10, 63+10, tag='recorder', fill='black')
         if self.sound_data[sdi]['hole_data'][7] == '0':
             self.cv.create_oval(62.5-10, 63-10, 62.5+10, 63+10, tag='recorder')
-        
-        #受信
-        rcv_data = self.udp_data.rcv_input()
-        rcv_data_s = rcv_data.split(':')
-        self.sound_data[sdi]['volume'] = rcv_data_s[0]
-        self.sound_data[sdi]['hole_data'] = rcv_data_s[1]
 
         #音を出す
         #self.sound.sr_play(self.udp_data.return_input())#通信時

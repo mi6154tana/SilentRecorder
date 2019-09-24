@@ -6,6 +6,7 @@ import time
 from PIL import Image, ImageTk
 #from gpio_in import GpioIn as gi
 from create_page import CreatePage as cp
+from ope_recording import OpeRecording as o_re
 import page_func as pf
 import json
 import os
@@ -21,7 +22,8 @@ page_names = [
     'RECORDING_LIST',
     'PLAY_RECORDING',
     'SETTING',
-    'POWER'
+    'POWER',
+    'DELEAT_OR_PLAY_RECORDING'
 ]
 
 trans_list = [#行はpagesに格納されているインデックス番号に対応、配列の中身は移動先のページのインデックス番号
@@ -29,15 +31,17 @@ trans_list = [#行はpagesに格納されているインデックス番号に対
         [0],            #1:通常演奏　用意されていなければ、先に進めない
         [0, 3],         #2:楽譜リスト
         [2],            #3:正確性診断
-        [0, 5],         #4:演奏記録一覧
-        [4],            #5:演奏記録再生
+        [0, 8],         #4:演奏記録一覧
+        [8],            #5:演奏記録再生
         [0],            #6:設定
-        [0]             #7:電源
+        [0],            #7:電源
+        [4, 5]          #8:記録を消すか否か
     ]
 
 button = None
 p_position = 0#現在のページ
 c_select = 1
+se_file = ''
 
 '''
 def gpio_init():
@@ -67,7 +71,7 @@ def gpio_input():
 '''
 
 def change_page(button_in):
-    global p_position, c_select
+    global p_position, c_select, se_file
     
     button_in = int(input('>>'))#PCでの動作確認
     #button_in = button.gpio_input()
@@ -97,13 +101,28 @@ def change_page(button_in):
         pages[p_position].draw_select(c_select)
     
     elif button_in == 3:#右
-        if p_position == 7:#仮の終了
+        if p_position == 4:
+            if len(pages[p_position].contents) > 0:
+                se_file = pages[p_position].contents[pages[p_position].d_positoin + c_select - 1] + '.txt'#要改良
+            else:
+                se_file = ''
+
+        elif p_position == 8 and c_select == 2:#記録を消す
+            ope = o_re()
+            ope.del_recording(se_file)
+            pages[trans_list[p_position][0]].raise_page()
+            pages[trans_list[p_position][0]].draw_select(1)
+            p_position = trans_list[p_position][0]
+            c_select = 1
+            return
+
+        elif p_position == 7:#仮の終了
             root.destroy()
             if c_select == 1:
                 os.system('sudo shutdown -h now')
             return
 
-        if p_position == 6:
+        elif p_position == 6:
             #設定ファイル書き換え
             with open("./config.json") as config_file:
                 json_obj = json.load(config_file,object_pairs_hook=OrderedDict)
@@ -141,22 +160,25 @@ def change_page(button_in):
             pages[p_position].draw_cons()
             #print(pages[p_position].contents)
 
-
-        if len(trans_list[p_position]) == 2:#移動先が一つだけの時
-            get_con = pages[p_position].contents[pages[p_position].d_positoin + c_select - 1]#要改良
-            print('select : ' + get_con)
-            pages[trans_list[p_position][1]].raise_page()
-            if trans_list[p_position][1] != 1 and trans_list[p_position][1] != 3 and trans_list[p_position][1] != 5:
-                pages[trans_list[p_position][1]].draw_select(1)
-            p_position = trans_list[p_position][1]
-            c_select = 1
-            # pf.select_func(p_position, get_con)#そのページ専用関数を発動
-        elif len(trans_list[p_position]) != 1:#???
-            pages[trans_list[p_position][c_select]].raise_page()
-            #pages[trans_list[p_position][c_select]].draw_select(1)
-            p_position = trans_list[p_position][c_select]
-            # pf.select_func(p_position, 'None')#そのページ専用関数を発動
-            c_select = 1
+        else:
+            if len(trans_list[p_position]) == 2:#移動先が一つだけの時
+                if len(pages[p_position].contents) > 0:
+                    get_con = pages[p_position].contents[pages[p_position].d_positoin + c_select - 1]#要改良
+                else:
+                    get_con = ''
+                print('select : ' + get_con)
+                pages[trans_list[p_position][1]].raise_page()
+                if trans_list[p_position][1] != 1 and trans_list[p_position][1] != 3 and trans_list[p_position][1] != 5:
+                    pages[trans_list[p_position][1]].draw_select(1)
+                p_position = trans_list[p_position][1]
+                c_select = 1
+                # pf.select_func(p_position, get_con)#そのページ専用関数を発動
+            elif len(trans_list[p_position]) != 1:#???
+                pages[trans_list[p_position][c_select]].raise_page()
+                #pages[trans_list[p_position][c_select]].draw_select(1)
+                p_position = trans_list[p_position][c_select]
+                # pf.select_func(p_position, 'None')#そのページ専用関数を発動
+                c_select = 1
 
     
     if button_in == 7777:
