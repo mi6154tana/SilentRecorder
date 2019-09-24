@@ -27,7 +27,8 @@ class UdpCom:
         self.sock_send.sendto(mode_s, (HOST, SEND_PORT))
 
     def rcv_input(self):
-        data, addr = self.sock_rcv.recvfrom(1024)
+        b_data, addr = self.sock_rcv.recvfrom(1024)
+        data = str(b_data)
         data_s = data.strip("b'").strip("'")
         print(data_s)
         return data_s

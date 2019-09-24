@@ -45,6 +45,7 @@ class NormalPlay:
     def __draw_recorder(self, sdi=0):
         '''
         if self.button.gpio_input() == 0:
+            udp_data.play_stop()
             self.root.quit()
             return
         '''
@@ -91,6 +92,7 @@ class NormalPlay:
             self.root.after(100, self.__draw_recorder, sdi+1)
         elif self.flag == 1:
             del self.sound
+            udp_data.play_stop()
             self.root.quit()
             return
 
