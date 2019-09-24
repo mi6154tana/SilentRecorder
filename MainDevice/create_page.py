@@ -8,6 +8,7 @@ import os
 from normal_play import NormalPlay
 from draw_sound_score import DrawScore as DS
 import json
+import codecs
 
 class CreatePage:
 
@@ -58,10 +59,14 @@ class CreatePage:
 
         elif p_num == 6: #設定の描画処理
             view_text = []
-            config_text_list = ["メトロノーム:","正確性診断の記録:","演奏デバイスの調整:"]
-            with open("./config.json","r") as config_file:
+            select_volumes = ["大","中","小"]
+            config_text_list = ["メトロノーム:","正確性診断の記録:","演奏デバイスの調整:","音量:"]
+            with codecs.open("./config.json","r") as config_file:
                 config_obj = json.load(config_file)
             for config_value,config_text in zip(config_obj.values(),config_text_list):
+                #音量用の処理
+                if config_value in ["0","1","2"]:
+                    config_value = select_volumes[int(config_value)]
                 view_text.append(config_text+config_value)
             #print("view:",view_text)
             return view_text

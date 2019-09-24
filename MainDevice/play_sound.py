@@ -6,6 +6,7 @@ from pygame.locals import *
 import pygame
 import time
 import sys
+import json
 
 class PlaySound:
 
@@ -13,6 +14,7 @@ class PlaySound:
         #pygame.init()
         pygame.mixer.quit()
         pygame.mixer.init()
+
 
         self.sound_list = []
         self.sound_fname = [#サンプリング音源のファイル名

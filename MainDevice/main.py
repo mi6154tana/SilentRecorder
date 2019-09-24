@@ -10,6 +10,7 @@ import page_func as pf
 import json
 import os
 from collections import OrderedDict
+import codecs
 
 root = None
 pages = []
@@ -105,7 +106,7 @@ def change_page(button_in):
 
         if p_position == 6:
             #設定ファイル書き換え
-            with open("./config.json") as config_file:
+            with open("./config.json","r") as config_file:
                 json_obj = json.load(config_file,object_pairs_hook=OrderedDict)
 
             if c_select == 1:
@@ -126,7 +127,14 @@ def change_page(button_in):
                 else:
                     json_obj["Mode"] = "A"
 
-            with open("./config.json","w") as writing_config_file:
+            if c_select == 4:
+                json_obj["Volume"] = str(int(json_obj["Volume"]) + 1)
+                if int(json_obj["Volume"])  == 3:
+                    json_obj["Volume"] = "0"
+                print(json_obj["Volume"])
+                #print(select_volumes[int(json_obj["Volume"])])
+
+            with codecs.open("./config.json","w","utf-8") as writing_config_file:
                 json.dump(json_obj,writing_config_file,ensure_ascii=False)
 
             #test
