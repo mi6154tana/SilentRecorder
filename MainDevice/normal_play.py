@@ -12,7 +12,7 @@ class NormalPlay:
         self.cv = cv
         self.root = root
         self.flag = 0
-        #self.button = gi()
+        #self.button = gi()#PaspberryPiでの動作確認
 
         # 再帰回数の設定
         sys.setrecursionlimit(6000)
@@ -44,7 +44,7 @@ class NormalPlay:
 
     def __draw_recorder(self, sdi=0):
         '''
-        if self.button.gpio_input() == 0:
+        if self.button.gpio_input() == 0:#PaspberryPiでの動作確認
             udp_data.play_stop()
             self.root.quit()
             return
@@ -92,7 +92,6 @@ class NormalPlay:
             self.cv.create_oval(62.5-10, 63-10, 62.5+10, 63+10, tag='recorder')
 
         #音を出す
-        #self.sound.sr_play(self.udp_data.return_input())#通信時
         self.sound.sr_play(self.sound_data[sdi]['hole_data'], int(self.sound_data[sdi]['volume']))
 
         if self.flag == 0:

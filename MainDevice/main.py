@@ -44,38 +44,11 @@ p_position = 0#現在のページ
 c_select = 1
 se_file = ''
 
-'''
-def gpio_init():
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(4,GPIO.OUT)
-    GPIO.setup(18,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
-    GPIO.setup(23,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
-    GPIO.setup(24,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
-    GPIO.setup(25,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
-
-def gpio_input():
-    if GPIO.input(18) == GPIO.HIGH:
-        print(0)
-        return 0
-    elif GPIO.input(23) == GPIO.HIGH:
-        print(1)
-        return 1
-    elif GPIO.input(24) == GPIO.HIGH:
-        print(2)
-        return 2
-    elif GPIO.input(25) == GPIO.HIGH:
-        print(3)
-        return 3
-    else:
-        print(-1)
-        return -1
-'''
-
 def change_page(button_in):
     global p_position, c_select, se_file
     
     button_in = int(input('>>'))#PCでの動作確認
-    #button_in = button.gpio_input()
+    #button_in = button.gpio_input()#PaspberryPiでの動作確認
     
     if button_in == 0:#左
         pages[trans_list[p_position][0]].raise_page()
@@ -150,13 +123,6 @@ def change_page(button_in):
             with codecs.open("./config.json","w","utf-8") as writing_config_file:
                 json.dump(json_obj,writing_config_file,ensure_ascii=False)
 
-            #test
-            # print("==============================================================")
-            # test = open("./config.json","r")
-            # print(json.load(test))
-            # test.close()
-            # print("==============================================================")
-
             #contents更新
             pages[p_position].contents = pages[p_position]._get_list_cons(p_position)
             pages[p_position].draw_cons()
@@ -194,7 +160,7 @@ def change_page(button_in):
         root.destroy()
     else:
         root.after(100, change_page, -1)#PCでの動作確認
-        #root.after(100, change_page, button.gpio_input())
+        #root.after(100, change_page, button.gpio_input())#PaspberryPiでの動作確認
 
 def main():
     global root, pages, button
