@@ -8,14 +8,18 @@ import os
 from normal_play import NormalPlay
 from draw_sound_score import DrawScore as DS
 import json
+import codecs
 
 class CreatePage:
 
     def __init__(self, root, name, p_num):
         self.p_frame = tk.Frame(root)
         self.p_name = name
+        self.contents = []
         self.cons_labels = []
         self.d_positoin = 0
+        self.my_num = p_num
+        self.selected_fname = ''
         #キャンバスを作る
         self.cv = tk.Canvas(self.p_frame,width = 512, height = 300)
         #self.cv.create_rectangle(0, 0, 800, 450, fill = 'green')#塗りつぶし
@@ -30,7 +34,9 @@ class CreatePage:
         name_label_font  = ("Helevetice", 14)
         name_label = tk.Label(self.p_frame, text = self.p_name, font = name_label_font)
         name_label.grid(row=4, column=0)
-
+        
+        self.cv.delete('cons')
+        self.contents.clear()
         self.contents = self._get_list_cons(p_num)
         if len(self.contents) == 0:
             print('No contents')
@@ -40,7 +46,7 @@ class CreatePage:
         for i in range(len(self.contents)):
             if i > 4:
                 break #仮
-            self.cv.create_polygon(50,45+i*50, 462,45+i*50, 462,85+i*50, 50,85+i*50, fill = 'blue',)
+            self.cv.create_polygon(50,45+i*50, 462,45+i*50, 462,85+i*50, 50,85+i*50, fill = 'blue', tag = 'cons')
 
     def _get_list_cons(self, p_num):
         if p_num == 0:
@@ -51,26 +57,37 @@ class CreatePage:
             if p_num == 2:
                 path = './Score'
             else:
-                path = './Memory'
+                path = './Recording'
             files = os.listdir(path)
             files_file = [f for f  in files if os.path.isfile(os.path.join(path, f))]
+            if len(files_file) == 0:
+                return ['ファイルが存在しません']
             return files_file
 
         elif p_num == 6: #設定の描画処理
             view_text = []
-            config_text_list = ["メトロノーム:","正確性診断の記録:","演奏デバイスの調整:"]
-            with open("./config.json","r") as config_file:
+            select_volumes = ["大","中","小"]
+            config_text_list = ["メトロノーム:","正確性診断の記録:","演奏デバイスの調整:","音量:"]
+            with codecs.open("./config.json","r") as config_file:
                 config_obj = json.load(config_file)
             for config_value,config_text in zip(config_obj.values(),config_text_list):
+                #音量用の処理
+                if config_value in ["0","1","2"]:
+                    config_value = select_volumes[int(config_value)]
                 view_text.append(config_text+config_value)
             #print("view:",view_text)
             return view_text
 
         elif p_num == 7:
             return ['電源を切る', 'プログラム終了']
+        elif p_num == 8:
+            return [self.selected_fname + 'を再生', self.selected_fname + 'を消す']
         else:
             return ['None']
-    
+
+    def set_file_name(self, name):
+        self.selected_fname = name
+
     def draw_cons(self):
         if self.p_name == 'NORMAL_PLAY':
             print('Go to NormalPlay!')
@@ -124,6 +141,7 @@ class CreatePage:
     def raise_page(self):
         self.d_positoin = 0   
         self.p_frame.tkraise()
+        self._create_cons(self.p_frame, self.my_num)
         self.draw_cons()
         print(self.p_name)
         if self.p_name != 'NORMAL_PLAY' and self.p_name != 'PLAY_RECORDING' and self.p_name != 'JUDGE_PLAY':

@@ -51,8 +51,6 @@ class BackMetro:
         tempo = float(60/bpm)
         thread_metro = threading.Thread(target=BackMetro._play_metronome, args=(self, tempo, ))#並行処理でメトロノームを流す
         thread_metro.start()
-        time.sleep(5)
-        self.metro_stop()
 
     def metro_stop(self):
         self.mflag = 0
@@ -64,6 +62,8 @@ def main():
     #metro.s()
     metro.metro_start(bpm)
     #BackMetronome(bpm)
+    time.sleep(5)
+    self.metro_stop()
 
 if __name__ == "__main__":
     main()
