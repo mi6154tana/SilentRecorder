@@ -77,10 +77,8 @@ class NormalPlay:
 
         # onfoo label表示
         self.__draw_onoff_label()
-
         # sound_volume表示
         self.__draw_sound_volume(sdi)
-
         # 音階表示
         self.__draw_sound_musicscale(sdi)
 
@@ -131,7 +129,9 @@ class NormalPlay:
 
     def __draw_onoff_label(self):
         rf_text = self.__get_record_flag()
+        # 枠表示
         self.cv.create_rectangle(220, 40, 300, 120)
+        # on,offの表示
         self.cv.create_text(260, 80, font=("Purisa", 36), text='記録\n'+rf_text['record_flag'], tag='rf_text')
 
     def __draw_sound_volume(self, sdi):
@@ -157,7 +157,9 @@ class NormalPlay:
         }
         hole_data = self.sound_data[sdi]['hole_data']
         try:
+            # 枠の表示
             self.cv.create_rectangle(230, 130, 290, 170)
+            # 音階の表示
             self.cv.create_text(260, 150, font=("Purisa", 36), text=fingering_models[hole_data], tag='recorder')
         except:
             pass
