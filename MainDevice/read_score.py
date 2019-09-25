@@ -8,25 +8,31 @@ def _data_conv(data):
     for i in range(len(model)):
         if data == model[i]:
             return i - 1
-            
+
 
 def read_score(music_name):
     music_data = []
     f = open('./Score/' + music_name + '.txt','r')
     line = f.readline()
-    tmp = line.split()#改行で分割
-    bpm = int(tmp[0])
-    NoteLength = 60/bpm
+    metaData = line.split()#改行で分割
+    baseNote = int(metaData[0])
+    bpm = int(metaData[1])
+    beat_numerator = int(metaData[2])#拍子(分子)
+    beat_denominator = int(metaData[3])#拍子(分母)
     mag = [0,4,2,3,1,1.5,0.25,0.375,0.5,0.75]#楽譜データに対応、一小節を４としている、楽譜データにあるものは配列のインデックス番号
+    NoteLength = (60/bpm) / (mag[baseNote])#4分音符の長さ
     hRecorder = 10 #リコーダーが一秒間に送ってくるデータ数
-    hScore = 32 #楽譜が一秒間に処理数データ数（最小の） 一小節のデータ数？？
+    hScore = 32 #一小節のデータ数
     line = f.readline()
     fRecorder = open('Recorder.txt','w')#リコーダーから送られてくるデータとみなす、後々正確性診断に使う
     fScore = open('Score.txt','w')#楽譜データから音階データのみを記録
     t = 0
 
+    secondPerNote = NoteLength * (4/beat_denominator)
+    secondPerMeasure = secondPerNote * beat_numerator
+
     music_data.append(NoteLength)
-    music_data.append(int(tmp[2]))
+    music_data.append(int(metaData[2]))
     #sound_conv = ps()
 
     #デバイスから入力される信号　　ド～ミ^
