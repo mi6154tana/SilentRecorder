@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-#This is Prototype Silent Recorder's code.
-
-#import RPi.GPIO as GPIO
+#This is Silent Recorder's code.
 from pygame.locals import *
 import pygame
 import time
@@ -52,30 +50,6 @@ class PlaySound:
             self.sound_list.append(None)
             self.sound_list[i] = pygame.mixer.Sound(self.sound_fname[i])
     
-        '''
-        GPIO.setmode(GPIO.BCM)
-        for i in range(8):#プロトタイプ(優先接続式)のみ
-            GPIO.setup(in_gpiopin[i], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        '''
-
-    '''
-    def ProtoFingeringCheck():#プロトタイプ(優先接続式)のみ
-        ifingering = ''
-        count = 0
-        for i in range(8):
-            if GPIO.input(in_gpiopin[i]) == GPIO.HIGH:
-                ifingering += '1'
-            else:
-                ifingering += '0'
-        print(ifingering)
-        for m in fingering_models:
-            if m == ifingering:
-                print('play sound !!')
-                return str(count)
-            count += 1
-        return '-1'# NoHit
-    '''
-
     def fingering_check(self, ifingering):
         count = 0
         for m in self.fingering_models:
@@ -101,13 +75,6 @@ class PlaySound:
             self.sound_list[now_fin].set_volume(float(1/200 * volume))
             p_volume = self.sound_list[now_fin].get_volume() # 音量取得
             # print(p_volume)
-
-    '''
-    def ChangeVolume():
-        volume = channel.get_volume() # 音量取得
-        print(volume)
-        channel.set_volume(0.5)
-    '''
 
     def sr_play(self, i_fin, volume):#呼び出されたとき
         #data = rcv_data.split(':')
@@ -142,8 +109,6 @@ def main():
             time.sleep(0.03)
     except KeyboardInterrupt:
         pass
-
-    #GPIO.cleanup()
 
 if __name__ == "__main__":
     main()
