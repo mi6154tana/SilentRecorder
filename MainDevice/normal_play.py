@@ -48,7 +48,21 @@ class NormalPlay:
             udp_data.play_stop()
             self.root.quit()
             return
+            
         '''
+
+        """
+        if self.button.gpio_input() == 3:
+            with open("config.json","r") as json_file:
+                config_dict = json.load(json_file)
+            if config_dict["record_flag"] == "ON":
+                config_dict["record_flag"] = "OFF"
+            else:
+                config_dict["record_flag"] = "ON"
+
+            with open("config.json","w") as json_file:
+                json.dump(config_dict,json_file)
+        """
 
         if sdi >= len(self.sound_data) and self.flag == 0:
             sdi = sdi - 1
