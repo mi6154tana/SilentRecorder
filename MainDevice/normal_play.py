@@ -5,7 +5,8 @@ import sys
 import threading
 # from udp_com import UdpCom as uc
 from play_sound import PlaySound as ps
-#from gpio_in import GpioIn as gi
+from ope_recording import OpeRecording as o_re
+#from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 
 class NormalPlay:
     def __init__(self, cv, root):
@@ -21,9 +22,14 @@ class NormalPlay:
         self.sound_data = self.__read_file()
 
         # 受信の準備
-        # self.udp_data = uc()
+        # self.udp_data = uc()#PaspberryPiでの動作確認
+
         # 音を出す準備
         self.sound = ps()
+
+        #記録をとる準備
+        self.write_rec = o_re()
+        self.write_rec_flag = 0
 
         # self.thread_wi = threading.Thread(target=self.__wait_input)#並行処理で入力を待つ
 
@@ -46,13 +52,15 @@ class NormalPlay:
         '''
         if self.button.gpio_input() == 0:#PaspberryPiでの動作確認
             udp_data.play_stop()
+            if self.write_rec_flag == 1:
+                self.write_rec.write_stop('user')
             self.root.quit()
             return
             
         '''
 
         """
-        if self.button.gpio_input() == 3:
+        if self.button.gpio_input() == 3:#PaspberryPiでの動作確認
             with open("config.json","r") as json_file:
                 config_dict = json.load(json_file)
             if config_dict["record_flag"] == "ON":
@@ -88,7 +96,7 @@ class NormalPlay:
         # リコーダー本体(裏)
         self.cv.create_polygon(30, 40, 30, 280, 100, 280, 100, 40, fill="blue", tag='recorder')
         
-        #受信
+        #受信　PaspberryPiでの動作確認　
         #rcv_data = self.udp_data.rcv_input()
         #rcv_data_s = rcv_data.split(':')
         #self.sound_data[sdi]['volume'] = rcv_data_s[0]
@@ -108,15 +116,20 @@ class NormalPlay:
 
         #音を出す
         self.sound.sr_play(self.sound_data[sdi]['hole_data'], int(self.sound_data[sdi]['volume']))
+        #記録を残す
+        if self.write_rec_flag == 1:
+            self.write_rec.write_recording(str(self.sound_data[sdi]['volume']), str(self.sound_data[sdi]['hole_data']))
 
         if self.flag == 0:
             self.root.after(100, self.__draw_recorder, sdi+1)
         elif self.flag == 1:
             del self.sound
-            # udp_data.play_stop()
+            # udp_data.play_stop()#PaspberryPiでの動作確認
+            if self.write_rec_flag == 1:
+                self.write_rec.write_stop('user')
             self.root.quit()
             return
-
+        
     def __write_record_flag(self, json_obj):
         with open('config.json', 'w') as f:
             json.dump(json_obj,f,ensure_ascii=False)
@@ -132,6 +145,13 @@ class NormalPlay:
         self.cv.create_rectangle(220, 40, 300, 120)
         # on,offの表示
         self.cv.create_text(260, 80, font=("Purisa", 36), text='記録\n'+rf_text['record_flag'], tag='rf_text')
+        #記録のオンオフ
+        if self.write_rec_flag == 0 and rf_text['record_flag'] == 'ON':
+            self.write_rec_flag = 1
+            self.write_rec.open_file()
+        elif self.write_rec_flag == 1 and rf_text['record_flag'] == 'OFF':
+            self.write_rec_flag = 0
+            self.write_rec.write_stop('user')
 
     def __draw_sound_volume(self, sdi):
         # volumeの枠作成
