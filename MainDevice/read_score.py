@@ -11,6 +11,8 @@ def _data_conv(data):
 
 
 def read_score(music_name):
+    hRecorder = 10 #リコーダーが一秒間に送ってくるデータ数
+    hScore = 32 #一小節のデータ数
     music_data = []
     f = open('./Score/' + music_name + '.txt','r')
     line = f.readline()
@@ -21,8 +23,6 @@ def read_score(music_name):
     beat_denominator = int(metaData[3])#拍子(分母)
     mag = [0,4,2,3,1,1.5,0.25,0.375,0.5,0.75]#楽譜データに対応、一小節を４としている、楽譜データにあるものは配列のインデックス番号
     NoteLength = (60/bpm) / (mag[baseNote])#4分音符の長さ
-    hRecorder = 10 #リコーダーが一秒間に送ってくるデータ数
-    hScore = 32 #一小節のデータ数
     line = f.readline()
     fRecorder = open('Recorder.txt','w')#リコーダーから送られてくるデータとみなす、後々正確性診断に使う
     fScore = open('Score.txt','w')#楽譜データから音階データのみを記録
@@ -46,7 +46,7 @@ def read_score(music_name):
             continue
         data = line.split()#改行を消去
         for i in range(int((hScore/4)*mag[int(data[1])])):
-            fScore.write(data[0]+'\n')
+            fScore.write(str(_data_conv(data[0]))+'\n')
             music_data.append(_data_conv(data[0]))
         dt = (mag[int(data[1])]*NoteLength)#その音符の長さ（秒）
         #無音処理
@@ -54,9 +54,11 @@ def read_score(music_name):
             scale = data[0][0]
             if scale == ".":
                 fRecorder.write("0:00000000\n")#休符
+                #fRecorder.write(str(-1) + '\n')
                 #music_data.append(sound_comp.fingering_check('00000000'))
             else :
                 fRecorder.write('1:' + halls[ord(scale)-ord('a')]+'\n')
+                #fRecorder.write(str(_data_conv(scale)) + '\n')
                 #music_data.append(sound_comp.fingering_check(halls[ord(scale)-ord('a')]))
         t += dt
         line = f.readline()
