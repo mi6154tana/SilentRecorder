@@ -11,6 +11,7 @@ class PlaySound:
     def __init__(self):
         #pygame.init()
         pygame.mixer.quit()
+        pygame.mixer.pre_init(44100,-16,1,512)
         pygame.mixer.init()
 
 
