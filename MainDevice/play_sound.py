@@ -11,6 +11,7 @@ class PlaySound:
     def __init__(self):
         #pygame.init()
         pygame.mixer.quit()
+        pygame.mixer.pre_init(44100,-16,1,512)
         pygame.mixer.init()
 
 
@@ -44,12 +45,26 @@ class PlaySound:
         self.last_fin = -1
         self.now_fin = -1
 
-        self.volume_max = 4096 #200 in test
+        self.volume_max = 200 #4096 ,200 in test
+        self.volume_lv = 1
 
         for i in range(10):
             self.sound_list.append(None)
             self.sound_list[i] = pygame.mixer.Sound(self.sound_fname[i])
+
+    def __get_volume_lv(self):
+        with open('config.json', 'r') as f:
+            conf_data = json.load(f)
+        return conf_data
     
+    def __set_volume_level(self):
+        v_text = self.__get_volume_lv()
+        if v_text['Volume'] == '1':
+            self.volume_lv = 2
+        elif v_text['Volume'] == '2':
+            self.volume_lv = 3
+
+
     def fingering_check(self, ifingering):
         count = 0
         for m in self.fingering_models:
@@ -65,20 +80,22 @@ class PlaySound:
                 self.sound_list[last_fin].stop()
             if now_fin != -1:
                 #pygame.mixer.music.set_volume(volume)
-                self.sound_list[now_fin].set_volume(float(1/self.volume_max * volume))
+                self.sound_list[now_fin].set_volume(float(1/self.volume_max * volume)/3 * self.volume_lv)
+                #self.sound_list[now_fin].set_volume(float(1/3) * self.volume_lv)
                 self.sound_list[now_fin].play(-1)
                 p_volume = self.sound_list[now_fin].get_volume() # 音量取得
-                # print(p_volume)
+                #print(p_volume)
             else:
                 self.sound_list[last_fin].stop()
         else:
-            #self.sound_list[now_fin].set_volume(float(1/200 * volume))
-            self.sound_list[now_fin].set_volume(1)
+            self.sound_list[now_fin].set_volume(float(1/self.volume_max * volume)/3 * self.volume_lv)
+            #self.sound_list[now_fin].set_volume(float(1/3) * self.volume_lv)
             p_volume = self.sound_list[now_fin].get_volume() # 音量取得
-            # print(p_volume)
+            #print(p_volume)
 
     def sr_play(self, i_fin, volume):#呼び出されたとき
         #data = rcv_data.split(':')
+        self.__set_volume_level()
         fin_tmp = int(self.fingering_check(i_fin))
         self.last_fin = self.now_fin
         self.now_fin = fin_tmp

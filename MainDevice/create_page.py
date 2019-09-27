@@ -66,7 +66,7 @@ class CreatePage:
 
         elif p_num == 6: #設定の描画処理
             view_text = []
-            select_volumes = ["大","中","小"]
+            select_volumes = ["小","中","大"]
             config_text_list = ["メトロノーム:","正確性診断の記録:","演奏デバイスの調整:","音量:"]
             with codecs.open("./config.json","r") as config_file:
                 config_obj = json.load(config_file)
