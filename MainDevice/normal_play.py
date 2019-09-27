@@ -77,9 +77,10 @@ class NormalPlay:
 
         # onfoo label表示
         self.__draw_onoff_label()
-
         # sound_volume表示
         self.__draw_sound_volume(sdi)
+        # 音階表示
+        self.__draw_sound_musicscale(sdi)
 
         # リコーダー本体(表)
         self.cv.create_polygon(110, 40, 110, 280, 180, 280, 180, 40, fill="blue", tag='recorder')
@@ -127,15 +128,40 @@ class NormalPlay:
 
     def __draw_onoff_label(self):
         rf_text = self.__get_record_flag()
-        self.cv.create_text(250, 30, text=rf_text['record_flag'], tag='rf_text')
+        # 枠表示
+        self.cv.create_rectangle(220, 40, 300, 120)
+        # on,offの表示
+        self.cv.create_text(260, 80, font=("Purisa", 36), text='記録\n'+rf_text['record_flag'], tag='rf_text')
 
     def __draw_sound_volume(self, sdi):
         # volumeの枠作成
-        self.cv.create_polygon(400, 40, 400, 280, 480, 280, 480, 40, tag='sd_volume', fill='', outline='black')
+        self.cv.create_polygon(360, 40, 360, 280, 440, 280, 440, 40, tag='sd_volume', fill='', outline='black')
         # volumeの量表示
-        self.cv.create_polygon(400, 280-int(self.sound_data[sdi]['volume']), 400, 280, 480, 280, 480, 280-int(self.sound_data[sdi]['volume']), fill="blue", tag='sd_volume')
+        self.cv.create_polygon(360, 280-int(self.sound_data[sdi]['volume']), 360, 280, 440, 280, 440, 280-int(self.sound_data[sdi]['volume']), fill="blue", tag='sd_volume')
         # 値表示
-        self.cv.create_text(440, 280-int(self.sound_data[sdi]['volume'])/2, text=self.sound_data[sdi]['volume'], tag='sd_volume')
+        self.cv.create_text(400, 280-int(self.sound_data[sdi]['volume'])/2, text=self.sound_data[sdi]['volume'], tag='sd_volume')
+    
+    def __draw_sound_musicscale(self, sdi):
+        fingering_models = {
+            '11111111':'ド',    # do
+            '01111111':'レ',    # re
+            '00111111':'ミ',    # mi
+            '00011111':'ファ',   # fa
+            '00001111':'ソ',    # sol
+            '00000111':'ラ',    # la
+            '00000011':'シ',    # si
+            '00000101':'^ド',   # do8va
+            '00000100':'^レ',   # re8va
+            '00111110':'^ミ'    # mi8va
+        }
+        hole_data = self.sound_data[sdi]['hole_data']
+        try:
+            # 枠の表示
+            self.cv.create_rectangle(230, 130, 290, 170)
+            # 音階の表示
+            self.cv.create_text(260, 150, font=("Purisa", 36), text=fingering_models[hole_data], tag='recorder')
+        except:
+            pass
 
     def __wait_input(self):
         while 1:
