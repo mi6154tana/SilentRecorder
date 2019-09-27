@@ -72,7 +72,8 @@ class PlaySound:
             else:
                 self.sound_list[last_fin].stop()
         else:
-            self.sound_list[now_fin].set_volume(float(1/200 * volume))
+            #self.sound_list[now_fin].set_volume(float(1/200 * volume))
+            self.sound_list[now_fin].set_volume(1)
             p_volume = self.sound_list[now_fin].get_volume() # 音量取得
             # print(p_volume)
 
