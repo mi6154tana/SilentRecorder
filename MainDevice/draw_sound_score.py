@@ -23,28 +23,29 @@ class DrawScore:
         5,5,4,2,1,1,1,1
     ]
     '''
-    music_deta = []
-    #root = tk.Tk("1024x600")
-    last_time = time.time()
-    draw_point = 0
-    seek_point = 10
-    end_flag = 0
-    bpm = 0
-    measure = 0
-    
-
-    music_sound = ["ド","レ","ミ","ファ","ソ","ラ","シ","ド","レ"]
-    labals_update = -1
-    labels = []
-    #cv = tk.Canvas(root,width = 1024,height = 600)
-    sound = ps()
 
     def __init__(self, music_name,cv,p_frame,mode_name):
         self.cv = cv
         self.root = p_frame
-        self.mode_name =mode_name
+        self.mode_name = mode_name
         #self.button = gi()
         #self.cv.pack()
+
+        self.music_deta = []
+        self.last_time = time.time()
+        self.first_roop = 1
+        self.draw_point = 0
+        self.seek_point = 10
+        self.end_flag = 0
+        self.bpm = 0
+        self.measure = 0
+
+        self.music_sound = ["ド","レ","ミ","ファ","ソ","ラ","シ","ド","レ"]
+        self.labals_update = -1
+        self.labels = []
+        #cv = tk.Canvas(root,width = 1024,height = 600)
+        self.sound = ps()
+
         if self.mode_name == "PLAY_RECORDING":
             l_music_data = rs.read_score(music_name)
             self.bpm = l_music_data[0]
@@ -53,8 +54,8 @@ class DrawScore:
             self.music_deta = l_music_data
             for i in self.music_deta:
                 print(i)
-            self.root.after(10, self._draw_score_line)
-            self.root.mainloop()
+            #self.root.after(10, self._draw_score_line)
+            #self.root.mainloop()
 
         else:
             l_music_data = rs.read_score(music_name)
@@ -64,10 +65,8 @@ class DrawScore:
             self.music_deta = l_music_data
             for i in self.music_deta:
                 print(i)
-            self.root.after(10, self._draw_score_line)
-            self.root.mainloop()
-
-    
+            #self.root.after(10, self._draw_score_line)
+            #self.root.mainloop()
 
     def _reset_labels(self):
         self.labals_update = 1
@@ -86,10 +85,11 @@ class DrawScore:
         interval = now_time - self.last_time
         if interval >= self.bpm*self.measure*2:
             self.draw_point += 32*2#だと思う
-            seek_point = 5#最も左のシーク位置
+            self.seek_point = 5#最も左のシーク位置
             self.last_time = time.time()
             if self.end_flag == 1:
-                print("OKOKOKO")
+                '''
+                print("OKOKOKO")#点数を表示
                 self.ans = j_s.judgement_score()
                 print("ANS_e:", self.ans)
                 self.label = tk.Label(self.root,text = "正答率" + str(round(self.ans,1)) + "%" ,background = "white",font = ("",20,"bold"))
@@ -99,6 +99,7 @@ class DrawScore:
                 time.sleep(3)
                 print("interval : " + str(interval))
                 print("end of draw_score_line")
+                '''
                 #self.root.destroy()
                 self.root.quit()
                 return
@@ -108,7 +109,7 @@ class DrawScore:
         else:
             self.labals_update = 0
         
-        seek_point = 5.0+ 500.0*float(interval/(self.bpm*self.measure*2))
+        self.seek_point = 5.0+ 500.0*float(interval/(self.bpm*self.measure*2))
         self.last_seek = time.time()
 
         self.cv.delete("all")
@@ -155,13 +156,23 @@ class DrawScore:
                 break
             count += 1
     
-        self.cv.create_polygon(seek_point-2, 50, seek_point+2, 50, seek_point + 2, 140, seek_point -2, 140, fill = "red")#シーク線
+        self.cv.create_polygon(self.seek_point-2, 50, self.seek_point+2, 50, self.seek_point + 2, 140, self.seek_point -2, 140, fill = "red")#シーク線
         if self.draw_point + 32*2 >= len(self.music_deta):
             #print("flag of draw_score_line")
             self.end_flag = 1
-            
-        
-        self.root.after(10, self._draw_score_line)
+            #self.root.quit()
+            #return
+
+        if self.first_roop:
+            self.first_roop = 0
+            self.last_time = time.time() + 5
+            self.root.after(5000, self._draw_score_line)        
+        else:
+            self.root.after(10, self._draw_score_line)
+
+    def ds_main(self):
+        self._draw_score_line()
+        self.root.mainloop()
 
 if __name__ == "__main__":
     #sound_score = DrawScore('君が代')
