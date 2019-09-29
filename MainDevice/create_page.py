@@ -97,7 +97,7 @@ class CreatePage:
 
         if self.p_name == 'JUDGE_PLAY':
             print("JUDGE PLAY")
-            draw_s = DS("君が代",self.cv,self.p_frame,"JUDGE_PLAY")
+            draw_s = DS(self.selected_fname,self.cv,self.p_frame,"JUDGE_PLAY")
             draw_s.ds_main()
             return
 

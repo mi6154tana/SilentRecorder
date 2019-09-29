@@ -3,9 +3,12 @@ import math
 import time
 import numpy as np
 import read_score as rs
-#from gpio_in import GpioIn as gi
+#from udp_com import UdpCom as uc #RaspberryPiでの動作確認
+#from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 from play_sound import PlaySound as ps
 import judgement_score as j_s
+from ope_recording import OpeRecording as o_re
+import json
 
 class DrawScore:
     '''
@@ -24,18 +27,19 @@ class DrawScore:
     ]
     '''
 
-    def __init__(self, music_name,cv,p_frame,mode_name):
+    def __init__(self, music_name, cv, p_frame, mode_name):
         self.cv = cv
         self.root = p_frame
+        self.music_name = music_name
         self.mode_name = mode_name
-        #self.button = gi()
-        #self.cv.pack()
+        #self.button = gi() #RaspberryPiでの動作確認
 
         self.music_deta = []
         self.last_time = time.time()
         self.first_roop = 1
         self.draw_point = 0
-        self.seek_point = 10
+        self.seek_point = 5
+        self.last_seek_point = 5#入力描画用
         self.end_flag = 0
         self.bpm = 0
         self.measure = 0
@@ -43,30 +47,45 @@ class DrawScore:
         self.music_sound = ["ド","レ","ミ","ファ","ソ","ラ","シ","ド","レ"]
         self.labals_update = -1
         self.labels = []
-        #cv = tk.Canvas(root,width = 1024,height = 600)
+
+        # 受信の準備 #RaspberryPiでの動作確認
+        # self.udp_data = uc()#PaspberryPiでの動作確認
+
+        # 音を出す準備
         self.sound = ps()
+        self.rcv_data_s = []
+
+        #記録をとる準備
+        self.write_rec = o_re()
+        self.write_rec_flag = 0
 
         if self.mode_name == "PLAY_RECORDING":
-            l_music_data = rs.read_score(music_name)
+            l_music_data = rs.read_score(self.music_name)
             self.bpm = l_music_data[0]
             self.measure = l_music_data[1]
             del l_music_data[0:2]
             self.music_deta = l_music_data
             for i in self.music_deta:
                 print(i)
-            #self.root.after(10, self._draw_score_line)
-            #self.root.mainloop()
-
         else:
-            l_music_data = rs.read_score(music_name)
+            l_music_data = rs.read_score(self.music_name)
             self.bpm = l_music_data[0]
             self.measure = l_music_data[1]
             del l_music_data[0:2]
             self.music_deta = l_music_data
             for i in self.music_deta:
                 print(i)
-            #self.root.after(10, self._draw_score_line)
-            #self.root.mainloop()
+
+    def _draw_base_line(self):
+        self.cv.create_polygon(0, 0, 512, 0, 512, 300, 0, 300, fill = "white")
+        #五線譜の表示
+        for i in range(0,5):
+            i = i * 10
+            self.cv.create_line(5,80+i,505,80+i)
+        #小節毎の区切りの線
+        self.cv.create_line(5,80,5,120)
+        self.cv.create_line(255,80,255,120)
+        self.cv.create_line(505,80,505,120)
 
     def _reset_labels(self):
         self.labals_update = 1
@@ -76,16 +95,27 @@ class DrawScore:
 
     def _draw_score_line(self):
         '''
-        if self.button.gpio_input() == 0:
+        if self.button.gpio_input() == 0:#PaspberryPiでの動作確認
+            self.write_rec.write_stop(self.music_name)
             self.root.quit()
             return
         '''
+        
+        self.rcv_data_s.clear()
+        #受信　PaspberryPiでの動作確認　
+        '''
+        rcv_data = self.udp_data.rcv_input()
+        rcv_data_s = rcv_data.split(':')
+        '''
+        if self.write_rec_flag:#記録を残す
+            self.write_rec.write_recording(self.rcv_data_s[0], self.rcv_data_s[1])
+
         x = 0
         now_time = time.time()
         interval = now_time - self.last_time
         if interval >= self.bpm*self.measure*2:
             self.draw_point += 32*2#だと思う
-            self.seek_point = 5#最も左のシーク位置
+            #self.seek_point = 0#最も左のシーク位置
             self.last_time = time.time()
             if self.end_flag == 1:
                 '''
@@ -101,6 +131,7 @@ class DrawScore:
                 print("end of draw_score_line")
                 '''
                 #self.root.destroy()
+                self.write_rec.write_stop(self.music_name)
                 self.root.quit()
                 return
             self._reset_labels()
@@ -109,21 +140,11 @@ class DrawScore:
         else:
             self.labals_update = 0
         
-        self.seek_point = 5.0+ 500.0*float(interval/(self.bpm*self.measure*2))
+        #self.seek_point = 5.0+ 500.0*float(interval/(self.bpm*self.measure*2))
         self.last_seek = time.time()
 
-        self.cv.delete("all")
-        self.cv.create_polygon(0, 0, 512, 0, 512, 300, 0, 300, fill = "white")
-        #五線譜の表示
-        #五線譜の表示
-        for i in range(0,5):
-            i = i * 10
-            self.cv.create_line(5,80+i,505,80+i)
-        #小節毎の区切りの線
-        self.cv.create_line(5,80,5,120)
-        self.cv.create_line(255,80,255,120)
-        self.cv.create_line(505,80,505,120)
-
+        self.cv.delete('score_line')
+        
         m_p = [127.5,122.5,117.5,112.5,107.5,102.5,97.5,92.5,87.5]#音階の描画位置
         count = 0
         old_m = -1
@@ -135,7 +156,7 @@ class DrawScore:
                 #print(str(j) + ':' + str(draw_point))
                 x1=x * 500/(32*2)#x1 = x * 62.5
                 #self.cv.create_polygon(x1 + 10,M_s[j],72.5 + x1,M_s[j],72.5 + x1,M_s[j] + 10,x1 + 10,M_s[j] + 10 , tag ="polygon")
-                self.cv.create_polygon(x1 + 5,m_p[j],5 + 500/(32*2) + x1,m_p[j],5 + 500/(32*2) + x1,m_p[j] + 5,x1 + 5,m_p[j] + 5 , tag ="polygon")
+                self.cv.create_polygon(x1 + 5,m_p[j],5 + 500/(32*2) + x1,m_p[j],5 + 500/(32*2) + x1,m_p[j] + 5,x1 + 5,m_p[j] + 5 , tag = 'score_line')
 
                 #音階が変わったかを検知
                 if count == self.draw_point:
@@ -156,21 +177,41 @@ class DrawScore:
                 break
             count += 1
     
-        self.cv.create_polygon(self.seek_point-2, 50, self.seek_point+2, 50, self.seek_point + 2, 140, self.seek_point -2, 140, fill = "red")#シーク線
+        self.cv.create_polygon(self.seek_point-2, 50, self.seek_point+2, 50, self.seek_point + 2, 140, self.seek_point -2, 140, fill = "red", tag = 'score_line')#シーク線
         if self.draw_point + 32*2 >= len(self.music_deta):
             #print("flag of draw_score_line")
             self.end_flag = 1
             #self.root.quit()
             #return
 
+        if self.rcv_data_s[1] == old_m:#一致しているとき
+            self.cv.create_polygon(self.last_seek_point, m_p[self.rcv_data_s[1]], self.seek_point, m_p[self.rcv_data_s[1]], self.seek_point, m_p[self.rcv_data_s[1]]-5, self.last_seek_point, m_p[self.rcv_data_s[1]]-5, fill = "blue", tag = 'score_line')#入力描画
+        else:
+            self.cv.create_polygon(self.last_seek_point, m_p[self.rcv_data_s[1]], self.seek_point, m_p[self.rcv_data_s[1]], self.seek_point, m_p[self.rcv_data_s[1]]-5, self.last_seek_point, m_p[self.rcv_data_s[1]]-5, fill = "red", tag = 'score_line')#入力描画
+        #音を出す
+        #self.sound.sr_play(self.rcv_data_s[1], self.rcv_data_s[0])
+
         if self.first_roop:
             self.first_roop = 0
             self.last_time = time.time() + 5
             self.root.after(5000, self._draw_score_line)        
         else:
-            self.root.after(10, self._draw_score_line)
+            self.last_seek_point = self.last_seek
+            self.seek_point = 5 + 500.0*float(interval/(self.bpm*self.measure*2))
+            self.root.after(50, self._draw_score_line)
+
+    def __get_record_flag(self):
+        with open('config.json', 'r') as f:
+            conf_data = json.load(f)
+        return conf_data
 
     def ds_main(self):
+        rf_text = self.__get_record_flag()
+        if rf_text['record_flag'] == 'ON':
+            self.write_rec_flag = 1
+            self.write_rec.open_file()
+
+        self._draw_base_line()
         self._draw_score_line()
         self.root.mainloop()
 
