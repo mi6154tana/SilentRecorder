@@ -129,10 +129,11 @@ def change_page(button_in):
             #print(pages[p_position].contents)
 
         else:
-            if p_position == 4:
+            if p_position == 2 or p_position == 4:
                 if len(pages[p_position].contents) > 0:
                     se_file = pages[p_position].contents[pages[p_position].d_positoin + c_select - 1]#要改良
-                    pages[8].set_file_name(se_file)
+                    #pages[8].set_file_name(se_file)
+                    pages[trans_list[p_position][1]].set_file_name(se_file)
                     se_file += '.txt'
                 else:
                     se_file = ''

@@ -121,7 +121,7 @@ class NormalPlay:
             self.write_rec.write_recording(str(self.sound_data[sdi]['volume']), str(self.sound_data[sdi]['hole_data']))
 
         if self.flag == 0:
-            self.root.after(50, self.__draw_recorder, sdi+1)
+            self.root.after(100, self.__draw_recorder, sdi+1)
         elif self.flag == 1:
             del self.sound
             # udp_data.play_stop()#PaspberryPiでの動作確認

@@ -3,12 +3,14 @@ import math
 import time
 import numpy as np
 import read_score as rs
-#from udp_com import UdpCom as uc #RaspberryPiでの動作確認
+#from udp_com import UdpCom as uc #RaspberryPiでの動作確認 and 演奏デバイスと通信時
 #from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 from play_sound import PlaySound as ps
 import judgement_score as j_s
 from ope_recording import OpeRecording as o_re
 import json
+
+from send_damy_input import DamyInput as di #PCでの動作確認
 
 class DrawScore:
     '''
@@ -48,7 +50,7 @@ class DrawScore:
         self.labals_update = -1
         self.labels = []
 
-        # 受信の準備 #RaspberryPiでの動作確認
+        # 受信の準備 #RaspberryPiでの動作確認 and 演奏デバイスと通信時
         # self.udp_data = uc()#PaspberryPiでの動作確認
 
         # 音を出す準備
@@ -59,6 +61,12 @@ class DrawScore:
         self.write_rec = o_re()
         self.write_rec_flag = 0
 
+        self.chan_in = 0
+        self.chan_in_point = 0
+
+        self.d_input = di()#PCでの動作確認
+
+        
         if self.mode_name == "PLAY_RECORDING":
             l_music_data = rs.read_score(self.music_name)
             self.bpm = l_music_data[0]
@@ -68,7 +76,7 @@ class DrawScore:
             for i in self.music_deta:
                 print(i)
         else:
-            l_music_data = rs.read_score(self.music_name)
+            l_music_data = rs.read_score(self.music_name)#, self.mode_name)
             self.bpm = l_music_data[0]
             self.measure = l_music_data[1]
             del l_music_data[0:2]
@@ -100,15 +108,22 @@ class DrawScore:
             self.root.quit()
             return
         '''
-        
-        self.rcv_data_s.clear()
-        #受信　PaspberryPiでの動作確認　
-        '''
-        rcv_data = self.udp_data.rcv_input()
-        rcv_data_s = rcv_data.split(':')
-        '''
-        if self.write_rec_flag:#記録を残す
-            self.write_rec.write_recording(self.rcv_data_s[0], self.rcv_data_s[1])
+        if self.mode_name == 'JUDGE_PLAY':
+            self.rcv_data_s.clear()
+            #受信　PaspberryPiでの動作確認 and 演奏デバイスと通信時
+            '''
+            rcv_data = self.udp_data.rcv_input()
+            self.rcv_data_s = rcv_data.split(':')
+            '''
+
+            #PCでの動作確認
+            rcv_data = self.d_input.rcv_input()
+            self.rcv_data_s = rcv_data.split(':')
+            if int(self.rcv_data_s[1]) != self.chan_in:
+                self.chan_in_point = self.seek_point
+
+        #if self.write_rec_flag:#記録を残す
+        #    self.write_rec.write_recording(self.rcv_data_s[0], self.rcv_data_s[1])
 
         x = 0
         now_time = time.time()
@@ -184,10 +199,12 @@ class DrawScore:
             #self.root.quit()
             #return
 
+        
         if self.rcv_data_s[1] == old_m:#一致しているとき
-            self.cv.create_polygon(self.last_seek_point, m_p[self.rcv_data_s[1]], self.seek_point, m_p[self.rcv_data_s[1]], self.seek_point, m_p[self.rcv_data_s[1]]-5, self.last_seek_point, m_p[self.rcv_data_s[1]]-5, fill = "blue", tag = 'score_line')#入力描画
+            self.cv.create_polygon(self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, fill = "blue", tag = "score_line")#入力描画
         else:
-            self.cv.create_polygon(self.last_seek_point, m_p[self.rcv_data_s[1]], self.seek_point, m_p[self.rcv_data_s[1]], self.seek_point, m_p[self.rcv_data_s[1]]-5, self.last_seek_point, m_p[self.rcv_data_s[1]]-5, fill = "red", tag = 'score_line')#入力描画
+            self.cv.create_polygon(self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, fill = "red", tag = "score_line")#入力描画
+        
         #音を出す
         #self.sound.sr_play(self.rcv_data_s[1], self.rcv_data_s[0])
 
@@ -198,7 +215,27 @@ class DrawScore:
         else:
             self.last_seek_point = self.last_seek
             self.seek_point = 5 + 500.0*float(interval/(self.bpm*self.measure*2))
+            self.chan_in = int(self.rcv_data_s[1])
+            if self.chan_in_point > self.seek_point:
+                self.chan_in = self.seek_point
             self.root.after(50, self._draw_score_line)
+
+    def _data_conv(self, data):
+        model = [
+            '11111111',#do
+            '01111111',#re
+            '00111111',#mi
+            '00011111',#fa
+            '00001111',#sol
+            '00000111',#la
+            '00000011',#si
+            '00000101',#do8va
+            '00000100',#re8va
+            '00111110' #mi8va
+        ]
+        for i in range(len(model)):
+            if data == model[i]:
+                return i - 1
 
     def __get_record_flag(self):
         with open('config.json', 'r') as f:
@@ -206,10 +243,11 @@ class DrawScore:
         return conf_data
 
     def ds_main(self):
-        rf_text = self.__get_record_flag()
-        if rf_text['record_flag'] == 'ON':
-            self.write_rec_flag = 1
-            self.write_rec.open_file()
+        if self.mode_name == 'JUDGE_PLAY':
+            rf_text = self.__get_record_flag()
+            if rf_text['record_flag'] == 'ON':
+                self.write_rec_flag = 1
+                self.write_rec.open_file()
 
         self._draw_base_line()
         self._draw_score_line()
