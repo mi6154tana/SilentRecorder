@@ -63,6 +63,7 @@ class DrawScore:
 
         self.chan_in = 0
         self.chan_in_point = 0
+        self.score_update = 1
 
         self.d_input = di()#PCでの動作確認
 
@@ -114,14 +115,14 @@ class DrawScore:
             '''
             rcv_data = self.udp_data.rcv_input()
             self.rcv_data_s = rcv_data.split(':')
-            '''
-
+            
             #PCでの動作確認
             rcv_data = self.d_input.rcv_input()
             self.rcv_data_s = rcv_data.split(':')
             if int(self.rcv_data_s[1]) != self.chan_in:
-                self.chan_in_point = self.seek_point
-
+                self.chan_in_point = self.seek_point - 5
+            '''
+                
         #if self.write_rec_flag:#記録を残す
         #    self.write_rec.write_recording(self.rcv_data_s[0], self.rcv_data_s[1])
 
@@ -158,12 +159,14 @@ class DrawScore:
         #self.seek_point = 5.0+ 500.0*float(interval/(self.bpm*self.measure*2))
         self.last_seek = time.time()
 
-        self.cv.delete('score_line')
+        self.cv.delete('seek_line')
         
         m_p = [127.5,122.5,117.5,112.5,107.5,102.5,97.5,92.5,87.5]#音階の描画位置
         count = 0
         old_m = -1
         old_change = 5
+
+    
         for j in self.music_deta:#range(draw_point, draw_point + 16):
             if self.draw_point <= count and self.draw_point + 32*2 > count:
                 if count > len(self.music_deta):
@@ -171,7 +174,8 @@ class DrawScore:
                 #print(str(j) + ':' + str(draw_point))
                 x1=x * 500/(32*2)#x1 = x * 62.5
                 #self.cv.create_polygon(x1 + 10,M_s[j],72.5 + x1,M_s[j],72.5 + x1,M_s[j] + 10,x1 + 10,M_s[j] + 10 , tag ="polygon")
-                self.cv.create_polygon(x1 + 5,m_p[j],5 + 500/(32*2) + x1,m_p[j],5 + 500/(32*2) + x1,m_p[j] + 5,x1 + 5,m_p[j] + 5 , tag = 'score_line')
+                if self.score_update:
+                    self.cv.create_polygon(x1 + 5,m_p[j],5 + 500/(32*2) + x1,m_p[j],5 + 500/(32*2) + x1,m_p[j] + 5,x1 + 5,m_p[j] + 5 , tag = 'score_line')
 
                 #音階が変わったかを検知
                 if count == self.draw_point:
@@ -191,20 +195,22 @@ class DrawScore:
             if count >= self.draw_point + 32*2:
                 break
             count += 1
-    
-        self.cv.create_polygon(self.seek_point-2, 50, self.seek_point+2, 50, self.seek_point + 2, 140, self.seek_point -2, 140, fill = "red", tag = 'score_line')#シーク線
+        
+        self.score_update = 0
+
+        self.cv.create_polygon(self.seek_point-2, 50, self.seek_point+2, 50, self.seek_point + 2, 140, self.seek_point -2, 140, fill = "red", tag = 'seek_line')#シーク線
         if self.draw_point + 32*2 >= len(self.music_deta):
             #print("flag of draw_score_line")
             self.end_flag = 1
             #self.root.quit()
             #return
 
-        
+        '''
         if self.rcv_data_s[1] == old_m:#一致しているとき
-            self.cv.create_polygon(self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, fill = "blue", tag = "score_line")#入力描画
+            self.cv.create_polygon(self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, fill = "blue", tag = "in_score_line")#入力描画
         else:
-            self.cv.create_polygon(self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, fill = "red", tag = "score_line")#入力描画
-        
+            self.cv.create_polygon(self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, fill = "red", tag = "in_score_line")#入力描画
+        '''
         #音を出す
         #self.sound.sr_play(self.rcv_data_s[1], self.rcv_data_s[0])
 
@@ -215,10 +221,13 @@ class DrawScore:
         else:
             self.last_seek_point = self.last_seek
             self.seek_point = 5 + 500.0*float(interval/(self.bpm*self.measure*2))
-            self.chan_in = int(self.rcv_data_s[1])
+            #self.chan_in = int(self.rcv_data_s[1])
             if self.chan_in_point > self.seek_point:
                 self.chan_in = self.seek_point
-            self.root.after(50, self._draw_score_line)
+                self.cv.delete('score_line')
+                self.cv.delete('in_score_line')
+                self.score_update = 1
+            self.root.after(100, self._draw_score_line)
 
     def _data_conv(self, data):
         model = [
