@@ -117,7 +117,7 @@ class NormalPlay:
         #音を出す
         self.sound.sr_play(self.sound_data[sdi]['hole_data'], int(self.sound_data[sdi]['volume']))
         #記録を残す
-        if self.write_rec_flag == 1:
+        if self.write_rec_flag:
             self.write_rec.write_recording(str(self.sound_data[sdi]['volume']), str(self.sound_data[sdi]['hole_data']))
 
         if self.flag == 0:

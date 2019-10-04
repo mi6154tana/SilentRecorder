@@ -80,18 +80,19 @@ class PlaySound:
                 self.sound_list[last_fin].stop()
             if now_fin != -1:
                 #pygame.mixer.music.set_volume(volume)
-                self.sound_list[now_fin].set_volume(float(1/self.volume_max * volume)/3 * self.volume_lv)
+                #self.sound_list[now_fin].set_volume(float(1/self.volume_max * volume)/3 * self.volume_lv)
                 #self.sound_list[now_fin].set_volume(float(1/3) * self.volume_lv)
+                #self.sound_list[now_fin].set_volume(1)
                 self.sound_list[now_fin].play(-1)
-                p_volume = self.sound_list[now_fin].get_volume() # 音量取得
+                #p_volume = self.sound_list[now_fin].get_volume() # 音量取得
                 #print(p_volume)
             else:
                 self.sound_list[last_fin].stop()
         else:
-            self.sound_list[now_fin].set_volume(float(1/self.volume_max * volume)/3 * self.volume_lv)
+            #self.sound_list[now_fin].set_volume(float(1/self.volume_max * volume)/3 * self.volume_lv)
             #self.sound_list[now_fin].set_volume(float(1/3) * self.volume_lv)
             p_volume = self.sound_list[now_fin].get_volume() # 音量取得
-            #print(p_volume)
+            print(p_volume)
 
     def sr_play(self, i_fin, volume):#呼び出されたとき
         #data = rcv_data.split(':')

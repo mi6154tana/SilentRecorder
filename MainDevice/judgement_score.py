@@ -3,7 +3,7 @@ def judgement_score():
     Standard_data = open("Recorder.txt","r") #正解
     S_d_line = Standard_data.read().split()
 
-    User_sound_data = open("Dummy_data.txt","r") #ユーザー入力
+    User_sound_data = open("./udp_input.txt","r") #ユーザー入力
     U_s_d_line = User_sound_data.read().split()
 
     for i in range(len(S_d_line)):
