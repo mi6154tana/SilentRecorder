@@ -59,7 +59,6 @@ class DrawScore:
 
         #記録をとる準備
         self.write_rec = o_re()
-        self.write_rec_flag = 0
 
         self.chan_in = 0
         self.chan_in_point = 0
@@ -115,16 +114,16 @@ class DrawScore:
             '''
             rcv_data = self.udp_data.rcv_input()
             self.rcv_data_s = rcv_data.split(':')
-            
+            '''
             #PCでの動作確認
             rcv_data = self.d_input.rcv_input()
             self.rcv_data_s = rcv_data.split(':')
             if int(self.rcv_data_s[1]) != self.chan_in:
-                self.chan_in_point = self.seek_point - 5
-            '''
+                self.chan_in_point = self.last_seek_point#self.seek_point - 10
+            
                 
-        #if self.write_rec_flag:#記録を残す
-        #    self.write_rec.write_recording(self.rcv_data_s[0], self.rcv_data_s[1])
+        #記録を残す
+        self.write_rec.write_recording(self.rcv_data_s[0], self.rcv_data_s[1])
 
         x = 0
         now_time = time.time()
@@ -205,12 +204,12 @@ class DrawScore:
             #self.root.quit()
             #return
 
-        '''
+        
         if self.rcv_data_s[1] == old_m:#一致しているとき
             self.cv.create_polygon(self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, fill = "blue", tag = "in_score_line")#入力描画
         else:
             self.cv.create_polygon(self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, fill = "red", tag = "in_score_line")#入力描画
-        '''
+        
         #音を出す
         #self.sound.sr_play(self.rcv_data_s[1], self.rcv_data_s[0])
 
@@ -219,7 +218,7 @@ class DrawScore:
             self.last_time = time.time() + 5
             self.root.after(5000, self._draw_score_line)        
         else:
-            self.last_seek_point = self.last_seek
+            self.last_seek_point = self.seek_point
             self.seek_point = 5 + 500.0*float(interval/(self.bpm*self.measure*2))
             #self.chan_in = int(self.rcv_data_s[1])
             if self.chan_in_point > self.seek_point:
@@ -246,17 +245,9 @@ class DrawScore:
             if data == model[i]:
                 return i - 1
 
-    def __get_record_flag(self):
-        with open('config.json', 'r') as f:
-            conf_data = json.load(f)
-        return conf_data
-
     def ds_main(self):
         if self.mode_name == 'JUDGE_PLAY':
-            rf_text = self.__get_record_flag()
-            if rf_text['record_flag'] == 'ON':
-                self.write_rec_flag = 1
-                self.write_rec.open_file()
+            self.write_rec.open_file()
 
         self._draw_base_line()
         self._draw_score_line()
