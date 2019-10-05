@@ -49,6 +49,7 @@ class DrawScore:
         self.music_sound = ["ド","レ","ミ","ファ","ソ","ラ","シ","^ド","^レ","^ミ"]
         self.labals_update = -1
         self.labels = []
+        self.js_label = tk.Label(self.root,text = "",background = "white",font = ("",20,"bold"))
 
         # 受信の準備 #RaspberryPiでの動作確認 and 演奏デバイスと通信時
         # self.udp_data = uc()#PaspberryPiでの動作確認
@@ -65,7 +66,7 @@ class DrawScore:
         self.score_update = 1
 
         self.d_input = di()#PCでの動作確認
-
+        self.roop_counter = 0
         
         if self.mode_name == "PLAY_RECORDING":
             l_music_data = rs.read_score(self.music_name)
@@ -117,13 +118,13 @@ class DrawScore:
             '''
             #PCでの動作確認
             rcv_data = self.d_input.rcv_input()
+            self.roop_counter += 1
             self.rcv_data_s = rcv_data.split(':')
             if int(self.rcv_data_s[1]) != self.chan_in:
                 self.chan_in_point = self.last_seek_point#self.seek_point - 10
-            
                 
-        #記録を残す
-        self.write_rec.write_recording(self.rcv_data_s[0], self.rcv_data_s[1])
+            #記録を残す
+            self.write_rec.write_recording(self.rcv_data_s[0], self.rcv_data_s[1])
 
         x = 0
         now_time = time.time()
@@ -133,18 +134,18 @@ class DrawScore:
             #self.seek_point = 0#最も左のシーク位置
             self.last_time = time.time()
             if self.end_flag == 1:
-                '''
+                
                 print("OKOKOKO")#点数を表示
                 self.ans = j_s.judgement_score()
                 print("ANS_e:", self.ans)
-                self.label = tk.Label(self.root,text = "正答率" + str(round(self.ans,1)) + "%" ,background = "white",font = ("",20,"bold"))
-                self.label.place(x = 300, y = 240)
-                self.root.update()
+                self.js_label = tk.Label(self.root,text = "正答率" + str(round(self.ans,2)) + "%" ,background = "white",font = ("",20,"bold"))
+                self.js_label.place(x = 300, y = 240)
+                #self.root.update()
                 
                 time.sleep(3)
                 print("interval : " + str(interval))
                 print("end of draw_score_line")
-                '''
+                
                 #self.root.destroy()
                 self.write_rec.write_stop(self.music_name)
                 self.root.quit()
@@ -160,7 +161,7 @@ class DrawScore:
 
         self.cv.delete('seek_line')
         
-        m_p = [127.5,122.5,117.5,112.5,107.5,102.5,97.5,92.5,87.5,82.5]#音階の描画位置
+        m_p = [127.5, 122.5, 117.5, 112.5, 107.5, 102.5, 97.5, 92.5, 87.5, 82.5]#音階の描画位置
         count = 0
         old_m = -1
         old_change = 5
@@ -176,6 +177,7 @@ class DrawScore:
                 if self.score_update:
                     if j != -1:#休符などでなければ
                         self.cv.create_polygon(x1 + 5,m_p[j],5 + 500/(32*2) + x1,m_p[j],5 + 500/(32*2) + x1,m_p[j] + 5,x1 + 5,m_p[j] + 5 , tag = 'score_line')
+                        print('j : ', j)
 
                 #音階が変わったかを検知
                 if count == self.draw_point:
@@ -183,6 +185,8 @@ class DrawScore:
                 if self.labals_update == 1:
                     if j != old_m or count == self.draw_point + 32*2-1 or count == len(self.music_deta)-1:
                         self.labels.append(tk.Label(text = self.music_sound[old_m],background = "white",font = ("",10,"bold")))
+                        if self.music_sound[old_m] == '^ミ':
+                            print('ミの時：', j)
                         self.labels[len(self.labels)-1].place(x = (old_change + x1 )/2 - 5,y = 150)
                         old_m = j
                         old_change = x1 + 5
@@ -210,11 +214,13 @@ class DrawScore:
                 self.cv.create_polygon(self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, fill = "blue", tag = "in_score_line")#入力描画
             else:
                 self.cv.create_polygon(self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, fill = "red", tag = "in_score_line")#入力描画
-        
+            print('rcv_data_s[1] : ', self._data_conv( self.rcv_data_s[1]))
+
         #音を出す
         #self.sound.sr_play(self.rcv_data_s[1], self.rcv_data_s[0])
 
         if self.first_roop:
+            self.js_label.place_forget()
             self.first_roop = 0
             self.last_time = time.time() + 5
             self.root.after(5000, self._draw_score_line)        
@@ -223,6 +229,12 @@ class DrawScore:
             self.seek_point = 5 + 500.0*float(interval/(self.bpm*self.measure*2))
             #self.chan_in = int(self.rcv_data_s[1])
             if self.chan_in_point > self.seek_point:
+                self.last_seek_point = 5
+                print('roop_counter : ', self.roop_counter)
+                if self.roop_counter < 96:
+                    for amari in range(96 - self.roop_counter):
+                        print('読み込めなかった', self.d_input.rcv_input())
+                self.roop_counter = 0
                 self.chan_in = self.seek_point
                 self.cv.delete('score_line')
                 self.cv.delete('in_score_line')
@@ -244,12 +256,12 @@ class DrawScore:
         ]
         for i in range(len(model)):
             if data == model[i]:
-                return i - 1
+                return i
 
     def ds_main(self):
         if self.mode_name == 'JUDGE_PLAY':
             self.write_rec.open_file()
-
+        self.js_label.place_forget()
         self._draw_base_line()
         self._draw_score_line()
         self.root.mainloop()

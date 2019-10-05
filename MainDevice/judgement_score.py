@@ -1,6 +1,6 @@
 def judgement_score():
     cnt = 0
-    Standard_data = open("Recorder.txt","r") #正解
+    Standard_data = open("./Recorder.txt","r") #正解
     S_d_line = Standard_data.read().split()
 
     User_sound_data = open("./udp_input.txt","r") #ユーザー入力
@@ -9,5 +9,6 @@ def judgement_score():
     for i in range(len(S_d_line)):
         if S_d_line[i] == U_s_d_line[i]:
             cnt += 1
-    ans = cnt/len(S_d_line) * 100
+    ans = float(cnt/len(S_d_line)) * 100
+    print('正確性', ans)
     return ans
