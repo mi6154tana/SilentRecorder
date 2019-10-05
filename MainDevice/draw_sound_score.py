@@ -46,7 +46,7 @@ class DrawScore:
         self.bpm = 0
         self.measure = 0
 
-        self.music_sound = ["ド","レ","ミ","ファ","ソ","ラ","シ","ド","レ"]
+        self.music_sound = ["ド","レ","ミ","ファ","ソ","ラ","シ","^ド","^レ","^ミ"]
         self.labals_update = -1
         self.labels = []
 
@@ -160,7 +160,7 @@ class DrawScore:
 
         self.cv.delete('seek_line')
         
-        m_p = [127.5,122.5,117.5,112.5,107.5,102.5,97.5,92.5,87.5]#音階の描画位置
+        m_p = [127.5,122.5,117.5,112.5,107.5,102.5,97.5,92.5,87.5,82.5]#音階の描画位置
         count = 0
         old_m = -1
         old_change = 5
@@ -174,7 +174,8 @@ class DrawScore:
                 x1=x * 500/(32*2)#x1 = x * 62.5
                 #self.cv.create_polygon(x1 + 10,M_s[j],72.5 + x1,M_s[j],72.5 + x1,M_s[j] + 10,x1 + 10,M_s[j] + 10 , tag ="polygon")
                 if self.score_update:
-                    self.cv.create_polygon(x1 + 5,m_p[j],5 + 500/(32*2) + x1,m_p[j],5 + 500/(32*2) + x1,m_p[j] + 5,x1 + 5,m_p[j] + 5 , tag = 'score_line')
+                    if j != -1:#休符などでなければ
+                        self.cv.create_polygon(x1 + 5,m_p[j],5 + 500/(32*2) + x1,m_p[j],5 + 500/(32*2) + x1,m_p[j] + 5,x1 + 5,m_p[j] + 5 , tag = 'score_line')
 
                 #音階が変わったかを検知
                 if count == self.draw_point:
@@ -204,11 +205,11 @@ class DrawScore:
             #self.root.quit()
             #return
 
-        
-        if self.rcv_data_s[1] == old_m:#一致しているとき
-            self.cv.create_polygon(self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, fill = "blue", tag = "in_score_line")#入力描画
-        else:
-            self.cv.create_polygon(self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, fill = "red", tag = "in_score_line")#入力描画
+        if self.rcv_data_s[1] != '00000000':#休符などでなければ
+            if self.rcv_data_s[1] == old_m:#一致しているとき
+                self.cv.create_polygon(self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, fill = "blue", tag = "in_score_line")#入力描画
+            else:
+                self.cv.create_polygon(self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, self.chan_in_point, m_p[self._data_conv(self.rcv_data_s[1])]-5, fill = "red", tag = "in_score_line")#入力描画
         
         #音を出す
         #self.sound.sr_play(self.rcv_data_s[1], self.rcv_data_s[0])
@@ -226,7 +227,7 @@ class DrawScore:
                 self.cv.delete('score_line')
                 self.cv.delete('in_score_line')
                 self.score_update = 1
-            self.root.after(100, self._draw_score_line)
+            self.root.after(50, self._draw_score_line)
 
     def _data_conv(self, data):
         model = [
