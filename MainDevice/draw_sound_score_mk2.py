@@ -24,16 +24,14 @@ class DrawScore:
 
         self.music_deta = []
         self.last_time = time.time()
+        self.last_input_time = time.time()
         self.first_roop = 1
-        self.draw_point = 0
+        #self.draw_point = 0
         self.seek_point = 5
         self.last_seek_point = 5#入力描画用
         self.end_flag = 0
-        self.NoteLength = 0
-        self.measure = 0
 
         self.music_sound = ["ド","レ","ミ","ファ","ソ","ラ","シ","ド","レ"]
-        self.labals_update = -1
         self.labels = []
 
         self.m_p = [127.5,122.5,117.5,112.5,107.5,102.5,97.5,92.5,87.5]#音階の描画位置
@@ -46,7 +44,7 @@ class DrawScore:
 
         # 音を出す準備
         self.sound = ps()
-        self.rcv_data_s = []
+        self.rcv_data_s = ['0', '00000100']
 
         #記録をとる準備
         self.write_rec = o_re()
@@ -55,6 +53,10 @@ class DrawScore:
         l_music_data = rs.read_score(self.music_name, self.mode_name)
         noteLength = l_music_data[0]
         measure = l_music_data[1]
+        del l_music_data[0:2]
+        self.exa_music_datas = l_music_data
+        self.exa_counter = 0
+
         self.seek_limit = noteLength*measure*2 #2小説の演奏にかかる時間7
         print('self.seek_limit : ', self.seek_limit)
         self.num_measure_data = self.seek_limit/0.05 #に小説の描画に必要なデータ数
@@ -62,7 +64,9 @@ class DrawScore:
         print('self.num_measure_data to int: ', int(self.num_measure_data))
         self.draw_min_size = 500/self.num_measure_data
 
-        self._read_exa_file()# Mk2におけるお手本データ
+
+        #実験用
+        self.input_counter = 0
     
     def _draw_base_line(self):# 五線譜の描画
         self.cv.create_polygon(0, 0, 512, 0, 512, 300, 0, 300, fill = "white", tag = 'back_ground')
@@ -83,19 +87,23 @@ class DrawScore:
             self.root.quit()
             return
         '''
-        if self.mode_name == 'JUDGE_PLAY':# 入力を受け付ける
-            self.rcv_data_s.clear()
-            #rcv_data = self.udp_data.rcv_input()# 受信 PaspberryPiでの動作確認 and 演奏デバイスと通信時
-            #rcv_data = self.d_input.rcv_input()# PCでの動作確認
-
-            #self.rcv_data_s = rcv_data.split(':')
-            
-        # 記録を残す
-        #self.write_rec.write_recording(self.rcv_data_s[0], self.rcv_data_s[1])
-
         now_time = time.time()
         interval = now_time - self.last_time
+
+        if self.mode_name == 'JUDGE_PLAY' and self.first_roop != 1:# 入力を受け付ける
+            if now_time - self.last_input_time >= 0.05:# 0.05秒おきに入力を受け付ける
+                self.rcv_data_s.clear()
+                #rcv_data = self.udp_data.rcv_input()# 受信 PaspberryPiでの動作確認 and 演奏デバイスと通信時
+                rcv_data = self.d_input.rcv_input()# PCでの動作確認
+                self.rcv_data_s = rcv_data.split(':')
+                self.last_input_time = time.time()
+                self.input_counter += 1
+                # 記録を残す
+                self.write_rec.write_recording(self.rcv_data_s[0], self.rcv_data_s[1])
+
         if interval >= self.seek_limit or self.first_roop:# シークバーが右端に行った 画面の更新
+            print('self.input_counter : ', self.input_counter)
+            self.input_counter = 0
             if self.end_flag:
                 self.write_rec.write_stop(self.music_name)
                 self.root.quit()
@@ -125,7 +133,10 @@ class DrawScore:
             
             if self.num_measure_data - int(self.num_measure_data) > 0:
                 self.exa_counter += 1
-                 
+
+        #入力描画
+        self.cv.create_polygon(self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, fill = "blue", tag = "in_score_line")
+
         self.cv.delete('seek_line')
         self.cv.create_polygon(self.seek_point-2, 50, self.seek_point+2, 50, self.seek_point + 2, 140, self.seek_point -2, 140, fill = "red", tag = 'seek_line')
 
@@ -148,15 +159,6 @@ class DrawScore:
     def _draw_scale_label(self, scale, x0, x1):
         self.labels.append(tk.Label(text = self.music_sound[scale],background = "white",font = ("",10,"bold")))
         self.labels[len(self.labels)-1].place(x = (x0 + x1 )/2 - 5,y = 150)
-
-    def _read_exa_file(self):
-        self.exa_counter = 0
-        f = open('./Recorder.txt','r')
-        self.exa_music_datas = []
-        for i in f:
-            data = ','.join(str(i).split())
-            data_s = data.split(':')
-            self.exa_music_datas.append(self._data_conv(data_s[1]))
 
     def _data_conv(self, data):
         model = [

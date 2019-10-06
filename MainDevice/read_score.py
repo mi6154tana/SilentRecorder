@@ -23,7 +23,7 @@ def read_score(music_name, mode_name):
     NoteLength = 60/bpm
     mag = [0,4,2,3,1,1.5,0.25,0.375,0.5,0.75]#楽譜データに対応、一小節を４としている、楽譜データにあるものは配列のインデックス番号
     hRecorder = 20 #リコーダーが一秒間に送ってくるデータ数
-    hScore = 32 #楽譜が一秒間に処理数データ数（最小の） 一小節のデータ数？？
+    hScore = NoteLength*int(tmp[2])/0.05 #楽譜が一秒間に処理数データ数（最小の） 一小節のデータ数？？
     line = f.readline()
     fRecorder = open('Recorder.txt','w')#リコーダーから送られてくるデータとみなす、後々正確性診断に使う
     fScore = open('Score.txt','w')#楽譜データから音階データのみを記録
