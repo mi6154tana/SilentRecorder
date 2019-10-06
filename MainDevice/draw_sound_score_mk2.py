@@ -136,8 +136,6 @@ class DrawScore:
         #入力描画
         if self.last_seek_point > self.seek_point:
             self.last_seek_point = 5
-        if self._data_conv(self.rcv_data_s[1]) == 8:
-            print('^レ')
         self.cv.create_polygon(self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, fill = "blue", tag = "in_score_line")
 
         self.cv.delete('seek_line')
