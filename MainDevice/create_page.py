@@ -6,7 +6,7 @@ from time import sleep
 from PIL import Image, ImageTk
 import os
 from normal_play import NormalPlay
-from draw_sound_score import DrawScore as DS
+from draw_sound_score_mk2 import DrawScore as DS
 import json
 import codecs
 
@@ -98,13 +98,13 @@ class CreatePage:
         if self.p_name == 'JUDGE_PLAY':
             print("JUDGE PLAY")
             draw_s = DS(self.selected_fname,self.cv,self.p_frame,"JUDGE_PLAY")
-            draw_s.ds_main()
+            draw_s.dss_main()
             return
 
         if self.p_name == "PLAY_RECORDING":
             print("Play_recoding")
             DS("君が代",self.cv,self.p_frame,"PLAY_RECORDING")
-            draw_s.ds_main()
+            draw_s.dss_main()
             return
             
         for i in range(len(self.cons_labels)):
