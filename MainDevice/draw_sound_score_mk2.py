@@ -25,6 +25,7 @@ class DrawScore:
         self.music_deta = []
         self.last_time = time.time()
         self.last_input_time = time.time()
+        self.start_time = time.time()
         self.first_roop = 1
         #self.draw_point = 0
         self.seek_point = 5
@@ -44,7 +45,7 @@ class DrawScore:
 
         # 音を出す準備
         self.sound = ps()
-        self.rcv_data_s = ['0', '00000100']
+        self.rcv_data_s = ['0', '00000000']
 
         #記録をとる準備
         self.write_rec = o_re()
@@ -59,11 +60,10 @@ class DrawScore:
 
         self.seek_limit = noteLength*measure*2 #2小説の演奏にかかる時間7
         print('self.seek_limit : ', self.seek_limit)
-        self.num_measure_data = self.seek_limit/0.05 #に小説の描画に必要なデータ数
+        self.num_measure_data = self.seek_limit/0.05 #二小説の描画に必要なデータ数
         print('self.num_measure_data : ', self.num_measure_data)
         print('self.num_measure_data to int: ', int(self.num_measure_data))
         self.draw_min_size = 500/self.num_measure_data
-
 
         #実験用
         self.input_counter = 0
@@ -91,7 +91,7 @@ class DrawScore:
         interval = now_time - self.last_time
 
         if self.mode_name == 'JUDGE_PLAY' and self.first_roop != 1:# 入力を受け付ける
-            if now_time - self.last_input_time >= 0.05:# 0.05秒おきに入力を受け付ける
+            if (now_time-self.start_time) - self.input_counter*0.05 >= 0.05:# 0.05秒おきに入力を受け付ける
                 self.rcv_data_s.clear()
                 #rcv_data = self.udp_data.rcv_input()# 受信 PaspberryPiでの動作確認 and 演奏デバイスと通信時
                 rcv_data = self.d_input.rcv_input()# PCでの動作確認
@@ -103,7 +103,6 @@ class DrawScore:
 
         if interval >= self.seek_limit or self.first_roop:# シークバーが右端に行った 画面の更新
             print('self.input_counter : ', self.input_counter)
-            self.input_counter = 0
             if self.end_flag:
                 self.write_rec.write_stop(self.music_name)
                 self.root.quit()
@@ -135,6 +134,10 @@ class DrawScore:
                 self.exa_counter += 1
 
         #入力描画
+        if self.last_seek_point > self.seek_point:
+            self.last_seek_point = 5
+        if self._data_conv(self.rcv_data_s[1]) == 8:
+            print('^レ')
         self.cv.create_polygon(self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, fill = "blue", tag = "in_score_line")
 
         self.cv.delete('seek_line')
@@ -144,6 +147,8 @@ class DrawScore:
         if self.first_roop:# 第一回目のループは5秒後
             self.first_roop = 0
             self.last_time = time.time() + 5
+            self.start_time = self.last_time
+            self.last_input_time = self.last_time
             self.root.after(5000, self._draw_score_line)        
         else:
             self.last_seek_point = self.seek_point
