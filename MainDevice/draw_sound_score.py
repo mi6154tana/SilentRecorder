@@ -116,10 +116,12 @@ class DrawScore:
             self.rcv_data_s = rcv_data.split(':')
             '''
             #PCでの動作確認
+            '''
             rcv_data = self.d_input.rcv_input()
             self.rcv_data_s = rcv_data.split(':')
             if int(self.rcv_data_s[1]) != self.chan_in:
                 self.chan_in_point = self.last_seek_point#self.seek_point - 10
+            '''
             
                 
         #記録を残す
