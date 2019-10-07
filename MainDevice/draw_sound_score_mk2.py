@@ -57,12 +57,13 @@ class DrawScore:
         #おそらくrsは記録再生時には必要ない
         l_music_data = rs.read_score(self.music_name, self.mode_name)
         noteLength = l_music_data[0]
-        measure = l_music_data[1]
+        self.bpm = noteLength * 60
+        self.radix = l_music_data[1]
         del l_music_data[0:2]
         self.exa_music_datas = l_music_data
         self.exa_counter = 0
 
-        self.seek_limit = noteLength*measure*2 #2小説の演奏にかかる時間7
+        self.seek_limit = noteLength*self.radix*2 #2小説の演奏にかかる時間7
         print('self.seek_limit : ', self.seek_limit)
         self.num_measure_data = self.seek_limit/0.05 #二小説の描画に必要なデータ数
         print('self.num_measure_data : ', self.num_measure_data)
@@ -141,6 +142,7 @@ class DrawScore:
 
         else:# 入力描画
             if self.last_seek_point > self.seek_point:
+                self.cv.delete('in_score_line')
                 self.last_seek_point = 5
             if self._data_conv(self.rcv_data_s[1]) != -1:
                 self.cv.create_polygon(self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, fill = "blue", tag = "in_score_line")
@@ -192,7 +194,10 @@ class DrawScore:
     def dss_main(self):
         if self.mode_name == 'JUDGE_PLAY':
             self.write_rec.open_file()
+            self.write_rec.write_head_data(str(self.bpm), '4', str(self.radix))
 
         self._draw_base_line()# 五線譜を描画
         self._draw_score_line()
+        #題名表示
+        self.cv.create_text(242 + len(self.music_name)*2, 20, font = ('Purisa', 25), text = self.music_name)
         self.root.mainloop()
