@@ -14,6 +14,10 @@ class OpeRecording:
         print('call open ', self.file_name)
         self.fp = open(self.file_name, 'w')
     
+    def write_head_data(self, bpm, ordinal_num, radix):
+        data = bpm + ' ' + ordinal_num + ' ' + radix + '\n'
+        self.fp.write(data)
+
     def write_recording(self, v_data, f_data):
         data = v_data + ':' + f_data + '\n'
         self.fp.write(data)
