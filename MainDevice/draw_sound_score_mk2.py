@@ -57,8 +57,8 @@ class DrawScore:
         #おそらくrsは記録再生時には必要ない
         l_music_data = rs.read_score(self.music_name, self.mode_name)
         noteLength = l_music_data[0]
-        self.bpm = noteLength * 60
         self.radix = l_music_data[1]
+        self.bpm = 60/noteLength
         del l_music_data[0:2]
         self.exa_music_datas = l_music_data
         self.exa_counter = 0
