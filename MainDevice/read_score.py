@@ -46,7 +46,8 @@ def read_score(music_name, mode_name):
             continue
         data = line.split()#改行を消去
         for i in range(int((hScore/int(tmp[2]))*mag[int(data[1])])):#range(int((hScore/4)*mag[int(data[1])])):
-            fScore.write(data[0]+'\n')
+            #fScore.write(data[0]+'\n')
+            fScore.write(halls[_data_conv(data[0])] + '\n')
             music_data.append(_data_conv(data[0]))
         if ((hScore/int(tmp[2]))*mag[int(data[1])]) - int((hScore/int(tmp[2]))*mag[int(data[1])]) > 0.0:
             fixer += ((hScore/int(tmp[2]))*mag[int(data[1])]) - int((hScore/int(tmp[2]))*mag[int(data[1])])
@@ -55,7 +56,7 @@ def read_score(music_name, mode_name):
             music_data.append(_data_conv(data[0]))
             fixer -= 1.0
             
-        print('int((hScore/4)*mag[int(data[1])]) ', int((hScore/int(tmp[2]))*mag[int(data[1])]))
+        #print('int((hScore/4)*mag[int(data[1])]) ', int((hScore/int(tmp[2]))*mag[int(data[1])]))
         dt = (mag[int(data[1])]*NoteLength)#その音符の長さ（秒）
         #無音処理
         for i in np.arange(t, t+dt, (1/hRecorder)):

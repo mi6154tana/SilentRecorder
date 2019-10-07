@@ -108,10 +108,12 @@ class DrawScore:
                 self.write_rec.write_recording(self.rcv_data_s[0], self.rcv_data_s[1])
 
         if interval >= self.seek_limit or self.first_roop:# シークバーが右端に行った 画面の更新
-            print('interval ', interval)
-            print('self.input_counter : ', self.input_counter)
-            if self.end_flag:
+            #print('interval ', interval)
+            #print('self.input_counter : ', self.input_counter)
+            if self.end_flag:#終了
                 self.write_rec.write_stop(self.music_name)
+                if self.mode_name == 'JUDGE_PLAY':
+                    self.cv.create_text(242 + len(self.music_name)*2, 185, font = ('Purisa', 25), text = '正確率 : ' + j_s.judgement_score())
                 self.root.quit()
                 return
             self.last_time = now_time
@@ -145,8 +147,12 @@ class DrawScore:
                 self.cv.delete('in_score_line')
                 self.last_seek_point = 5
             if self._data_conv(self.rcv_data_s[1]) != -1:
-                self.cv.create_polygon(self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, fill = "blue", tag = "in_score_line")
+                if self._data_conv(self.rcv_data_s[1]) == self.exa_music_datas[self.input_counter - 1]:
+                    self.cv.create_polygon(self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, fill = "blue", tag = "in_score_line")
+                else:
+                    self.cv.create_polygon(self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, fill = "red", tag = "in_score_line")
         
+
         #シーク線
         self.cv.delete('seek_line')
         self.cv.create_polygon(self.seek_point-2, 50, self.seek_point+2, 50, self.seek_point + 2, 140, self.seek_point -2, 140, fill = "red", tag = 'seek_line')
