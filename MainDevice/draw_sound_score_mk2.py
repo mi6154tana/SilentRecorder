@@ -10,6 +10,7 @@ import read_score as rs
 from play_sound import PlaySound as ps
 import judgement_score as j_s
 from ope_recording import OpeRecording as o_re
+from back_metro import BackMetro as bm
 import json
 
 from send_damy_input import DamyInput as di #PCでの動作確認
@@ -43,6 +44,9 @@ class DrawScore:
         # PCでの動作確認
         self.d_input = di()
 
+        #メトロノームの準備
+        self.b_metro = bm()
+
         # 音を出す準備
         self.sound = ps()
         self.rcv_data_s = ['0', '00000000']
@@ -62,11 +66,12 @@ class DrawScore:
         print('self.seek_limit : ', self.seek_limit)
         self.num_measure_data = self.seek_limit/0.05 #二小説の描画に必要なデータ数
         print('self.num_measure_data : ', self.num_measure_data)
-        print('self.num_measure_data to int: ', int(self.num_measure_data))
+        #print('self.num_measure_data to int: ', int(self.num_measure_data))
         self.draw_min_size = 500/self.num_measure_data
 
         #実験用
         self.input_counter = 0
+        self.reflesh = 1
     
     def _draw_base_line(self):# 五線譜の描画
         self.cv.create_polygon(0, 0, 512, 0, 512, 300, 0, 300, fill = "white", tag = 'back_ground')
@@ -102,6 +107,7 @@ class DrawScore:
                 self.write_rec.write_recording(self.rcv_data_s[0], self.rcv_data_s[1])
 
         if interval >= self.seek_limit or self.first_roop:# シークバーが右端に行った 画面の更新
+            print('interval ', interval)
             print('self.input_counter : ', self.input_counter)
             if self.end_flag:
                 self.write_rec.write_stop(self.music_name)
@@ -133,11 +139,13 @@ class DrawScore:
             if self.num_measure_data - int(self.num_measure_data) > 0:
                 self.exa_counter += 1
 
-        #入力描画
-        if self.last_seek_point > self.seek_point:
-            self.last_seek_point = 5
-        self.cv.create_polygon(self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, fill = "blue", tag = "in_score_line")
-
+        else:# 入力描画
+            if self.last_seek_point > self.seek_point:
+                self.last_seek_point = 5
+            if self._data_conv(self.rcv_data_s[1]) != -1:
+                self.cv.create_polygon(self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, fill = "blue", tag = "in_score_line")
+        
+        #シーク線
         self.cv.delete('seek_line')
         self.cv.create_polygon(self.seek_point-2, 50, self.seek_point+2, 50, self.seek_point + 2, 140, self.seek_point -2, 140, fill = "red", tag = 'seek_line')
 
