@@ -108,10 +108,12 @@ class DrawScore:
                 self.write_rec.write_recording(self.rcv_data_s[0], self.rcv_data_s[1])
 
         if interval >= self.seek_limit or self.first_roop:# シークバーが右端に行った 画面の更新
-            print('interval ', interval)
-            print('self.input_counter : ', self.input_counter)
-            if self.end_flag:
+            #print('interval ', interval)
+            #print('self.input_counter : ', self.input_counter)
+            if self.end_flag:#終了
                 self.write_rec.write_stop(self.music_name)
+                if self.mode_name == 'JUDGE_PLAY':
+                    self.cv.create_text(242 + len(self.music_name)*2, 185, font = ('Purisa', 25), text = '正確率 : ' + j_s.judgement_score())
                 self.root.quit()
                 return
             self.last_time = now_time
