@@ -3,15 +3,12 @@
 import numpy as np
 #from play_sound import PlaySound as ps
 
-def _data_conv(data, mode):
+def _data_conv(data):
     model = ['.', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
-    model_kana = ['　', 'ド', 'レ', 'ミ', 'ファ', 'ソ', 'ラ', 'シ', '＾ド', '＾レ', '＾ミ']
+    #model_kana = ['　', 'ド', 'レ', 'ミ', 'ファ', 'ソ', 'ラ', 'シ', '＾ド', '＾レ', '＾ミ']
     for i in range(len(model)):
         if data == model[i]:
-            if mode == 0:
-                return i - 1
-            else:
-                return model_kana[i]
+            return i - 1
             
 
 def read_score(music_name, mode_name):
@@ -52,17 +49,17 @@ def read_score(music_name, mode_name):
         data = line.split()#改行を消去
         for i in range(int((hScore/int(tmp[2]))*mag[int(data[1])])):#range(int((hScore/4)*mag[int(data[1])])):
             #fScore.write(data[0]+'\n')
-            if halls[_data_conv(data[0], 0)] != -1:
-                fScore.write(halls[_data_conv(data[0], 0)] + '\n')
+            if halls[_data_conv(data[0])] != -1:
+                fScore.write(halls[_data_conv(data[0])] + '\n')
             else :
                 fScore.write('00000000\n')
-            music_data.append(_data_conv(data[0], 0))
-        fScale_kana.write(_data_conv(data[0], 1) + ':' + str(int((hScore/int(tmp[2]))*mag[int(data[1])])) + '\n')
+            music_data.append(_data_conv(data[0]))
+        fScale_kana.write(str(int((hScore/int(tmp[2]))*mag[int(data[1])])) + '\n')
         if ((hScore/int(tmp[2]))*mag[int(data[1])]) - int((hScore/int(tmp[2]))*mag[int(data[1])]) > 0.0:
             fixer += ((hScore/int(tmp[2]))*mag[int(data[1])]) - int((hScore/int(tmp[2]))*mag[int(data[1])])
         if fixer >= 1.0:
             fScore.write(data[0]+'\n')
-            music_data.append(_data_conv(data[0], 0))
+            music_data.append(_data_conv(data[0]))
             fixer -= 1.0
             
         #print('int((hScore/4)*mag[int(data[1])]) ', int((hScore/int(tmp[2]))*mag[int(data[1])]))

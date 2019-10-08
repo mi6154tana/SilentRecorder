@@ -67,7 +67,7 @@ class DrawScore:
         self._read_scale_kana()
         self.kana_last_write = 0
         self.kana_num = 0
-        self.drawing_kana = self.kana_lines[self.kana_num].split(':')
+        self.drawing_kana = self.kana_lines[self.kana_num]#.split(':')
 
         self.seek_limit = noteLength*self.radix*2 #2小説の演奏にかかる時間7
         print('self.seek_limit : ', self.seek_limit)
@@ -147,11 +147,11 @@ class DrawScore:
                     pass
                 
                 #print(self.drawing_kana[1], ' ', self.exa_counter)
-                if int(self.drawing_kana[1]) == self.exa_counter - self.kana_last_write:
+                if int(self.drawing_kana) == self.exa_counter - self.kana_last_write:
                     self._draw_scale_label(drawing_scale, scale_change_point, x1)#カタカナ音階の表示
                     self.kana_last_write = self.exa_counter
                     self.kana_num += 1
-                    self.drawing_kana = self.kana_lines[self.kana_num].split(':')
+                    self.drawing_kana = self.kana_lines[self.kana_num]#.split(':')
                     scale_change_point = x1
             
             if self.num_measure_data - int(self.num_measure_data) > 0:
