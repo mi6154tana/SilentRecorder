@@ -134,7 +134,8 @@ class DrawScore:
                 x0 = i*self.draw_min_size + 5
                 x1 = i*self.draw_min_size + self.draw_min_size + 5
                 drawing_scale = int(self.exa_music_datas[self.exa_counter])
-                self.cv.create_polygon(x0,self.m_p[drawing_scale], x1,self.m_p[drawing_scale], x1,self.m_p[drawing_scale] + 5, x0,self.m_p[drawing_scale] + 5 , tag = 'score_line')
+                if drawing_scale != -1:
+                    self.cv.create_polygon(x0,self.m_p[drawing_scale], x1,self.m_p[drawing_scale], x1,self.m_p[drawing_scale] + 5, x0,self.m_p[drawing_scale] + 5 , tag = 'score_line')
                 self.exa_counter += 1
 
                 if self.exa_counter > len(self.exa_music_datas)-1:#お手本楽譜の最後まで来たら
@@ -152,7 +153,8 @@ class DrawScore:
                     self._draw_scale_label(drawing_scale, scale_change_point, x1)#カタカナ音階の表示
                     self.kana_last_write = self.exa_counter
                     self.kana_num += 1
-                    self.drawing_kana = self.kana_lines[self.kana_num]#.split(':')
+                    if self.kana_num < len(self.kana_lines):
+                        self.drawing_kana = self.kana_lines[self.kana_num]#.split(':')
                     scale_change_point = x1
             
             if self.num_measure_data - int(self.num_measure_data) > 0:
@@ -199,8 +201,9 @@ class DrawScore:
         self.labels.clear()
 
     def _draw_scale_label(self, scale, x0, x1):
-        self.labels.append(tk.Label(text = self.music_sound[scale],background = "white",font = ("",10,"bold")))
-        self.labels[len(self.labels)-1].place(x = (x0 + x1 )/2 - 5,y = 150)
+        if scale != -1:
+            self.labels.append(tk.Label(text = self.music_sound[scale],background = "white",font = ("",10,"bold")))
+            self.labels[len(self.labels)-1].place(x = (x0 + x1 )/2 - 5,y = 150)
 
     def _data_conv(self, data):
         model = [
