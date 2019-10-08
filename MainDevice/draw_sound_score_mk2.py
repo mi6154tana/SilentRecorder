@@ -44,9 +44,6 @@ class DrawScore:
         # PCでの動作確認
         self.d_input = di()
 
-        #メトロノームの準備
-        self.b_metro = bm()
-
         # 音を出す準備
         self.sound = ps()
         self.rcv_data_s = ['0', '00000000']
@@ -79,6 +76,9 @@ class DrawScore:
         #実験用
         self.input_counter = 0
         self.reflesh = 1
+
+        #メトロノームの準備
+        self.b_metro = bm(self.root,self.bpm)
     
     def _draw_base_line(self):# 五線譜の描画
         self.cv.create_polygon(0, 0, 512, 0, 512, 300, 0, 300, fill = "white", tag = 'back_ground')
@@ -120,6 +120,7 @@ class DrawScore:
                 self.write_rec.write_stop(self.music_name)
                 if self.mode_name == 'JUDGE_PLAY':
                     self.cv.create_text(242 + len(self.music_name)*2, 205, font = ('Purisa', 25), text = '正確率 : ' + j_s.judgement_score())
+                    self.b_metro.metro_stop()
                 self.root.quit()
                 return
             self.last_time = now_time
@@ -226,6 +227,7 @@ class DrawScore:
 
         self._draw_base_line()# 五線譜を描画
         self._draw_score_line()
+        self.b_metro.metro_start()
         #題名表示
         self.cv.create_text(242 + len(self.music_name)*2, 20, font = ('Purisa', 25), text = self.music_name)
         self.root.mainloop()
