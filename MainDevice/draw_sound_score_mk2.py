@@ -52,7 +52,10 @@ class DrawScore:
         self.write_rec = o_re()
 
         #お手本を読む
-        l_music_data = rs.read_score(self.music_name, self.mode_name)
+        if self.mode_name == 'JUDGE_PLAY':
+            l_music_data = rs.read_score(self.music_name)
+        else:
+            l_music_data = rs.read_recording(self.music_name)
         noteLength = l_music_data[0]
         self.radix = l_music_data[1]
         self.bpm = 60/noteLength
@@ -117,9 +120,9 @@ class DrawScore:
             #print('interval ', interval)
             print('self.input_counter : ', self.input_counter)
             if self.end_flag:#終了
-                self.write_rec.write_stop(self.music_name)
                 if self.mode_name == 'JUDGE_PLAY':
-                    self.cv.create_text(242 + len(self.music_name)*2, 205, font = ('Purisa', 25), text = '正確率 : ' + j_s.judgement_score())
+                    self.write_rec.write_stop(self.music_name)
+                    self.cv.create_text(242 + len(self.music_name)*2, 225, font = ('Purisa', 25), text = '正確率 : ' + j_s.judgement_score())
                     self.b_metro.metro_stop()
                 self.root.quit()
                 return
@@ -133,7 +136,11 @@ class DrawScore:
             for i in range(int(self.num_measure_data)):# お手本を二小節分描画
                 x0 = i*self.draw_min_size + 5
                 x1 = i*self.draw_min_size + self.draw_min_size + 5
-                drawing_scale = int(self.exa_music_datas[self.exa_counter])
+                if self.mode_name == 'JUDGE_PLAY':
+                    drawing_scale = int(self.exa_music_datas[self.exa_counter])
+                else:
+                    rec_tmp_s = self.exa_music_datas[self.exa_counter].split(':')
+                    drawing_scale = self._data_conv(rec_tmp_s[1])
                 if drawing_scale != -1:
                     self.cv.create_polygon(x0,self.m_p[drawing_scale], x1,self.m_p[drawing_scale], x1,self.m_p[drawing_scale] + 5, x0,self.m_p[drawing_scale] + 5 , tag = 'score_line')
                 self.exa_counter += 1
@@ -142,11 +149,6 @@ class DrawScore:
                     self._draw_scale_label(drawing_scale, scale_change_point, x1)
                     self.end_flag = 1
                     break
-                
-                if drawing_scale != self.exa_music_datas[self.exa_counter] or i == int(self.num_measure_data)-1:# 次に描画する音階が違うとき
-                    #self._draw_scale_label(drawing_scale, scale_change_point, x1)#カタカナ音階の表示
-                    #scale_change_point = x1
-                    pass
                 
                 #print(self.drawing_kana[1], ' ', self.exa_counter)
                 if int(self.drawing_kana) == self.exa_counter - self.kana_last_write:
@@ -160,7 +162,7 @@ class DrawScore:
             if self.num_measure_data - int(self.num_measure_data) > 0:
                 self.exa_counter += 1
 
-        else:# 入力描画
+        elif self.mode_name == 'JUDGE_PLAY':# 入力描画
             if self.last_seek_point > self.seek_point:
                 self.cv.delete('in_score_line')
                 self.last_seek_point = 5
@@ -230,7 +232,11 @@ class DrawScore:
 
         self._draw_base_line()# 五線譜を描画
         self._draw_score_line()
-        self.b_metro.metro_start()
+        if self.mode_name == 'JUDGE_PLAY':
+            self.b_metro.metro_start()
+            title_y = 20
+        else:
+            title_y = 225
         #題名表示
-        self.cv.create_text(242 + len(self.music_name)*2, 20, font = ('Purisa', 25), text = self.music_name)
+        self.cv.create_text(242 + len(self.music_name)*2, title_y, font = ('Purisa', 25), text = self.music_name)
         self.root.mainloop()

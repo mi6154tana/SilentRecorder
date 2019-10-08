@@ -103,7 +103,7 @@ class CreatePage:
 
         if self.p_name == "PLAY_RECORDING":
             print("Play_recoding")
-            DS("君が代",self.cv,self.p_frame,"PLAY_RECORDING")
+            draw_s = DS(self.selected_fname,self.cv,self.p_frame,"PLAY_RECORDING")
             draw_s.dss_main()
             return
             
