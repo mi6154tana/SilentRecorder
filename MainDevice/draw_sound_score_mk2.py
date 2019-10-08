@@ -54,7 +54,7 @@ class DrawScore:
         #記録をとる準備
         self.write_rec = o_re()
 
-        #おそらくrsは記録再生時には必要ない
+        #お手本を読む
         l_music_data = rs.read_score(self.music_name, self.mode_name)
         noteLength = l_music_data[0]
         self.radix = l_music_data[1]
@@ -62,6 +62,12 @@ class DrawScore:
         del l_music_data[0:2]
         self.exa_music_datas = l_music_data
         self.exa_counter = 0
+
+        #カタカナデータを読む
+        self._read_scale_kana()
+        self.kana_last_write = 0
+        self.kana_num = 0
+        self.drawing_kana = self.kana_lines[self.kana_num].split(':')
 
         self.seek_limit = noteLength*self.radix*2 #2小説の演奏にかかる時間7
         print('self.seek_limit : ', self.seek_limit)
@@ -109,11 +115,11 @@ class DrawScore:
 
         if interval >= self.seek_limit or self.first_roop:# シークバーが右端に行った 画面の更新
             #print('interval ', interval)
-            #print('self.input_counter : ', self.input_counter)
+            print('self.input_counter : ', self.input_counter)
             if self.end_flag:#終了
                 self.write_rec.write_stop(self.music_name)
                 if self.mode_name == 'JUDGE_PLAY':
-                    self.cv.create_text(242 + len(self.music_name)*2, 185, font = ('Purisa', 25), text = '正確率 : ' + j_s.judgement_score())
+                    self.cv.create_text(242 + len(self.music_name)*2, 205, font = ('Purisa', 25), text = '正確率 : ' + j_s.judgement_score())
                 self.root.quit()
                 return
             self.last_time = now_time
@@ -134,9 +140,18 @@ class DrawScore:
                     self._draw_scale_label(drawing_scale, scale_change_point, x1)
                     self.end_flag = 1
                     break
-
+                
                 if drawing_scale != self.exa_music_datas[self.exa_counter] or i == int(self.num_measure_data)-1:# 次に描画する音階が違うとき
+                    #self._draw_scale_label(drawing_scale, scale_change_point, x1)#カタカナ音階の表示
+                    #scale_change_point = x1
+                    pass
+                
+                #print(self.drawing_kana[1], ' ', self.exa_counter)
+                if int(self.drawing_kana[1]) == self.exa_counter - self.kana_last_write:
                     self._draw_scale_label(drawing_scale, scale_change_point, x1)#カタカナ音階の表示
+                    self.kana_last_write = self.exa_counter
+                    self.kana_num += 1
+                    self.drawing_kana = self.kana_lines[self.kana_num].split(':')
                     scale_change_point = x1
             
             if self.num_measure_data - int(self.num_measure_data) > 0:
@@ -168,6 +183,13 @@ class DrawScore:
             self.last_seek_point = self.seek_point
             self.seek_point = 5 + 500.0*float(interval/self.seek_limit)
             self.root.after(10, self._draw_score_line)
+
+    def _read_scale_kana(self):
+        f = open('./ScaleKana.txt', 'r')
+        self.kana_lines = f.readlines()
+        for i in range(len(self.kana_lines)):
+            self.kana_lines[i] = self.kana_lines[i].strip()
+        
 
     def _reset_scale_labels(self):
         self.labals_update = 1
