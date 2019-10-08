@@ -41,8 +41,3 @@ class OpeRecording:
         with open('config.json', 'r') as f:
             conf_data = json.load(f)
         return conf_data
-
-
-
-
-
