@@ -33,7 +33,7 @@ trans_list = [#行はpagesに格納されているインデックス番号に対
         [0, 3],         #2:楽譜リスト
         [2],            #3:正確性診断
         [0, 8],         #4:演奏記録一覧
-        [8],            #5:演奏記録再生
+        [4],            #5:演奏記録再生
         [0],            #6:設定
         [0],            #7:電源
         [4, 5]          #8:記録を消すか否か
@@ -129,10 +129,13 @@ def change_page(button_in):
             #print(pages[p_position].contents)
 
         else:
-            if p_position == 2 or p_position == 4:
+            if p_position == 2 or p_position == 4 or p_position == 8:
                 if len(pages[p_position].contents) > 0:
                     se_file = pages[p_position].contents[pages[p_position].d_positoin + c_select - 1]#要改良
                     #pages[8].set_file_name(se_file)
+                    if p_position == 8:
+                        se_file = se_file.strip("を再生")
+                        se_file = se_file.strip("を消去")
                     pages[trans_list[p_position][1]].set_file_name(se_file)
                     se_file += '.txt'
                 else:

@@ -11,12 +11,9 @@ def _data_conv(data):
             return i - 1
             
 
-def read_score(music_name, mode_name):
+def read_score(music_name):
     music_data = []
-    if mode_name == 'PLAY_RECORDING':
-        music_path = './Recording/' + music_name
-    else:
-        music_path = './Score/' + music_name
+    music_path = './Score/' + music_name
     f = open(music_path + '.txt','r')
     line = f.readline()
     tmp = line.split()#改行で分割
@@ -81,3 +78,17 @@ def read_score(music_name, mode_name):
     #del sound_comp
 
     return music_data
+
+def read_recording(music_name):
+    recording_data = []
+    music_path = './Recording/' + music_name
+    f = open(music_path + '.txt', 'r')
+    recording_lines = f.readlines()
+    head_datas = recording_lines[0].strip().split()
+    print('head_datas', head_datas)
+    recording_data.append(60/float(head_datas[0]))
+    recording_data.append(int(head_datas[2]))
+    for i in range(1, len(recording_lines)):
+        recording_data.append(recording_lines[i].strip())
+
+    return recording_data
