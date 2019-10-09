@@ -105,16 +105,20 @@ class DrawScore:
         now_time = time.time()
         interval = now_time - self.last_time
 
-        if self.mode_name == 'JUDGE_PLAY' and self.first_roop != 1:# 入力を受け付ける
+        if self.first_roop != 1:# 入力を受け付ける
             if (now_time-self.start_time) - self.input_counter*0.05 >= 0.05:# 0.05秒おきに入力を受け付ける
                 self.rcv_data_s.clear()
-                #rcv_data = self.udp_data.rcv_input()# 受信 PaspberryPiでの動作確認 and 演奏デバイスと通信時
-                rcv_data = self.d_input.rcv_input()# PCでの動作確認
+                if self.mode_name == 'JUDGE_PLAY':
+                    #rcv_data = self.udp_data.rcv_input()# 受信 PaspberryPiでの動作確認 and 演奏デバイスと通信時
+                    rcv_data = self.d_input.rcv_input()# PCでの動作確認
+                else:
+                    rcv_data = self.exa_music_datas[self.input_counter]# exaを入力とする
                 self.rcv_data_s = rcv_data.split(':')
                 self.last_input_time = time.time()
                 self.input_counter += 1
                 # 記録を残す
-                self.write_rec.write_recording(self.rcv_data_s[0], self.rcv_data_s[1])
+                if self.mode_name == 'JUDGE_PLAY':
+                    self.write_rec.write_recording(self.rcv_data_s[0], self.rcv_data_s[1])
 
         if interval >= self.seek_limit or self.first_roop:# シークバーが右端に行った 画面の更新
             #print('interval ', interval)
@@ -176,6 +180,12 @@ class DrawScore:
         #シーク線
         self.cv.delete('seek_line')
         self.cv.create_polygon(self.seek_point-2, 50, self.seek_point+2, 50, self.seek_point + 2, 140, self.seek_point -2, 140, fill = "red", tag = 'seek_line')
+
+        #音を出す
+        if self.mode_name == 'JUDGE_PLAY':
+            self.sound.sr_play(self.rcv_data_s[1], self.rcv_data_s[0])
+        else:
+            self.sound.sr_play(self.rcv_data_s[1], self.rcv_data_s[0])
 
         #再起ループ
         if self.first_roop:# 第一回目のループは5秒後
