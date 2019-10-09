@@ -23,6 +23,7 @@ class UdpCom:
     def zero_start(self, mode):
         #mode == 0 shutdown
         #mode == 1 play_start
+        #mode == 2 change UnderSunMode  and play_start
         mode_s = struct.pack('>i', mode)
         self.sock_send.sendto(mode_s, (self.HOST, self.SEND_PORT))
 
