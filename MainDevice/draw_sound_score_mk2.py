@@ -245,7 +245,7 @@ class DrawScore:
             self.write_rec.open_file()
             self.write_rec.write_head_data(str(self.bpm), '4', str(self.radix))
 
-            '''#PaspberryPiでの動作確認
+            '''#演奏デバイスに送信指示 PaspberryPiでの動作確認
             pd_mode_text = self.__get_record_flag()
             if pd_mode_text['Mode'] == 'B':
                 self.udp_data.zero_start(2)
