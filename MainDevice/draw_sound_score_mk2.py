@@ -235,11 +235,23 @@ class DrawScore:
                 return i
         return -1
 
+    def __get_record_flag(self):
+        with open('config.json', 'r') as f:
+            conf_data = json.load(f)
+        return conf_data
+
     def dss_main(self):
         if self.mode_name == 'JUDGE_PLAY':
             self.write_rec.open_file()
             self.write_rec.write_head_data(str(self.bpm), '4', str(self.radix))
 
+            '''#演奏デバイスに送信指示 PaspberryPiでの動作確認
+            pd_mode_text = self.__get_record_flag()
+            if pd_mode_text['Mode'] == 'B':
+                self.udp_data.zero_start(2)
+            else:
+                self.udp_data.zero_start(1)
+            '''
         self._draw_base_line()# 五線譜を描画
         self._draw_score_line()
         if self.mode_name == 'JUDGE_PLAY':

@@ -13,6 +13,7 @@ import codecs
 class CreatePage:
 
     def __init__(self, root, name, p_num):
+        self.draw_mag = 1.0 #フルスクリーン時、表示するディスプレイに合わせるため
         self.p_frame = tk.Frame(root)
         self.p_name = name
         self.contents = []
@@ -28,7 +29,6 @@ class CreatePage:
         self._create_cons(root, p_num)
         #self.p_frame.pack()
         self.p_frame.grid(row=0, column=0, sticky="nsew")
-    
 
     def _create_cons(self, root, p_num):
         name_label_font  = ("Helevetice", 14)
@@ -46,7 +46,7 @@ class CreatePage:
         for i in range(len(self.contents)):
             if i > 4:
                 break #仮
-            self.cv.create_polygon(50,45+i*50, 462,45+i*50, 462,85+i*50, 50,85+i*50, fill = 'blue', tag = 'cons')
+            self.cv.create_polygon(50 *self.draw_mag,45+i*50*self.draw_mag, 462*self.draw_mag,45+i*50*self.draw_mag, 462*self.draw_mag,85+i*50*self.draw_mag, 50*self.draw_mag,85+i*50*self.draw_mag, fill = '#8A2BE2', tag = 'cons')
 
     def _get_list_cons(self, p_num):
         if p_num == 0:
@@ -117,7 +117,7 @@ class CreatePage:
             if i > len(self.contents)-1:
                 break
             #listbox.insert(tk.END,self.contents[i])#tk.Label(self.p_frame, text = self.contents[i], foreground = 'white', background = 'blue',font = ("",20,"bold")))
-            self.cons_labels.append(tk.Label(self.p_frame, text = self.contents[i], foreground = 'white', background = 'blue',font = ("",20,"bold")))
+            self.cons_labels.append(tk.Label(self.p_frame, text = self.contents[i], foreground = 'white', background = '#8A2BE2',font = ("",15,"bold")))
             self.cons_labels[counter].place(x = 50, y = 47 + counter*50)
             counter += 1
         
@@ -135,10 +135,10 @@ class CreatePage:
     def draw_select(self, c_num):
         c_num -= 1 #都合
         self.cv.delete('select')
-        self.cv.create_polygon(45,40+c_num*50, 50,40+c_num*50, 50,90+c_num*50, 45,90+c_num*50, fill = 'red',tag = 'select')
-        self.cv.create_polygon(462,40+c_num*50, 467,40+c_num*50, 467,90+c_num*50, 462,90+c_num*50, fill = 'red',tag = 'select')
-        self.cv.create_polygon(50,40+c_num*50, 467,40+c_num*50, 467,45+c_num*50, 50,45+c_num*50, fill = 'red',tag = 'select')
-        self.cv.create_polygon(50,85+c_num*50, 467,85+c_num*50, 467,90+c_num*50, 50,90+c_num*50, fill = 'red',tag = 'select')
+        self.cv.create_polygon(45*self.draw_mag, 40+c_num*50*self.draw_mag, 50*self.draw_mag,40+c_num*50*self.draw_mag,  50*self.draw_mag,90+c_num*50*self.draw_mag,  45*self.draw_mag,90+c_num*50*self.draw_mag, fill = 'red',tag = 'select')
+        self.cv.create_polygon(462*self.draw_mag,40+c_num*50*self.draw_mag, 467*self.draw_mag,40+c_num*50*self.draw_mag, 467*self.draw_mag,90+c_num*50*self.draw_mag, 462*self.draw_mag,90+c_num*50*self.draw_mag, fill = 'red',tag = 'select')
+        self.cv.create_polygon(50*self.draw_mag, 40+c_num*50*self.draw_mag, 467*self.draw_mag,40+c_num*50*self.draw_mag, 467*self.draw_mag,45+c_num*50*self.draw_mag, 50*self.draw_mag,45+c_num*50*self.draw_mag, fill = 'red',tag = 'select')
+        self.cv.create_polygon(50*self.draw_mag, 85+c_num*50*self.draw_mag, 467*self.draw_mag,85+c_num*50*self.draw_mag, 467*self.draw_mag,90+c_num*50*self.draw_mag, 50*self.draw_mag,90+c_num*50*self.draw_mag, fill = 'red',tag = 'select')
     
     def raise_page(self):
         self.d_positoin = 0   

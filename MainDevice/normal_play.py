@@ -204,7 +204,13 @@ class NormalPlay:
 
     def npmain(self):
         # self.thread_wi.start()
-        # self.udp_data.zero_start(1)#演奏デバイスに送信指示
+        '''#演奏デバイスに送信指示 PaspberryPiでの動作確認
+        pd_mode_text = self.__get_record_flag()
+        if pd_mode_text['Mode'] == 'B':
+            self.udp_data.zero_start(2)
+        else:
+            self.udp_data.zero_start(1)
+        '''
         self.__draw_recorder()
         self.root.mainloop()
         print('end')
