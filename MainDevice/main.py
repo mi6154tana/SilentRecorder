@@ -4,7 +4,7 @@
 import tkinter as tk
 import time
 from PIL import Image, ImageTk
-#from gpio_in import GpioIn as gi
+#from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 from create_page import CreatePage as cp
 from ope_recording import OpeRecording as o_re
 import page_func as pf
@@ -95,7 +95,8 @@ def change_page(button_in):
 
         elif p_position == 6:
             #設定ファイル書き換え
-            with open("./config.json","r") as config_file:
+            nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
+            with open(nowDirectoryPath + "config.json","r") as config_file:
                 json_obj = json.load(config_file,object_pairs_hook=OrderedDict)
 
             if c_select == 1:
@@ -123,7 +124,7 @@ def change_page(button_in):
                 print(json_obj["Volume"])
                 #print(select_volumes[int(json_obj["Volume"])])
 
-            with codecs.open("./config.json","w","utf-8") as writing_config_file:
+            with codecs.open(nowDirectoryPath + "config.json","w","utf-8") as writing_config_file:
                 json.dump(json_obj,writing_config_file,ensure_ascii=False)
 
             #contents更新
@@ -172,8 +173,7 @@ def change_page(button_in):
 def main():
     global root, pages, button
 
-    #gpio_init()
-    #button = gi()
+    #button = gi() #RaspberryPiでの動作確認
     
     root = tk.Tk()
 

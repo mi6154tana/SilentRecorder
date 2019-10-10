@@ -7,10 +7,12 @@ import pygame
 import time
 import sys
 import json
+import os
 
 class BackMetro:
 
     def __init__(self,root,bpm):
+        nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
         pygame.mixer.quit()
         pygame.mixer.pre_init(44100,-16,1,512)
         pygame.mixer.init()
@@ -19,8 +21,8 @@ class BackMetro:
         self.root = root
         #self.sound_metro = None
         #self.sound_metro_2 = None
-        self.metro_fname = './SoundDatas/metro_1.wav'
-        #self.metro_fname_2 = './SoundDatas/metro_2.wav'
+        self.metro_fname = nowDirectoryPath + 'SoundDatas/metro_1.wav'
+        #self.metro_fname_2 = nowDirectoryPath + 'SoundDatas/metro_2.wav'
 
         self.sound_metro = pygame.mixer.Sound(self.metro_fname)
         #self.sound_metro_2 = pygame.mixer.Sound(self.metro_fname_1)
@@ -29,7 +31,8 @@ class BackMetro:
         self.volume_lv = 1
 
     def __get_volume_lv(self):
-        with open('config.json', 'r') as f:
+        nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
+        with open(nowDirectoryPath + 'config.json', 'r') as f:
             conf_data = json.load(f)
         return conf_data
     
