@@ -12,6 +12,7 @@ import judgement_score as j_s
 from ope_recording import OpeRecording as o_re
 from back_metro import BackMetro as bm
 import json
+import os
 
 from send_damy_input import DamyInput as di #PCでの動作確認
 
@@ -201,7 +202,8 @@ class DrawScore:
             self.root.after(10, self._draw_score_line)
 
     def _read_scale_kana(self):
-        f = open('./ScaleKana.txt', 'r')
+        nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
+        f = open(nowDirectoryPath + 'ScaleKana.txt', 'r')
         self.kana_lines = f.readlines()
         for i in range(len(self.kana_lines)):
             self.kana_lines[i] = self.kana_lines[i].strip()
@@ -237,7 +239,8 @@ class DrawScore:
         return -1
 
     def __get_pd_mode_flag(self):
-        with open('config.json', 'r') as f:
+        nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
+        with open(nowDirectoryPath + 'config.json', 'r') as f:
             conf_data = json.load(f)
         return conf_data
 

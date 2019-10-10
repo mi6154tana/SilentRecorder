@@ -1,7 +1,9 @@
+import os
 class DamyInput:
     def __init__(self):
         self.counter = 0
-        f = open('./damy_input.txt','r')
+        nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
+        f = open(nowDirectoryPath + 'damy_input.txt','r')
         self.damy_line = []
         for i in f:
             self.damy_line.append(str(i).split())

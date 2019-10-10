@@ -9,6 +9,7 @@ from normal_play import NormalPlay
 from draw_sound_score_mk2 import DrawScore as DS
 import json
 import codecs
+import os
 
 class CreatePage:
 
@@ -49,15 +50,16 @@ class CreatePage:
             self.cv.create_polygon(50 *self.draw_mag,45+i*50*self.draw_mag, 462*self.draw_mag,45+i*50*self.draw_mag, 462*self.draw_mag,85+i*50*self.draw_mag, 50*self.draw_mag,85+i*50*self.draw_mag, fill = '#8A2BE2', tag = 'cons')
 
     def _get_list_cons(self, p_num):
+        nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
         if p_num == 0:
             return ['通常演奏', '正確性診断', '記録', '設定', '終了']
         elif p_num == 1:
             return []
         elif p_num == 2 or p_num == 4:
             if p_num == 2:
-                path = './Score'
+                path = nowDirectoryPath + 'Score'
             else:
-                path = './Recording'
+                path = nowDirectoryPath + 'Recording'
             files = os.listdir(path)
             files_file = [f for f  in files if os.path.isfile(os.path.join(path, f))]
             if len(files_file) == 0:
@@ -68,7 +70,7 @@ class CreatePage:
             view_text = []
             select_volumes = ["小","中","大"]
             config_text_list = ["メトロノーム:","正確性診断の記録:","演奏デバイスの調整:","音量:"]
-            with codecs.open("./config.json","r") as config_file:
+            with codecs.open(nowDirectoryPath + "config.json","r") as config_file:
                 config_obj = json.load(config_file)
             for config_value,config_text in zip(config_obj.values(),config_text_list):
                 #音量用の処理

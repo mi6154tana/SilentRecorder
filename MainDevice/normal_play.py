@@ -3,6 +3,7 @@ import time
 import json
 import sys
 import threading
+import os
 # from udp_com import UdpCom as uc
 from play_sound import PlaySound as ps
 from ope_recording import OpeRecording as o_re
@@ -34,7 +35,8 @@ class NormalPlay:
         # self.thread_wi = threading.Thread(target=self.__wait_input)#並行処理で入力を待つ
 
     def __read_file(self):
-        with open('Recorder.txt', 'r') as f:
+        nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
+        with open(nowDirectoryPath + 'Recorder.txt', 'r') as f:
             read_text = f.read()
         sound_data = []
         for i in read_text.split('\n'):
@@ -49,7 +51,7 @@ class NormalPlay:
         return sound_data
 
     def __draw_recorder(self, sdi=0):
-        
+        nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
         if self.button.gpio_input() == 0:#PaspberryPiでの動作確認
             #udp_data.play_stop()
             if self.write_rec_flag == 1:
@@ -61,14 +63,14 @@ class NormalPlay:
 
         
         if self.button.gpio_input() == 3:#PaspberryPiでの動作確認
-            with open("config.json","r") as json_file:
+            with open(nowDirectoryPath + "config.json","r") as json_file:
                 config_dict = json.load(json_file)
             if config_dict["record_flag"] == "ON":
                 config_dict["record_flag"] = "OFF"
             else:
                 config_dict["record_flag"] = "ON"
 
-            with open("config.json","w") as json_file:
+            with open(nowDirectoryPath + "config.json","w") as json_file:
                 json.dump(config_dict,json_file)
         
 
@@ -131,11 +133,12 @@ class NormalPlay:
             return
         
     def __write_record_flag(self, json_obj):
-        with open('config.json', 'w') as f:
+        with open(nowDirectoryPath + 'config.json', 'w') as f:
             json.dump(json_obj,f,ensure_ascii=False)
 
     def __get_record_flag(self):
-        with open('config.json', 'r') as f:
+        nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
+        with open(nowDirectoryPath + 'config.json', 'r') as f:
             conf_data = json.load(f)
         return conf_data
 

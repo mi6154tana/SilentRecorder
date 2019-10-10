@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #This is Prototype Silent Recorder's code.
 import numpy as np
+import os
 #from play_sound import PlaySound as ps
 
 def _data_conv(data):
@@ -12,8 +13,9 @@ def _data_conv(data):
             
 
 def read_score(music_name):
+    nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
     music_data = []
-    music_path = './Score/' + music_name
+    music_path = nowDirectoryPath + 'Score/' + music_name
     f = open(music_path + '.txt','r')
     line = f.readline()
     tmp = line.split()#改行で分割
@@ -24,9 +26,9 @@ def read_score(music_name):
     hScore = NoteLength*int(tmp[2])/0.05 #お手本楽譜の一小節のデータ数？？
     print('hScore : ', hScore)
     line = f.readline()
-    fRecorder = open('Recorder.txt','w')#リコーダーから送られてくるデータとみなす、後々正確性診断に使う
-    fScore = open('Score.txt','w')#楽譜データから音階データのみを記録
-    fScale_kana = open('ScaleKana.txt', 'w')#カタカナ描画用
+    fRecorder = open(nowDirectoryPath + 'Recorder.txt','w')#リコーダーから送られてくるデータとみなす、後々正確性診断に使う
+    fScore = open(nowDirectoryPath + 'Score.txt','w')#楽譜データから音階データのみを記録
+    fScale_kana = open(nowDirectoryPath + 'ScaleKana.txt', 'w')#カタカナ描画用
     t = 0
 
     music_data.append(NoteLength)
@@ -80,8 +82,9 @@ def read_score(music_name):
     return music_data
 
 def read_recording(music_name):
+    nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
     recording_data = []
-    music_path = './Recording/' + music_name
+    music_path = nowDirectoryPath + 'Recording/' + music_name
     f = open(music_path + '.txt', 'r')
     recording_lines = f.readlines()
     head_datas = recording_lines[0].strip().split()
