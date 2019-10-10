@@ -144,7 +144,7 @@ class NormalPlay:
         # 枠表示
         self.cv.create_rectangle(220, 40, 300, 120)
         # on,offの表示
-        self.cv.create_text(260, 80, font=("Purisa", 36), text='記録\n'+rf_text['record_flag'], tag='rf_text')
+        self.cv.create_text(260, 80, font=("Purisa", 20), text='記録\n'+rf_text['record_flag'], tag='rf_text')
         #記録のオンオフ
         if self.write_rec_flag == 0 and rf_text['record_flag'] == 'ON':
             self.write_rec_flag = 1
@@ -179,7 +179,7 @@ class NormalPlay:
             # 枠の表示
             self.cv.create_rectangle(230, 130, 290, 170)
             # 音階の表示
-            self.cv.create_text(260, 150, font=("Purisa", 36), text=fingering_models[hole_data], tag='recorder')
+            self.cv.create_text(260, 150, font=("Purisa", 20), text=fingering_models[hole_data], tag='recorder')
         except:
             pass
 

@@ -98,13 +98,15 @@ class DrawScore:
         '''#PaspberryPiでの動作確認
         #中断して戻る
         if self.button.gpio_input() == 0:
-            self.write_rec.write_stop(self.music_name)
+            if self.mode_name == 'JUDGE_PLAY':
+                self.write_rec.write_stop(self.music_name)
+                self.b_metro.metro_start()
             self.root.quit()
             return
         '''
         now_time = time.time()
         interval = now_time - self.last_time
-
+        rcv_data = '0:00000000'
         if self.first_roop != 1:# 入力を受け付ける
             if (now_time-self.start_time) - self.input_counter*0.05 >= 0.05:# 0.05秒おきに入力を受け付ける
                 self.rcv_data_s.clear()
@@ -112,7 +114,8 @@ class DrawScore:
                     #rcv_data = self.udp_data.rcv_input()# 受信 PaspberryPiでの動作確認 and 演奏デバイスと通信時
                     rcv_data = self.d_input.rcv_input()# PCでの動作確認
                 else:
-                    rcv_data = self.exa_music_datas[self.input_counter]# exaを入力とする
+                    if self.input_counter < len(self.exa_music_datas)-1:
+                        rcv_data = self.exa_music_datas[self.input_counter]# exaを入力とする
                 self.rcv_data_s = rcv_data.split(':')
                 self.last_input_time = time.time()
                 self.input_counter += 1
@@ -150,22 +153,35 @@ class DrawScore:
                 self.exa_counter += 1
 
                 if self.exa_counter > len(self.exa_music_datas)-1:#お手本楽譜の最後まで来たら
-                    self._draw_scale_label(drawing_scale, scale_change_point, x1)
+                    if self.mode_name == 'JUDGE_PLAY':
+                        self._draw_scale_label(drawing_scale, scale_change_point, x1)
                     self.end_flag = 1
                     break
                 
                 #print(self.drawing_kana[1], ' ', self.exa_counter)
-                if int(self.drawing_kana) == self.exa_counter - self.kana_last_write:
+                if self.mode_name == 'JUDGE_PLAY' and int(self.drawing_kana) == self.exa_counter - self.kana_last_write:
                     self._draw_scale_label(drawing_scale, scale_change_point, x1)#カタカナ音階の表示
                     self.kana_last_write = self.exa_counter
                     self.kana_num += 1
                     if self.kana_num < len(self.kana_lines):
                         self.drawing_kana = self.kana_lines[self.kana_num]#.split(':')
                     scale_change_point = x1
-            
+                
+                '''
+                elif self.mode_name == 'PLAY_RECORDING':
+                    next_rec_tmp_s = self.exa_music_datas[self.exa_counter].split(':')
+                    if drawing_scale != self._data_conv(next_rec_tmp_s[1]):
+                        self._draw_scale_label(drawing_scale, scale_change_point, x1)#カタカナ音階の表示
+                        self.kana_last_write = self.exa_counter
+                        self.kana_num += 1
+                        if self.kana_num < len(self.kana_lines):
+                            self.drawing_kana = self.kana_lines[self.kana_num]#.split(':')
+                        scale_change_point = x1
+                '''
+
             if self.num_measure_data - int(self.num_measure_data) > 0:
                 self.exa_counter += 1
-
+        
         elif self.mode_name == 'JUDGE_PLAY':# 入力描画
             if self.last_seek_point > self.seek_point:
                 self.cv.delete('in_score_line')
@@ -235,7 +251,7 @@ class DrawScore:
                 return i
         return -1
 
-    def __get_pd_mode_flag(self):
+    def __get_mode_flag(self):
         with open('config.json', 'r') as f:
             conf_data = json.load(f)
         return conf_data
@@ -245,9 +261,9 @@ class DrawScore:
             self.write_rec.open_file()
             self.write_rec.write_head_data(str(self.bpm), '4', str(self.radix))
 
+            mode_text = self.__get_mode_flag()
             '''#演奏デバイスに送信指示 PaspberryPiでの動作確認
-            pd_mode_text = self.__get_pd_mode_flag()
-            if pd_mode_text['Mode'] == 'B':
+            if mode_text['Mode'] == 'B':
                 self.udp_data.zero_start(2)
             else:
                 self.udp_data.zero_start(1)
@@ -255,7 +271,8 @@ class DrawScore:
         self._draw_base_line()# 五線譜を描画
         self._draw_score_line()
         if self.mode_name == 'JUDGE_PLAY':
-            self.b_metro.metro_start()
+            if mode_text['metronom'] == 'ON':
+                self.b_metro.metro_start()
             title_y = 20
         else:
             title_y = 225
