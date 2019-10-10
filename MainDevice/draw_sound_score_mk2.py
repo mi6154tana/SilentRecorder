@@ -98,7 +98,9 @@ class DrawScore:
         '''#PaspberryPiでの動作確認
         #中断して戻る
         if self.button.gpio_input() == 0:
-            self.write_rec.write_stop(self.music_name)
+            if self.mode_name == 'JUDGE_PLAY':
+                self.write_rec.write_stop(self.music_name)
+                self.b_metro.metro_start()
             self.root.quit()
             return
         '''
