@@ -5,6 +5,7 @@ import pygame
 import time
 import sys
 import json
+import os
 
 class PlaySound:
 
@@ -14,19 +15,20 @@ class PlaySound:
         pygame.mixer.pre_init(44100,-16,1,512)
         pygame.mixer.init()
 
+        nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
 
         self.sound_list = []
         self.sound_fname = [#サンプリング音源のファイル名
-            './SoundDatas/do.wav',
-            './SoundDatas/re.wav',
-            './SoundDatas/mi.wav',
-            './SoundDatas/fa.wav',
-            './SoundDatas/sol.wav',
-            './SoundDatas/la.wav',
-            './SoundDatas/si.wav',
-            './SoundDatas/do8va.wav',
-            './SoundDatas/re8va.wav',
-            './SoundDatas/mi8va.wav'
+            nowDirectoryPath + 'SoundDatas/do.wav',
+            nowDirectoryPath + 'SoundDatas/re.wav',
+            nowDirectoryPath + 'SoundDatas/mi.wav',
+            nowDirectoryPath + 'SoundDatas/fa.wav',
+            nowDirectoryPath + 'SoundDatas/sol.wav',
+            nowDirectoryPath + 'SoundDatas/la.wav',
+            nowDirectoryPath + 'SoundDatas/si.wav',
+            nowDirectoryPath + 'SoundDatas/do8va.wav',
+            nowDirectoryPath + 'SoundDatas/re8va.wav',
+            nowDirectoryPath + 'SoundDatas/mi8va.wav'
         ]
         self.fingering_models = [
             '11111111',#do
@@ -53,7 +55,8 @@ class PlaySound:
             self.sound_list[i] = pygame.mixer.Sound(self.sound_fname[i])
 
     def __get_volume_lv(self):
-        with open('config.json', 'r') as f:
+        nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
+        with open(nowDirectoryPath + 'config.json', 'r') as f:
             conf_data = json.load(f)
         return conf_data
     
@@ -92,7 +95,7 @@ class PlaySound:
             #self.sound_list[now_fin].set_volume(float(1/self.volume_max * volume)/3 * self.volume_lv)
             #self.sound_list[now_fin].set_volume(float(1/3) * self.volume_lv)
             p_volume = self.sound_list[now_fin].get_volume() # 音量取得
-            print(p_volume)
+            #print(p_volume)
 
     def sr_play(self, i_fin, volume):#呼び出されたとき
         #data = rcv_data.split(':')
