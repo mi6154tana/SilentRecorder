@@ -235,7 +235,7 @@ class DrawScore:
                 return i
         return -1
 
-    def __get_record_flag(self):
+    def __get_pd_mode_flag(self):
         with open('config.json', 'r') as f:
             conf_data = json.load(f)
         return conf_data
@@ -246,7 +246,7 @@ class DrawScore:
             self.write_rec.write_head_data(str(self.bpm), '4', str(self.radix))
 
             '''#演奏デバイスに送信指示 PaspberryPiでの動作確認
-            pd_mode_text = self.__get_record_flag()
+            pd_mode_text = self.__get_pd_mode_flag()
             if pd_mode_text['Mode'] == 'B':
                 self.udp_data.zero_start(2)
             else:
