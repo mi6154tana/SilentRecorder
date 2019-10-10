@@ -114,7 +114,8 @@ class DrawScore:
                     #rcv_data = self.udp_data.rcv_input()# 受信 PaspberryPiでの動作確認 and 演奏デバイスと通信時
                     rcv_data = self.d_input.rcv_input()# PCでの動作確認
                 else:
-                    rcv_data = self.exa_music_datas[self.input_counter]# exaを入力とする
+                    if self.input_counter < len(self.exa_music_datas)-1:
+                        rcv_data = self.exa_music_datas[self.input_counter]# exaを入力とする
                 self.rcv_data_s = rcv_data.split(':')
                 self.last_input_time = time.time()
                 self.input_counter += 1
