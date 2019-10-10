@@ -12,6 +12,7 @@ import json
 import os
 from collections import OrderedDict
 import codecs
+#from udp_com import UdpCom as uc #RaspberryPiでの動作確認 and 演奏デバイスと通信時
 
 root = None
 pages = []
@@ -43,6 +44,7 @@ button = None
 p_position = 0#現在のページ
 c_select = 1
 se_file = ''
+#udp_data = uc()#RaspberryPiでの動作確認 and 演奏デバイスと通信時
 
 def change_page(button_in):
     global p_position, c_select, se_file
@@ -85,6 +87,7 @@ def change_page(button_in):
             c_select = 1
 
         elif p_position == 7:#仮の終了
+            #udp_data.zero_start(0)#RaspberryPiでの動作確認 and 演奏デバイスと通信時
             root.destroy()
             if c_select == 1:
                 os.system('sudo shutdown -h now')
