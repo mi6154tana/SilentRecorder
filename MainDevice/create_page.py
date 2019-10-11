@@ -47,7 +47,7 @@ class CreatePage:
         for i in range(len(self.contents)):
             if i > 4:
                 break #仮
-            self.cv.create_polygon(50 *self.draw_mag,(45+i*50)*self.draw_mag, 462*self.draw_mag,(45+i*50)*self.draw_mag, 462*self.draw_mag,(85+i*50)*self.draw_mag, 50*self.draw_mag,(85+i*50)*self.draw_mag, fill = '#82b8ff', tag = 'cons')
+            self.cv.create_polygon(50 *self.draw_mag,(45+i*50)*self.draw_mag, 462*self.draw_mag,(45+i*50)*self.draw_mag, 462*self.draw_mag,(85+i*50)*self.draw_mag, 50*self.draw_mag,(85+i*50)*self.draw_mag, fill = '#437ecc', tag = 'cons')
 
     def _get_list_cons(self, p_num):
         nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
@@ -119,8 +119,8 @@ class CreatePage:
             if i > len(self.contents)-1:
                 break
             #listbox.insert(tk.END,self.contents[i])#tk.Label(self.p_frame, text = self.contents[i], foreground = 'white', background = 'blue',font = ("",20,"bold")))
-            self.cons_labels.append(tk.Label(self.p_frame, text = self.contents[i], foreground = 'white', background = '#8A2BE2',font = ("",int(15*self.draw_mag),"bold")))
-            self.cons_labels[counter].place(x = 50*self.draw_mag, y = (47 + counter*50)*self.draw_mag)
+            self.cons_labels.append(tk.Label(self.p_frame, text = self.contents[i], foreground = 'white', background = '#437ecc',font = ("",int(15*self.draw_mag),"bold")))
+            self.cons_labels[counter].place(x = 60*self.draw_mag, y = (47 + counter*50)*self.draw_mag)
             counter += 1
         
         #scrollbarの処理
