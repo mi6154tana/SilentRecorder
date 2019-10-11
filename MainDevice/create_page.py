@@ -47,7 +47,7 @@ class CreatePage:
         for i in range(len(self.contents)):
             if i > 4:
                 break #仮
-            self.cv.create_polygon(50 *self.draw_mag,(45+i*50)*self.draw_mag, 462*self.draw_mag,(45+i*50)*self.draw_mag, 462*self.draw_mag,(85+i*50)*self.draw_mag, 50*self.draw_mag,(85+i*50)*self.draw_mag, fill = '#8A2BE2', tag = 'cons')
+            self.cv.create_polygon(50 *self.draw_mag,(45+i*50)*self.draw_mag, 462*self.draw_mag,(45+i*50)*self.draw_mag, 462*self.draw_mag,(85+i*50)*self.draw_mag, 50*self.draw_mag,(85+i*50)*self.draw_mag, fill = '#82b8ff', tag = 'cons')
 
     def _get_list_cons(self, p_num):
         nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
