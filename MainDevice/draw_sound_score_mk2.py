@@ -6,7 +6,7 @@ import time
 import numpy as np
 import read_score as rs
 #from udp_com import UdpCom as uc #RaspberryPiでの動作確認 and 演奏デバイスと通信時
-from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
+#from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 from play_sound import PlaySound as ps
 import judgement_score as j_s
 from ope_recording import OpeRecording as o_re
@@ -18,12 +18,13 @@ from send_damy_input import DamyInput as di #PCでの動作確認
 
 class DrawScore:
     def __init__(self, music_name, cv, p_frame, mode_name):
+        self.center_adj = 100 #中央寄せ調整用
         self.draw_mag = 2.0 #フルスクリーン時、表示するディスプレイに合わせるため
         self.cv = cv
         self.root = p_frame
         self.music_name = music_name
         self.mode_name = mode_name
-        self.button = gi() #RaspberryPiでの動作確認
+        #self.button = gi() #RaspberryPiでの動作確認
 
         self.music_deta = []
         self.last_time = time.time()
@@ -86,18 +87,18 @@ class DrawScore:
         self.b_metro = bm(self.root,self.bpm)
     
     def _draw_base_line(self):# 五線譜の描画
-        self.cv.create_polygon(0, 0, 512*self.draw_mag, 0, 512*self.draw_mag, 300*self.draw_mag, 0, 300*self.draw_mag, fill = "white", tag = 'back_ground')
+        self.cv.create_polygon(self.center_adj + 0,0, self.center_adj + 512*self.draw_mag,0, self.center_adj + 512*self.draw_mag,300*self.draw_mag, self.center_adj + 0,300*self.draw_mag, fill = "white", tag = 'back_ground')
         #五本線
         for i in range(0,5):
             i = i * 10
-            self.cv.create_line(5*self.draw_mag,(80+i)*self.draw_mag,505*self.draw_mag,(80+i)*self.draw_mag, tag = 'base_line')
+            self.cv.create_line(self.center_adj + 5*self.draw_mag,(80+i)*self.draw_mag, self.center_adj + 505*self.draw_mag,(80+i)*self.draw_mag, tag = 'base_line')
         #小節毎の区切りの線
-        self.cv.create_line(5*self.draw_mag,80*self.draw_mag,5*self.draw_mag,120*self.draw_mag, tag = 'base_line')
-        self.cv.create_line(255*self.draw_mag,80*self.draw_mag,255*self.draw_mag,120*self.draw_mag, tag = 'base_line')
-        self.cv.create_line(505*self.draw_mag,80*self.draw_mag,505*self.draw_mag,120*self.draw_mag, tag = 'base_line')
+        self.cv.create_line(self.center_adj + 5*self.draw_mag,80*self.draw_mag,  self.center_adj + 5*self.draw_mag,120*self.draw_mag, tag = 'base_line')
+        self.cv.create_line(self.center_adj + 255*self.draw_mag,80*self.draw_mag,self.center_adj + 255*self.draw_mag,120*self.draw_mag, tag = 'base_line')
+        self.cv.create_line(self.center_adj + 505*self.draw_mag,80*self.draw_mag,self.center_adj + 505*self.draw_mag,120*self.draw_mag, tag = 'base_line')
 
     def _draw_score_line(self):
-        #PaspberryPiでの動作確認
+        '''#PaspberryPiでの動作確認
         #中断して戻る
         if self.button.gpio_input() == 0:
             if self.mode_name == 'JUDGE_PLAY':
@@ -105,7 +106,7 @@ class DrawScore:
                 self.b_metro.metro_stop()
             self.root.quit()
             return
-        
+        '''
         now_time = time.time()
         interval = now_time - self.last_time
         rcv_data = '0:00000000'
@@ -131,7 +132,7 @@ class DrawScore:
             if self.end_flag:#終了
                 if self.mode_name == 'JUDGE_PLAY':
                     self.write_rec.write_stop(self.music_name)
-                    self.cv.create_text((242 + len(self.music_name)*2)*self.draw_mag, 225*self.draw_mag, font = ('Purisa', int(25*self.draw_mag)), text = '正確率 : ' + j_s.judgement_score())
+                    self.cv.create_text(self.center_adj + (242 + len(self.music_name)*2)*self.draw_mag, 225*self.draw_mag, font = ('Purisa', int(25*self.draw_mag)), text = '正確率 : ' + str(round(j_s.judgement_score(), 1)) + '%')
                     self.b_metro.metro_stop()
                 self.root.quit()
                 return
@@ -151,7 +152,7 @@ class DrawScore:
                     rec_tmp_s = self.exa_music_datas[self.exa_counter].split(':')
                     drawing_scale = self._data_conv(rec_tmp_s[1])
                 if drawing_scale != -1:
-                    self.cv.create_polygon(x0,self.m_p[drawing_scale]*self.draw_mag, x1,self.m_p[drawing_scale]*self.draw_mag, x1,(self.m_p[drawing_scale] + 5)*self.draw_mag, x0,(self.m_p[drawing_scale] + 5)*self.draw_mag , tag = 'score_line')
+                    self.cv.create_polygon(self.center_adj + x0,self.m_p[drawing_scale]*self.draw_mag, self.center_adj + x1,self.m_p[drawing_scale]*self.draw_mag, self.center_adj + x1,(self.m_p[drawing_scale] + 5)*self.draw_mag, self.center_adj + x0,(self.m_p[drawing_scale] + 5)*self.draw_mag , tag = 'score_line')
                 self.exa_counter += 1
 
                 if self.exa_counter > len(self.exa_music_datas)-1:#お手本楽譜の最後まで来たら
@@ -190,14 +191,14 @@ class DrawScore:
                 self.last_seek_point = 5*4
             if self._data_conv(self.rcv_data_s[1]) != -1:
                 if self._data_conv(self.rcv_data_s[1]) == self.exa_music_datas[self.input_counter - 1]:
-                    self.cv.create_polygon(self.last_seek_point*self.draw_mag, self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.seek_point*self.draw_mag, self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.seek_point*self.draw_mag, (self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, self.last_seek_point*self.draw_mag, (self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, fill = "blue", tag = "in_score_line")
+                    self.cv.create_polygon(self.center_adj + self.last_seek_point*self.draw_mag,self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,(self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, self.center_adj + self.last_seek_point*self.draw_mag,(self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, fill = "blue", tag = "in_score_line")
                 else:
-                    self.cv.create_polygon(self.last_seek_point*self.draw_mag, self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.seek_point*self.draw_mag, self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.seek_point*self.draw_mag, (self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, self.last_seek_point*self.draw_mag, (self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, fill = "red", tag = "in_score_line")
+                    self.cv.create_polygon(self.center_adj + self.last_seek_point*self.draw_mag,self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,(self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, self.center_adj + self.last_seek_point*self.draw_mag,(self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, fill = "red", tag = "in_score_line")
         
 
         #シーク線
         self.cv.delete('seek_line')
-        self.cv.create_polygon((self.seek_point-2)*self.draw_mag, 50*self.draw_mag, (self.seek_point+2)*self.draw_mag, 50*self.draw_mag, (self.seek_point+2)*self.draw_mag, 140*self.draw_mag, (self.seek_point-2)*self.draw_mag, 140*self.draw_mag, fill = "red", tag = 'seek_line')
+        self.cv.create_polygon(self.center_adj + (self.seek_point-2)*self.draw_mag,50*self.draw_mag, self.center_adj + (self.seek_point+2)*self.draw_mag,50*self.draw_mag, self.center_adj + (self.seek_point+2)*self.draw_mag,140*self.draw_mag, self.center_adj + (self.seek_point-2)*self.draw_mag,140*self.draw_mag, fill = "red", tag = 'seek_line')
 
         #音を出す
         if self.mode_name == 'JUDGE_PLAY':
@@ -234,7 +235,7 @@ class DrawScore:
     def _draw_scale_label(self, scale, x0, x1):
         if scale != -1:
             self.labels.append(tk.Label(text = self.music_sound[scale],background = "white",font = ("",int(10*self.draw_mag),"bold")))
-            self.labels[len(self.labels)-1].place(x = ((x0 + x1 )/2 - 5),y = 150*self.draw_mag)
+            self.labels[len(self.labels)-1].place(x = self.center_adj + ((x0 + x1 )/2 - 5),y = 150*self.draw_mag)
 
     def _data_conv(self, data):
         model = [
@@ -281,5 +282,5 @@ class DrawScore:
         else:
             title_y = 225
         #題名表示
-        self.cv.create_text((242 + len(self.music_name)*2)*self.draw_mag, title_y*self.draw_mag, font = ('Purisa', int(25*self.draw_mag)), text = self.music_name)
+        self.cv.create_text(self.center_adj + (242 + len(self.music_name)*2)*self.draw_mag, title_y*self.draw_mag, font = ('Purisa', int(25*self.draw_mag)), text = self.music_name)
         self.root.mainloop()
