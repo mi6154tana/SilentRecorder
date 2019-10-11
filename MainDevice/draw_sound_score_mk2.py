@@ -131,7 +131,7 @@ class DrawScore:
             if self.end_flag:#終了
                 if self.mode_name == 'JUDGE_PLAY':
                     self.write_rec.write_stop(self.music_name)
-                    self.cv.create_text((242 + len(self.music_name)*2)*self.draw_mag, 225*self.draw_mag, font = ('Purisa', int(25*self.draw_mag)), text = '正確率 : ' + j_s.judgement_score())
+                    self.cv.create_text((242 + len(self.music_name)*2)*self.draw_mag, 225*self.draw_mag, font = ('Purisa', int(25*self.draw_mag)), text = '正確率 : ' + round(j_s.judgement_score(), 3) + '%')
                     self.b_metro.metro_stop()
                 self.root.quit()
                 return

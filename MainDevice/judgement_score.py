@@ -14,4 +14,4 @@ def judgement_score():
         if S_d_line[i] == fin_U_s_d_line[1]:
             cnt += 1
     ans = float(cnt/len(S_d_line)) * 100
-    return str(ans) + '%'
+    return ans
