@@ -4,7 +4,7 @@
 import tkinter as tk
 import time
 from PIL import Image, ImageTk
-#from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
+from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 from create_page import CreatePage as cp
 from ope_recording import OpeRecording as o_re
 import page_func as pf
@@ -49,8 +49,8 @@ se_file = ''
 def change_page(button_in):
     global p_position, c_select, se_file
     
-    button_in = int(input('>>'))#PCでの動作確認
-    #button_in = button.gpio_input()#PaspberryPiでの動作確認
+    #button_in = int(input('>>'))#PCでの動作確認
+    button_in = button.gpio_input()#PaspberryPiでの動作確認
     
     if button_in == 0:#左
         pages[trans_list[p_position][0]].raise_page()
@@ -167,21 +167,21 @@ def change_page(button_in):
     if button_in == 7777:
         root.destroy()
     else:
-        root.after(100, change_page, -1)#PCでの動作確認
-        #root.after(100, change_page, button.gpio_input())#PaspberryPiでの動作確認
+        #root.after(100, change_page, -1)#PCでの動作確認
+        root.after(100, change_page, button.gpio_input())#PaspberryPiでの動作確認
 
 def main():
     global root, pages, button
 
-    #button = gi() #RaspberryPiでの動作確認
+    button = gi() #RaspberryPiでの動作確認
     
     root = tk.Tk()
 
     # ウィンドウタイトルを決定
     root.title("SilentRecorder")
     # ウィンドウの大きさを決定
-    root.geometry("1024x600")#"512x300"
-    #window.attributes("-fullscreen", True)
+    root.geometry("512x300")#"512x300"
+    root.attributes("-fullscreen", True)
 
     # ウィンドウのグリッドを 1x1 にする
     root.grid_rowconfigure(0, weight=1)
