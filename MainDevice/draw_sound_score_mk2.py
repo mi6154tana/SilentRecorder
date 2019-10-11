@@ -6,7 +6,7 @@ import time
 import numpy as np
 import read_score as rs
 #from udp_com import UdpCom as uc #RaspberryPiでの動作確認 and 演奏デバイスと通信時
-from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
+#from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 from play_sound import PlaySound as ps
 import judgement_score as j_s
 from ope_recording import OpeRecording as o_re
@@ -23,7 +23,7 @@ class DrawScore:
         self.root = p_frame
         self.music_name = music_name
         self.mode_name = mode_name
-        self.button = gi() #RaspberryPiでの動作確認
+        #self.button = gi() #RaspberryPiでの動作確認
 
         self.music_deta = []
         self.last_time = time.time()
@@ -97,7 +97,7 @@ class DrawScore:
         self.cv.create_line(505*self.draw_mag,80*self.draw_mag,505*self.draw_mag,120*self.draw_mag, tag = 'base_line')
 
     def _draw_score_line(self):
-        #PaspberryPiでの動作確認
+        '''#PaspberryPiでの動作確認
         #中断して戻る
         if self.button.gpio_input() == 0:
             if self.mode_name == 'JUDGE_PLAY':
@@ -105,7 +105,7 @@ class DrawScore:
                 self.b_metro.metro_stop()
             self.root.quit()
             return
-        
+        '''
         now_time = time.time()
         interval = now_time - self.last_time
         rcv_data = '0:00000000'

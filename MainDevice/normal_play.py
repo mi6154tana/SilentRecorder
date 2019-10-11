@@ -7,7 +7,7 @@ import os
 #from udp_com import UdpCom as uc #RaspberryPiでの動作確認
 from play_sound import PlaySound as ps
 from ope_recording import OpeRecording as o_re
-from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
+#from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 
 class NormalPlay:
     def __init__(self, cv, root):
@@ -15,7 +15,7 @@ class NormalPlay:
         self.cv = cv
         self.root = root
         self.flag = 0
-        self.button = gi()#PaspberryPiでの動作確認
+        #self.button = gi()#PaspberryPiでの動作確認
 
         # 再帰回数の設定
         sys.setrecursionlimit(6000)
@@ -53,14 +53,14 @@ class NormalPlay:
 
     def __draw_recorder(self, sdi=0):
         nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
-        
+        '''
         if self.button.gpio_input() == 0:#PaspberryPiでの動作確認
             #udp_data.play_stop()
             if self.write_rec_flag == 1:
                 self.write_rec.write_stop('user')
             self.root.quit()
             return
-        
+        '''
         
         if self.button.gpio_input() == 3:#PaspberryPiでの動作確認
             with open(nowDirectoryPath + "config.json","r") as json_file:
