@@ -8,7 +8,7 @@ from contextlib import closing
 class UdpCom:
     
     def __init__(self):
-        self.HOST = '192.168.11.10'
+        self.HOST = '169.254.54.42'
         self.SEND_PORT = 60000
         
         self.RCV_IP = ""

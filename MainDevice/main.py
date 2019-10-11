@@ -4,7 +4,7 @@
 import tkinter as tk
 import time
 from PIL import Image, ImageTk
-#from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
+from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 from create_page import CreatePage as cp
 from ope_recording import OpeRecording as o_re
 import page_func as pf
@@ -67,8 +67,8 @@ def chattering_check(button_in):
 def change_page(button_in):
     global p_position, c_select, se_file
     
-    button_in = int(input('>>'))#PCでの動作確認
-    #button_in = button.gpio_input()#PaspberryPiでの動作確認
+    #button_in = int(input('>>'))#PCでの動作確認
+    button_in = button.gpio_input()#PaspberryPiでの動作確認
     
     
     if button_in == 0 and chattering_check(button_in):#左
@@ -193,7 +193,7 @@ def change_page(button_in):
 def main():
     global root, pages, button
 
-    #button = gi() #RaspberryPiでの動作確認
+    button = gi() #RaspberryPiでの動作確認
     
     root = tk.Tk()
 

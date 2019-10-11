@@ -5,8 +5,8 @@ import math
 import time
 import numpy as np
 import read_score as rs
-#from udp_com import UdpCom as uc #RaspberryPiでの動作確認 and 演奏デバイスと通信時
-#from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
+from udp_com import UdpCom as uc #RaspberryPiでの動作確認 and 演奏デバイスと通信時
+from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 from play_sound import PlaySound as ps
 import judgement_score as j_s
 from ope_recording import OpeRecording as o_re
@@ -24,7 +24,7 @@ class DrawScore:
         self.root = p_frame
         self.music_name = music_name
         self.mode_name = mode_name
-        #self.button = gi() #RaspberryPiでの動作確認
+        self.button = gi() #RaspberryPiでの動作確認
 
         self.music_deta = []
         self.last_time = time.time()
@@ -42,7 +42,7 @@ class DrawScore:
         self.m_p = [127.5,122.5,117.5,112.5,107.5,102.5,97.5,92.5,87.5]#音階の描画位置
 
         # 受信の準備 #RaspberryPiでの動作確認 and 演奏デバイスと通信時
-        # self.udp_data = uc()#PaspberryPiでの動作確認
+        self.udp_data = uc()#PaspberryPiでの動作確認
 
         # PCでの動作確認
         self.d_input = di()
@@ -98,7 +98,7 @@ class DrawScore:
         self.cv.create_line(self.center_adj + 505*self.draw_mag,80*self.draw_mag,self.center_adj + 505*self.draw_mag,120*self.draw_mag, tag = 'base_line')
 
     def _draw_score_line(self):
-        '''#PaspberryPiでの動作確認
+        #PaspberryPiでの動作確認
         #中断して戻る
         if self.button.gpio_input() == 0:
             if self.mode_name == 'JUDGE_PLAY':
@@ -106,7 +106,7 @@ class DrawScore:
                 self.b_metro.metro_stop()
             self.root.quit()
             return
-        '''
+        
         now_time = time.time()
         interval = now_time - self.last_time
         rcv_data = '0:00000000'
@@ -114,8 +114,8 @@ class DrawScore:
             if (now_time-self.start_time) - self.input_counter*0.05 >= 0.05:# 0.05秒おきに入力を受け付ける
                 self.rcv_data_s.clear()
                 if self.mode_name == 'JUDGE_PLAY':
-                    #rcv_data = self.udp_data.rcv_input()# 受信 PaspberryPiでの動作確認 and 演奏デバイスと通信時
-                    rcv_data = self.d_input.rcv_input()# PCでの動作確認
+                    rcv_data = self.udp_data.rcv_input()# 受信 PaspberryPiでの動作確認 and 演奏デバイスと通信時
+                    #rcv_data = self.d_input.rcv_input()# PCでの動作確認
                 else:
                     if self.input_counter < len(self.exa_music_datas)-1:
                         rcv_data = self.exa_music_datas[self.input_counter]# exaを入力とする
