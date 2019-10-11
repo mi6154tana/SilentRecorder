@@ -54,13 +54,13 @@ def set_button_buf(button_in):
         button_buf[i] <<= 1
         if i == button_in:
             button_buf[i] |= 1
-        button_buf[i] &= ((1 << 1) - 1)
+        button_buf[i] &= ((1 << 30) - 1)
 
 def chattering_check(button_in):
     global button_buf
     if button_in == -1:
         return False
-    if button_buf[button_in] == 0:
+    if button_buf[button_in] > 0:
         return True
     return False
 
@@ -77,7 +77,7 @@ def change_page(button_in):
         p_position = trans_list[p_position][0]
         c_select = 1
 
-    elif button_in == 1 and p_position != 1 and chattering_check(button_in):#上
+    elif button_in == 1 and p_position != 1:#上
         if c_select == 1 and pages[p_position].d_positoin > 0:
             pages[p_position].d_positoin -= 1
             pages[p_position].draw_cons() 
@@ -85,7 +85,7 @@ def change_page(button_in):
             c_select -= 1
         pages[p_position].draw_select(c_select)
 
-    elif button_in == 2 and p_position != 1 and chattering_check(button_in):#下
+    elif button_in == 2 and p_position != 1:#下
         if len(pages[p_position].contents) >= c_select + 1: 
             c_select += 1
             if c_select > 5:
@@ -95,8 +95,8 @@ def change_page(button_in):
             pages[p_position].draw_cons()
         pages[p_position].draw_select(c_select)
     
-    elif button_in == 3 and chattering_check(button_in):#右
-        print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    elif button_in == 3:#右
+
         if p_position == 8 and c_select == 2:#記録を消す
             ope = o_re()
             ope.del_recording(se_file)
