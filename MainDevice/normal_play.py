@@ -11,6 +11,7 @@ from ope_recording import OpeRecording as o_re
 
 class NormalPlay:
     def __init__(self, cv, root):
+        self.draw_mag = 2.0 #フルスクリーン時、表示するディスプレイに合わせるため
         self.cv = cv
         self.root = root
         self.flag = 0
@@ -92,10 +93,10 @@ class NormalPlay:
         self.__draw_sound_musicscale(sdi)
 
         # リコーダー本体(表)
-        self.cv.create_polygon(110, 40, 110, 280, 180, 280, 180, 40, fill="blue", tag='recorder')
+        self.cv.create_polygon(110*self.draw_mag, 40*self.draw_mag, 110*self.draw_mag, 280*self.draw_mag, 180*self.draw_mag, 280*self.draw_mag, 180*self.draw_mag, 40*self.draw_mag, fill="blue", tag='recorder')
 
         # リコーダー本体(裏)
-        self.cv.create_polygon(30, 40, 30, 280, 100, 280, 100, 40, fill="blue", tag='recorder')
+        self.cv.create_polygon(30*self.draw_mag, 40*self.draw_mag, 30*self.draw_mag, 280*self.draw_mag, 100*self.draw_mag, 280*self.draw_mag, 100*self.draw_mag, 40*self.draw_mag, fill="blue", tag='recorder')
         
         #受信　PaspberryPiでの動作確認　
         #rcv_data = self.udp_data.rcv_input()
@@ -106,14 +107,14 @@ class NormalPlay:
         # リコーダー穴(表)
         for i,hd in zip(range(7), self.sound_data[sdi]['hole_data'][0:7][::-1]):
             if hd == '1':
-                self.cv.create_oval(142.5-10, 63+32*i-10, 142.5+10, 63+32*i+10, fill="black", tag='recorder')
+                self.cv.create_oval((142.5-10)*self.draw_mag, (63+32*i-10)*self.draw_mag, (142.5+10)*self.draw_mag, (63+32*i+10)*self.draw_mag, fill="black", tag='recorder')
             if hd == '0':
-                self.cv.create_oval(142.5-10, 63+32*i-10, 142.5+10, 63+32*i+10, tag='recorder')
+                self.cv.create_oval((142.5-10)*self.draw_mag, (63+32*i-10)*self.draw_mag, (142.5+10)*self.draw_mag, (63+32*i+10)*self.draw_mag, tag='recorder')
         # リコーダー穴(裏)
         if self.sound_data[sdi]['hole_data'][7] == '1':
-            self.cv.create_oval(62.5-10, 63-10, 62.5+10, 63+10, tag='recorder', fill='black')
+            self.cv.create_oval((62.5-10)*self.draw_mag, (63-10)*self.draw_mag, (62.5+10)*self.draw_mag, (63+10)*self.draw_mag, tag='recorder', fill='black')
         if self.sound_data[sdi]['hole_data'][7] == '0':
-            self.cv.create_oval(62.5-10, 63-10, 62.5+10, 63+10, tag='recorder')
+            self.cv.create_oval((62.5-10)*self.draw_mag, (63-10)*self.draw_mag, (62.5+10)*self.draw_mag, (63+10)*self.draw_mag, tag='recorder')
 
         #音を出す
         self.sound.sr_play(self.sound_data[sdi]['hole_data'], int(self.sound_data[sdi]['volume']))
@@ -144,9 +145,9 @@ class NormalPlay:
     def __draw_onoff_label(self):
         rf_text = self.__get_record_flag()
         # 枠表示
-        self.cv.create_rectangle(220, 40, 300, 120)
+        self.cv.create_rectangle(220*self.draw_mag, 40*self.draw_mag, 300*self.draw_mag, 120*self.draw_mag)
         # on,offの表示
-        self.cv.create_text(260, 80, font=("Purisa", 20), text='記録\n'+rf_text['record_flag'], tag='rf_text')
+        self.cv.create_text(260*self.draw_mag, 80*self.draw_mag, font=("Purisa", int(20*self.draw_mag)), text='記録\n'+rf_text['record_flag'], tag='rf_text')
         #記録のオンオフ
         if self.write_rec_flag == 0 and rf_text['record_flag'] == 'ON':
             self.write_rec_flag = 1
@@ -157,11 +158,11 @@ class NormalPlay:
 
     def __draw_sound_volume(self, sdi):
         # volumeの枠作成
-        self.cv.create_polygon(360, 40, 360, 280, 440, 280, 440, 40, tag='sd_volume', fill='', outline='black')
+        self.cv.create_polygon(360*self.draw_mag, 40*self.draw_mag, 360*self.draw_mag, 280*self.draw_mag, 440*self.draw_mag, 280*self.draw_mag, 440*self.draw_mag, 40*self.draw_mag, tag='sd_volume', fill='', outline='black')
         # volumeの量表示
-        self.cv.create_polygon(360, 280-int(self.sound_data[sdi]['volume']), 360, 280, 440, 280, 440, 280-int(self.sound_data[sdi]['volume']), fill="blue", tag='sd_volume')
+        self.cv.create_polygon(360*self.draw_mag, (280-int(self.sound_data[sdi]['volume']))*self.draw_mag, 360*self.draw_mag, 280*self.draw_mag, 440*self.draw_mag, 280*self.draw_mag, 440*self.draw_mag, (280-int(self.sound_data[sdi]['volume']))*self.draw_mag, fill="blue", tag='sd_volume')
         # 値表示
-        self.cv.create_text(400, 280-int(self.sound_data[sdi]['volume'])/2, text=self.sound_data[sdi]['volume'], tag='sd_volume')
+        self.cv.create_text(400*self.draw_mag, (280-int(self.sound_data[sdi]['volume'])/2)*self.draw_mag, text=self.sound_data[sdi]['volume'], tag='sd_volume')
     
     def __draw_sound_musicscale(self, sdi):
         fingering_models = {
@@ -179,9 +180,9 @@ class NormalPlay:
         hole_data = self.sound_data[sdi]['hole_data']
         try:
             # 枠の表示
-            self.cv.create_rectangle(230, 130, 290, 170)
+            self.cv.create_rectangle(230*self.draw_mag, 130*self.draw_mag, 290*self.draw_mag, 170*self.draw_mag)
             # 音階の表示
-            self.cv.create_text(260, 150, font=("Purisa", 20), text=fingering_models[hole_data], tag='recorder')
+            self.cv.create_text(260*self.draw_mag, 150*self.draw_mag, font=("Purisa", int(20*self.draw_mag)), text=fingering_models[hole_data], tag='recorder')
         except:
             pass
 

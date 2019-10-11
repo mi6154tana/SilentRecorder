@@ -18,6 +18,7 @@ from send_damy_input import DamyInput as di #PCでの動作確認
 
 class DrawScore:
     def __init__(self, music_name, cv, p_frame, mode_name):
+        self.draw_mag = 2.0 #フルスクリーン時、表示するディスプレイに合わせるため
         self.cv = cv
         self.root = p_frame
         self.music_name = music_name
@@ -75,7 +76,7 @@ class DrawScore:
         self.num_measure_data = self.seek_limit/0.05 #二小説の描画に必要なデータ数
         print('self.num_measure_data : ', self.num_measure_data)
         #print('self.num_measure_data to int: ', int(self.num_measure_data))
-        self.draw_min_size = 500/self.num_measure_data
+        self.draw_min_size = 500*self.draw_mag/self.num_measure_data
 
         #実験用
         self.input_counter = 0
@@ -85,15 +86,15 @@ class DrawScore:
         self.b_metro = bm(self.root,self.bpm)
     
     def _draw_base_line(self):# 五線譜の描画
-        self.cv.create_polygon(0, 0, 512, 0, 512, 300, 0, 300, fill = "white", tag = 'back_ground')
+        self.cv.create_polygon(0, 0, 512*self.draw_mag, 0, 512*self.draw_mag, 300*self.draw_mag, 0, 300*self.draw_mag, fill = "white", tag = 'back_ground')
         #五本線
         for i in range(0,5):
             i = i * 10
-            self.cv.create_line(5,80+i,505,80+i, tag = 'base_line')
+            self.cv.create_line(5*self.draw_mag,(80+i)*self.draw_mag,505*self.draw_mag,(80+i)*self.draw_mag, tag = 'base_line')
         #小節毎の区切りの線
-        self.cv.create_line(5,80,5,120, tag = 'base_line')
-        self.cv.create_line(255,80,255,120, tag = 'base_line')
-        self.cv.create_line(505,80,505,120, tag = 'base_line')
+        self.cv.create_line(5*self.draw_mag,80*self.draw_mag,5*self.draw_mag,120*self.draw_mag, tag = 'base_line')
+        self.cv.create_line(255*self.draw_mag,80*self.draw_mag,255*self.draw_mag,120*self.draw_mag, tag = 'base_line')
+        self.cv.create_line(505*self.draw_mag,80*self.draw_mag,505*self.draw_mag,120*self.draw_mag, tag = 'base_line')
 
     def _draw_score_line(self):
         '''#PaspberryPiでの動作確認
@@ -130,7 +131,7 @@ class DrawScore:
             if self.end_flag:#終了
                 if self.mode_name == 'JUDGE_PLAY':
                     self.write_rec.write_stop(self.music_name)
-                    self.cv.create_text(242 + len(self.music_name)*2, 225, font = ('Purisa', 25), text = '正確率 : ' + j_s.judgement_score())
+                    self.cv.create_text((242 + len(self.music_name)*2)*self.draw_mag, 225*self.draw_mag, font = ('Purisa', int(25*self.draw_mag)), text = '正確率 : ' + j_s.judgement_score())
                     self.b_metro.metro_stop()
                 self.root.quit()
                 return
@@ -142,15 +143,15 @@ class DrawScore:
 
             scale_change_point = 5
             for i in range(int(self.num_measure_data)):# お手本を二小節分描画
-                x0 = i*self.draw_min_size + 5
-                x1 = i*self.draw_min_size + self.draw_min_size + 5
+                x0 = i*self.draw_min_size + 5*self.draw_mag
+                x1 = i*self.draw_min_size + self.draw_min_size + 5*self.draw_mag
                 if self.mode_name == 'JUDGE_PLAY':
                     drawing_scale = int(self.exa_music_datas[self.exa_counter])
                 else:
                     rec_tmp_s = self.exa_music_datas[self.exa_counter].split(':')
                     drawing_scale = self._data_conv(rec_tmp_s[1])
                 if drawing_scale != -1:
-                    self.cv.create_polygon(x0,self.m_p[drawing_scale], x1,self.m_p[drawing_scale], x1,self.m_p[drawing_scale] + 5, x0,self.m_p[drawing_scale] + 5 , tag = 'score_line')
+                    self.cv.create_polygon(x0,self.m_p[drawing_scale]*self.draw_mag, x1,self.m_p[drawing_scale]*self.draw_mag, x1,(self.m_p[drawing_scale] + 5)*self.draw_mag, x0,(self.m_p[drawing_scale] + 5)*self.draw_mag , tag = 'score_line')
                 self.exa_counter += 1
 
                 if self.exa_counter > len(self.exa_music_datas)-1:#お手本楽譜の最後まで来たら
@@ -186,17 +187,17 @@ class DrawScore:
         elif self.mode_name == 'JUDGE_PLAY':# 入力描画
             if self.last_seek_point > self.seek_point:
                 self.cv.delete('in_score_line')
-                self.last_seek_point = 5
+                self.last_seek_point = 5*4
             if self._data_conv(self.rcv_data_s[1]) != -1:
                 if self._data_conv(self.rcv_data_s[1]) == self.exa_music_datas[self.input_counter - 1]:
-                    self.cv.create_polygon(self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, fill = "blue", tag = "in_score_line")
+                    self.cv.create_polygon(self.last_seek_point*self.draw_mag, self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.seek_point*self.draw_mag, self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.seek_point*self.draw_mag, (self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, self.last_seek_point*self.draw_mag, (self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, fill = "blue", tag = "in_score_line")
                 else:
-                    self.cv.create_polygon(self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])], self.seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, self.last_seek_point, self.m_p[self._data_conv(self.rcv_data_s[1])] + 5, fill = "red", tag = "in_score_line")
+                    self.cv.create_polygon(self.last_seek_point*self.draw_mag, self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.seek_point*self.draw_mag, self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.seek_point*self.draw_mag, (self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, self.last_seek_point*self.draw_mag, (self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, fill = "red", tag = "in_score_line")
         
 
         #シーク線
         self.cv.delete('seek_line')
-        self.cv.create_polygon(self.seek_point-2, 50, self.seek_point+2, 50, self.seek_point + 2, 140, self.seek_point -2, 140, fill = "red", tag = 'seek_line')
+        self.cv.create_polygon((self.seek_point-2)*self.draw_mag, 50*self.draw_mag, (self.seek_point+2)*self.draw_mag, 50*self.draw_mag, (self.seek_point+2)*self.draw_mag, 140*self.draw_mag, (self.seek_point-2)*self.draw_mag, 140*self.draw_mag, fill = "red", tag = 'seek_line')
 
         #音を出す
         if self.mode_name == 'JUDGE_PLAY':
@@ -213,7 +214,7 @@ class DrawScore:
             self.root.after(5000, self._draw_score_line)        
         else:
             self.last_seek_point = self.seek_point
-            self.seek_point = 5 + 500.0*float(interval/self.seek_limit)
+            self.seek_point = (5 + 500.0)*float(interval/self.seek_limit)
             self.root.after(10, self._draw_score_line)
 
     def _read_scale_kana(self):
@@ -232,8 +233,8 @@ class DrawScore:
 
     def _draw_scale_label(self, scale, x0, x1):
         if scale != -1:
-            self.labels.append(tk.Label(text = self.music_sound[scale],background = "white",font = ("",10,"bold")))
-            self.labels[len(self.labels)-1].place(x = (x0 + x1 )/2 - 5,y = 150)
+            self.labels.append(tk.Label(text = self.music_sound[scale],background = "white",font = ("",int(10*self.draw_mag),"bold")))
+            self.labels[len(self.labels)-1].place(x = ((x0 + x1 )/2 - 5),y = 150*self.draw_mag)
 
     def _data_conv(self, data):
         model = [
@@ -280,5 +281,5 @@ class DrawScore:
         else:
             title_y = 225
         #題名表示
-        self.cv.create_text(242 + len(self.music_name)*2, title_y, font = ('Purisa', 25), text = self.music_name)
+        self.cv.create_text((242 + len(self.music_name)*2)*self.draw_mag, title_y*self.draw_mag, font = ('Purisa', int(25*self.draw_mag)), text = self.music_name)
         self.root.mainloop()
