@@ -11,6 +11,7 @@ from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 
 class NormalPlay:
     def __init__(self, cv, root):
+        self.damy_mode = 1 #演奏デバイスと通信せずに動かす
         self.center_adj = 100 #中央寄せ調整用
         self.draw_mag = 2.0 #フルスクリーン時、表示するディスプレイに合わせるため
         self.cv = cv
@@ -25,7 +26,8 @@ class NormalPlay:
         self.sound_data = self.__read_file()
 
         # 受信の準備
-        self.udp_data = uc()#PaspberryPiでの動作確認
+        if not damy_mode:
+            self.udp_data = uc()#PaspberryPiでの動作確認
 
         # 音を出す準備
         self.sound = ps()
@@ -38,7 +40,7 @@ class NormalPlay:
 
     def __read_file(self):
         nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
-        with open(nowDirectoryPath + 'Recorder.txt', 'r') as f:
+        with open(nowDirectoryPath + 'damy_input.txt', 'r') as f:
             read_text = f.read()
         sound_data = []
         for i in read_text.split('\n'):
@@ -56,7 +58,8 @@ class NormalPlay:
         nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
         
         if self.button.gpio_input() == 0:#PaspberryPiでの動作確認
-            self.udp_data.play_stop()
+            if not self.damy_mode:
+                self.udp_data.play_stop()
             if self.write_rec_flag == 1:
                 self.write_rec.write_stop('user')
             self.root.quit()
@@ -73,8 +76,6 @@ class NormalPlay:
             with open(nowDirectoryPath + "config.json","w") as json_file:
                 json.dump(config_dict,json_file)
        
-       
-
         if sdi >= len(self.sound_data) and self.flag == 0:
             sdi = sdi - 1
             self.flag = 1
@@ -85,6 +86,13 @@ class NormalPlay:
         self.cv.delete('rf_text')
         # 描画していたsound_volumeを削除
         self.cv.delete('sd_volume')
+
+        if not self.damy_mode:
+            :#受信　PaspberryPiでの動作確認　
+            rcv_data = self.udp_data.rcv_input()
+            rcv_data_s = rcv_data.split(':')
+            self.sound_data[sdi]['volume'] = rcv_data_s[0]
+            self.sound_data[sdi]['hole_data'] = rcv_data_s[1]
 
         # onfoo label表示
         self.__draw_onoff_label()
@@ -99,12 +107,6 @@ class NormalPlay:
         # リコーダー本体(裏)
         self.cv.create_polygon(self.center_adj + 30*self.draw_mag,40*self.draw_mag, self.center_adj + 30*self.draw_mag,280*self.draw_mag, self.center_adj + 100*self.draw_mag,280*self.draw_mag, self.center_adj + 100*self.draw_mag, 40*self.draw_mag, fill="#437ecc", tag='recorder')
         
-        #受信　PaspberryPiでの動作確認　
-        rcv_data = self.udp_data.rcv_input()
-        rcv_data_s = rcv_data.split(':')
-        self.sound_data[sdi]['volume'] = rcv_data_s[0]
-        self.sound_data[sdi]['hole_data'] = rcv_data_s[1]
-
         # リコーダー穴(表)
         for i,hd in zip(range(7), self.sound_data[sdi]['hole_data'][0:7][::-1]):
             if hd == '1':
@@ -124,10 +126,11 @@ class NormalPlay:
             self.write_rec.write_recording(str(self.sound_data[sdi]['volume']), str(self.sound_data[sdi]['hole_data']))
 
         if self.flag == 0:
-            self.root.after(25, self.__draw_recorder, sdi+1)
+            self.root.after(50, self.__draw_recorder, sdi+1)#in udp_com sleep is 25
         elif self.flag == 1:
             del self.sound
-            self.udp_data.play_stop()#PaspberryPiでの動作確認
+            if not self.damy_mode:
+                self.udp_data.play_stop()#PaspberryPiでの動作確認
             if self.write_rec_flag == 1:
                 self.write_rec.write_stop('user')
             self.root.quit()
@@ -208,18 +211,19 @@ class NormalPlay:
 
     def npmain(self):
         # self.thread_wi.start()
-        #演奏デバイスに送信指示 PaspberryPiでの動作確認
-        print('read mode')
-        pd_mode_text = self.__get_record_flag()
-        print('finish read mode. mode = ', pd_mode_text['Mode'])
-        if pd_mode_text['Mode'] == 'B':
-            print('zero start B')
-            self.udp_data.zero_start(2)
-            print('connnected')
-        else:
-            print('zoro start A')
-            self.udp_data.zero_start(1)
-            print('connected A')
+        if not self.damy_mode:
+            #演奏デバイスに送信指示 PaspberryPiでの動作確認
+            print('read mode')
+            pd_mode_text = self.__get_record_flag()
+            print('finish read mode. mode = ', pd_mode_text['Mode'])
+            if pd_mode_text['Mode'] == 'B':
+                print('zero start B')
+                self.udp_data.zero_start(2)
+                print('connnected')
+            else:
+                print('zoro start A')
+                self.udp_data.zero_start(1)
+                print('connected A')
         self.__draw_recorder()
         self.root.mainloop()
         print('end')

@@ -18,6 +18,7 @@ from send_damy_input import DamyInput as di #PCでの動作確認
 
 class DrawScore:
     def __init__(self, music_name, cv, p_frame, mode_name):
+        self.damy_mode = 1 #演奏デバイスと通信せずに動かす
         self.center_adj = 100 #中央寄せ調整用
         self.draw_mag = 2.0 #フルスクリーン時、表示するディスプレイに合わせるため
         self.cv = cv
@@ -42,7 +43,8 @@ class DrawScore:
         self.m_p = [127.5,122.5,117.5,112.5,107.5,102.5,97.5,92.5,87.5]#音階の描画位置
 
         # 受信の準備 #RaspberryPiでの動作確認 and 演奏デバイスと通信時
-        self.udp_data = uc()#PaspberryPiでの動作確認
+        if not self.damy_mode:
+            self.udp_data = uc()#PaspberryPiでの動作確認
 
         # PCでの動作確認
         self.d_input = di()
@@ -114,8 +116,10 @@ class DrawScore:
             if (now_time-self.start_time) - self.input_counter*0.05 >= 0.05:# 0.05秒おきに入力を受け付ける
                 self.rcv_data_s.clear()
                 if self.mode_name == 'JUDGE_PLAY':
-                    rcv_data = self.udp_data.rcv_input()# 受信 PaspberryPiでの動作確認 and 演奏デバイスと通信時
-                    #rcv_data = self.d_input.rcv_input()# PCでの動作確認
+                    if not damy_mode:
+                        rcv_data = self.udp_data.rcv_input()# 受信 PaspberryPiでの動作確認 and 演奏デバイスと通信時
+                    else:
+                        rcv_data = self.d_input.rcv_input()# PCでの動作確認
                 else:
                     if self.input_counter < len(self.exa_music_datas)-1:
                         rcv_data = self.exa_music_datas[self.input_counter]# exaを入力とする
@@ -267,12 +271,13 @@ class DrawScore:
             self.write_rec.write_head_data(str(self.bpm), '4', str(self.radix))
 
             mode_text = self.__get_mode_flag()
-            '''#演奏デバイスに送信指示 PaspberryPiでの動作確認
-            if mode_text['Mode'] == 'B':
-                self.udp_data.zero_start(2)
-            else:
-                self.udp_data.zero_start(1)
-            '''
+            if not self.damy_mode:
+                #演奏デバイスに送信指示 PaspberryPiでの動作確認
+                if mode_text['Mode'] == 'B':
+                    self.udp_data.zero_start(2)
+                else:
+                    self.udp_data.zero_start(1)
+                
         self._draw_base_line()# 五線譜を描画
         self._draw_score_line()
         if self.mode_name == 'JUDGE_PLAY':
