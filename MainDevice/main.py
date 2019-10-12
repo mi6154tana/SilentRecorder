@@ -201,7 +201,7 @@ def main():
     root.title("SilentRecorder")
     # ウィンドウの大きさを決定
     root.geometry("512x300")#"512x300"
-    #root.attributes("-fullscreen", True)
+    root.attributes("-fullscreen", True)
 
     # ウィンドウのグリッドを 1x1 にする
     root.grid_rowconfigure(0, weight=1)
