@@ -4,10 +4,10 @@ import json
 import sys
 import threading
 import os
-#from udp_com import UdpCom as uc #RaspberryPiでの動作確認
+from udp_com import UdpCom as uc #RaspberryPiでの動作確認
 from play_sound import PlaySound as ps
 from ope_recording import OpeRecording as o_re
-#from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
+from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 
 class NormalPlay:
     def __init__(self, cv, root):
@@ -16,7 +16,7 @@ class NormalPlay:
         self.cv = cv
         self.root = root
         self.flag = 0
-        #self.button = gi()#PaspberryPiでの動作確認
+        self.button = gi()#PaspberryPiでの動作確認
 
         # 再帰回数の設定
         sys.setrecursionlimit(6000)
@@ -25,7 +25,7 @@ class NormalPlay:
         self.sound_data = self.__read_file()
 
         # 受信の準備
-        # self.udp_data = uc()#PaspberryPiでの動作確認
+        self.udp_data = uc()#PaspberryPiでの動作確認
 
         # 音を出す準備
         self.sound = ps()
@@ -54,9 +54,9 @@ class NormalPlay:
 
     def __draw_recorder(self, sdi=0):
         nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
-        '''
+        
         if self.button.gpio_input() == 0:#PaspberryPiでの動作確認
-            #udp_data.play_stop()
+            self.udp_data.play_stop()
             if self.write_rec_flag == 1:
                 self.write_rec.write_stop('user')
             self.root.quit()
@@ -72,7 +72,7 @@ class NormalPlay:
 
             with open(nowDirectoryPath + "config.json","w") as json_file:
                 json.dump(config_dict,json_file)
-        '''
+       
        
 
         if sdi >= len(self.sound_data) and self.flag == 0:
@@ -100,10 +100,10 @@ class NormalPlay:
         self.cv.create_polygon(self.center_adj + 30*self.draw_mag,40*self.draw_mag, self.center_adj + 30*self.draw_mag,280*self.draw_mag, self.center_adj + 100*self.draw_mag,280*self.draw_mag, self.center_adj + 100*self.draw_mag, 40*self.draw_mag, fill="#437ecc", tag='recorder')
         
         #受信　PaspberryPiでの動作確認　
-        #rcv_data = self.udp_data.rcv_input()
-        #rcv_data_s = rcv_data.split(':')
-        #self.sound_data[sdi]['volume'] = rcv_data_s[0]
-        #self.sound_data[sdi]['hole_data'] = rcv_data_s[1]
+        rcv_data = self.udp_data.rcv_input()
+        rcv_data_s = rcv_data.split(':')
+        self.sound_data[sdi]['volume'] = rcv_data_s[0]
+        self.sound_data[sdi]['hole_data'] = rcv_data_s[1]
 
         # リコーダー穴(表)
         for i,hd in zip(range(7), self.sound_data[sdi]['hole_data'][0:7][::-1]):
@@ -124,10 +124,10 @@ class NormalPlay:
             self.write_rec.write_recording(str(self.sound_data[sdi]['volume']), str(self.sound_data[sdi]['hole_data']))
 
         if self.flag == 0:
-            self.root.after(50, self.__draw_recorder, sdi+1)
+            self.root.after(25, self.__draw_recorder, sdi+1)
         elif self.flag == 1:
             del self.sound
-            # udp_data.play_stop()#PaspberryPiでの動作確認
+            self.udp_data.play_stop()#PaspberryPiでの動作確認
             if self.write_rec_flag == 1:
                 self.write_rec.write_stop('user')
             self.root.quit()
@@ -208,13 +208,18 @@ class NormalPlay:
 
     def npmain(self):
         # self.thread_wi.start()
-        '''#演奏デバイスに送信指示 PaspberryPiでの動作確認
+        #演奏デバイスに送信指示 PaspberryPiでの動作確認
+        print('read mode')
         pd_mode_text = self.__get_record_flag()
+        print('finish read mode. mode = ', pd_mode_text['Mode'])
         if pd_mode_text['Mode'] == 'B':
+            print('zero start B')
             self.udp_data.zero_start(2)
+            print('connnected')
         else:
+            print('zoro start A')
             self.udp_data.zero_start(1)
-        '''
+            print('connected A')
         self.__draw_recorder()
         self.root.mainloop()
         print('end')

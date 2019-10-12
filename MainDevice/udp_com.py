@@ -8,8 +8,8 @@ from contextlib import closing
 class UdpCom:
     
     def __init__(self):
-        self.HOST = '192.168.11.10'
-        self.SEND_PORT = 60000
+        self.HOST = '172.17.10.10'
+        self.SEND_PORT = 60001
         
         self.RCV_IP = ""
         self.RCV_PORT = 60000
@@ -35,7 +35,8 @@ class UdpCom:
         return data_s
 
     def play_stop(self):
-        sock_send.sendto('stop', (self.HOST, self.SEND_PORT))
+        message = 'stop'.encode('utf-8')
+        self.sock_send.sendto(message, (self.HOST, self.SEND_PORT))
 
     def close_sock(self):
         #with closing(self.sock):
