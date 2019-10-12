@@ -47,7 +47,7 @@ class PlaySound:
         self.last_fin = -1
         self.now_fin = -1
 
-        self.volume_max = 4096 #4096 ,200 in test
+        self.volume_max = 200 #4096 ,200 in test
         self.volume_lv = 1.0
         self.__set_volume_level()
 
