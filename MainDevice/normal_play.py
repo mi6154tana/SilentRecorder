@@ -156,6 +156,7 @@ class NormalPlay:
         if self.write_rec_flag == 0 and rf_text['record_flag'] == 'ON':
             self.write_rec_flag = 1
             self.write_rec.open_file()
+            self.write_rec.write_head_data(60, 4, 4)
         elif self.write_rec_flag == 1 and rf_text['record_flag'] == 'OFF':
             self.write_rec_flag = 0
             self.write_rec.write_stop('user')
