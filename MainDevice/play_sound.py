@@ -47,7 +47,7 @@ class PlaySound:
         self.last_fin = -1
         self.now_fin = -1
 
-        self.volume_max = 4096409640964096409640964096409640964096409640964096409640964096409640964096409640964096409640964096409640964096409640964096409640964096409640964096409640964096 #4096 ,200 in test
+        self.volume_max = 4096 #4096 ,200 in test
         self.volume_lv = 1
 
         for i in range(10):
@@ -78,12 +78,15 @@ class PlaySound:
         return '-1'# NoHit
 
     def _change_sound(self, last_fin, now_fin, volume):
+        volume_sr = float(1/(self.volume_max - 10000) * volume)/3 * self.volume_lv
+        if volume_sr < 0:
+            volume_sr = 0
         if(last_fin != now_fin):
             if last_fin != -1:
                 self.sound_list[last_fin].stop()
             if now_fin != -1:
                 #pygame.mixer.music.set_volume(volume)
-                self.sound_list[now_fin].set_volume(float(1/self.volume_max * volume)/3 * self.volume_lv)
+                self.sound_list[now_fin].set_volume(volume_sr)
                 #self.sound_list[now_fin].set_volume(float(1/3) * self.volume_lv)
                 #self.sound_list[now_fin].set_volume(1)
                 self.sound_list[now_fin].play(-1)
@@ -92,7 +95,7 @@ class PlaySound:
             else:
                 self.sound_list[last_fin].stop()
         else:
-            self.sound_list[now_fin].set_volume(float(1/self.volume_max * volume)/3 * self.volume_lv)
+            self.sound_list[now_fin].set_volume(volume_sr)
             #self.sound_list[now_fin].set_volume(float(1/3) * self.volume_lv)
             p_volume = self.sound_list[now_fin].get_volume() # 音量取得
             #print(p_volume)
