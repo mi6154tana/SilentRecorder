@@ -26,7 +26,7 @@ class NormalPlay:
         self.sound_data = self.__read_file()
 
         # 受信の準備
-        if not damy_mode:
+        if not self.damy_mode:
             self.udp_data = uc()#PaspberryPiでの動作確認
 
         # 音を出す準備
