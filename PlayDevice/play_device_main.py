@@ -7,12 +7,12 @@ import sys
 import os
 
 
-host = '169.254.56.166' #IP addres
+host = '172.17.10.11' #IP addres
 sendport = 60000 #Port nomber
 socksend = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #Socket setup
 
 recvip = ""
-recvport = 60000
+recvport = 60001
 
 socksend = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sockrecv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -37,7 +37,7 @@ GPIO.setup(spi_cs, GPIO.OUT)
 #finger
 GPIO.setup(23,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(24,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(4,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(25,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(17,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(27,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(22,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
@@ -74,6 +74,8 @@ def readadc(adcnum, clockpin, mosipin, misopin, cspin):
     GPIO.output(cspin, GPIO.HIGH)
     return adcout
 
+
+#main code
 with closing(socksend), closing(sockrecv):
 
     try:
@@ -93,10 +95,13 @@ with closing(socksend), closing(sockrecv):
                         time.sleep(0.01)
                         inputVal0 = readadc(0, spi_clk, spi_mosi, spi_miso , spi_cs)
                         count += 1
-                        vol += inputVal0
-                        if count >= 10:
-                            vol = 4096 - (vol / 10)
-                            send_str = (str(int(vol)) + ':' + str(GPIO.input(14)) + str(GPIO.input(22)) + str(GPIO.input(27)) + str(GPIO.input(17)) + str(GPIO.input(4)) + str(GPIO.input(24)) + str(GPIO.input(23)) + str(GPIO.input(15))).encode('utf-8')
+                        if count == 1:
+                            vol = 4095 - inputVal0
+                        elif vol < (4095 - inputVal0):
+                            vol = 4095 - inputVal0
+                        if count >= 5:
+                            send_str = (str(int(vol)) + ':' + str(GPIO.input(14)) + str(GPIO.input(22)) + str(GPIO.input(27)) + str(GPIO.input(17)) + str(GPIO.input(25)) + str(GPIO.input(24)) + str(GPIO.input(23)) + str(GPIO.input(15))).encode('utf-8')
+                            print(send_str)
                             # send_vol = struct.pack('>d', vol)
                             socksend.sendto(send_str, (host, sendport))
                             count = 0
@@ -108,8 +113,9 @@ with closing(socksend), closing(sockrecv):
                             pass
                         else:
                             print("Play stop")
-                            GPIO.cleanup()
+                            #GPIO.cleanup()
                             sockrecv.setblocking(1)
+                            GPIO.output(6, GPIO.LOW)
                             break
 
                 except KeyboardInterrupt:
@@ -117,7 +123,9 @@ with closing(socksend), closing(sockrecv):
 
             elif num == 0:
                 os.system("sudo shutdown -h now")
-                break 
+                break
+            elif num == 2:
+                break
 
     except KeyboardInterrupt:
         pass
