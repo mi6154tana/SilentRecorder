@@ -48,7 +48,8 @@ class PlaySound:
         self.now_fin = -1
 
         self.volume_max = 4096 #4096 ,200 in test
-        self.volume_lv = 1
+        self.volume_lv = 1.0
+        self.__set_volume_level()
 
         for i in range(10):
             self.sound_list.append(None)
@@ -63,9 +64,9 @@ class PlaySound:
     def __set_volume_level(self):
         v_text = self.__get_volume_lv()
         if v_text['Volume'] == '1':
-            self.volume_lv = 2
+            self.volume_lv = 2.0
         elif v_text['Volume'] == '2':
-            self.volume_lv = 3
+            self.volume_lv = 3.0
 
 
     def fingering_check(self, ifingering):
@@ -78,7 +79,7 @@ class PlaySound:
         return '-1'# NoHit
 
     def _change_sound(self, last_fin, now_fin, volume):
-        volume_sr = float(1/(self.volume_max - 10000) * volume)/3 * self.volume_lv
+        volume_sr = float(1/(self.volume_max - 1000) * float(volume)/3 * self.volume_lv
         if volume_sr < 0:
             volume_sr = 0
         if(last_fin != now_fin):
@@ -102,7 +103,7 @@ class PlaySound:
 
     def sr_play(self, i_fin, volume):#呼び出されたとき
         #data = rcv_data.split(':')
-        self.__set_volume_level()
+        #self.__set_volume_level()
         fin_tmp = int(self.fingering_check(i_fin))
         self.last_fin = self.now_fin
         self.now_fin = fin_tmp
