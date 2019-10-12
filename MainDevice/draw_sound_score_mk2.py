@@ -116,7 +116,7 @@ class DrawScore:
             if (now_time-self.start_time) - self.input_counter*0.05 >= 0.05:# 0.05秒おきに入力を受け付ける
                 self.rcv_data_s.clear()
                 if self.mode_name == 'JUDGE_PLAY':
-                    if not damy_mode:
+                    if not self.damy_mode:
                         rcv_data = self.udp_data.rcv_input()# 受信 PaspberryPiでの動作確認 and 演奏デバイスと通信時
                     else:
                         rcv_data = self.d_input.rcv_input()# PCでの動作確認
