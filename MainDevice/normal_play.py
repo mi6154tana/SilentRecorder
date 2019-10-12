@@ -61,6 +61,13 @@ class NormalPlay:
                 self.write_rec.write_stop('user')
             self.root.quit()
             return
+
+　　　　#演奏中に1(上),2(下)が入力されても何もしない
+        if self.button.gpio_input() == 1:
+            pass
+
+        if self.button.gpio_input() == 2:
+            pass
         
         if self.button.gpio_input() == 3:#PaspberryPiでの動作確認
             with open(nowDirectoryPath + "config.json","r") as json_file:
@@ -72,6 +79,7 @@ class NormalPlay:
 
             with open(nowDirectoryPath + "config.json","w") as json_file:
                 json.dump(config_dict,json_file)
+
         '''
        
 

@@ -106,7 +106,14 @@ class DrawScore:
                 self.b_metro.metro_stop()
             self.root.quit()
             return
-        '''
+        
+        #演奏中に1(上),2(下)が入力されても何もしない
+        if self.gpio_input() == 1:
+            pass
+            
+        if self.gpio_input() == 2:
+            pass  
+        '''  
         now_time = time.time()
         interval = now_time - self.last_time
         rcv_data = '0:00000000'
