@@ -88,7 +88,7 @@ class NormalPlay:
         self.cv.delete('sd_volume')
 
         if not self.damy_mode:
-            :#受信　PaspberryPiでの動作確認　
+            #受信　PaspberryPiでの動作確認　
             rcv_data = self.udp_data.rcv_input()
             rcv_data_s = rcv_data.split(':')
             self.sound_data[sdi]['volume'] = rcv_data_s[0]
