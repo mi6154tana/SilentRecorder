@@ -93,10 +93,10 @@ class PlaySound:
         return '-1'# NoHit
 
     def _change_sound(self, last_fin, now_fin, volume):
-        i_volume = float(volume) - 1000.0
+        i_volume = float(volume) - 2000.0
         if i_volume < 0:
             i_volume = 0
-        volume_sr = float(1/(self.volume_max - 1000)) * i_volume/3 * self.volume_lv
+        volume_sr = float(1/(self.volume_max - 2000)) * i_volume/3 * self.volume_lv
         #volume_sr = float(1/(self.volume_max)) * float(volume)/3 * self.volume_lv
         if volume_sr < 0:
             volume_sr = 0

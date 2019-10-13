@@ -139,6 +139,7 @@ class DrawScore:
                     self.write_rec.write_stop(self.music_name)
                     self.cv.create_text(self.center_adj + (242 + len(self.music_name)*2)*self.draw_mag, 225*self.draw_mag, font = ('Purisa', int(25*self.draw_mag)), text = '正確率 : ' + str(round(j_s.judgement_score(), 1)) + '%')
                     self.b_metro.metro_stop()
+                    self.udp_data.play_stop()
                 self.root.quit()
                 return
             self.last_time = now_time
@@ -194,11 +195,11 @@ class DrawScore:
             if self.last_seek_point > self.seek_point:
                 self.cv.delete('in_score_line')
                 self.last_seek_point = 5*4
-            if self._data_conv(self.rcv_data_s[1]) != -1:
-                if self._data_conv(self.rcv_data_s[1]) == self.exa_music_datas[self.input_counter - 1]:
-                    self.cv.create_polygon(self.center_adj + self.last_seek_point*self.draw_mag,self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,(self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, self.center_adj + self.last_seek_point*self.draw_mag,(self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, fill = "blue", tag = "in_score_line")
+            if self._new_data_conv(self.rcv_data_s[1]) != -1 and int(self.rcv_data_s[0])>2000:
+                if self._new_data_conv(self.rcv_data_s[1]) == self.exa_music_datas[self.input_counter - 1]:
+                    self.cv.create_polygon(self.center_adj + self.last_seek_point*self.draw_mag,self.m_p[self._new_data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,self.m_p[self._new_data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,(self.m_p[self._new_data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, self.center_adj + self.last_seek_point*self.draw_mag,(self.m_p[self._new_data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, fill = "blue", tag = "in_score_line")
                 else:
-                    self.cv.create_polygon(self.center_adj + self.last_seek_point*self.draw_mag,self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,self.m_p[self._data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,(self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, self.center_adj + self.last_seek_point*self.draw_mag,(self.m_p[self._data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, fill = "red", tag = "in_score_line")
+                    self.cv.create_polygon(self.center_adj + self.last_seek_point*self.draw_mag,self.m_p[self._new_data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,self.m_p[self._new_data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,(self.m_p[self._new_data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, self.center_adj + self.last_seek_point*self.draw_mag,(self.m_p[self._new_data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, fill = "red", tag = "in_score_line")
         
 
         #シーク線
@@ -253,6 +254,24 @@ class DrawScore:
             '00000011',#si
             '00000101',#do8va
             '00000100',#re8va
+            '00111110' #mi8va
+        ]
+        for i in range(len(model)):
+            if data == model[i]:
+                return i
+        return -1
+
+    def _new_data_conv(self, data):
+        model = [
+            '11111111',#do
+            '01111111',#re
+            '00111111',#mi
+            '00011111',#fa
+            '00001111',#sol
+            '00000111',#la
+            '00001011',#si
+            '00001101',#do8va
+            '00001100',#re8va
             '00111110' #mi8va
         ]
         for i in range(len(model)):
