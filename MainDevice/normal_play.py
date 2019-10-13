@@ -117,7 +117,7 @@ class NormalPlay:
         if self.sound_data[sdi]['hole_data'][7] == '1':
             self.cv.create_oval(self.center_adj + (62.5-10)*self.draw_mag, (63-10)*self.draw_mag, self.center_adj + (62.5+10)*self.draw_mag, (63+10)*self.draw_mag, tag='recorder', fill='black')
         if self.sound_data[sdi]['hole_data'][7] == '0':
-            self.cv.create_oval((self.center_adj + 62.5-10)*self.draw_mag, (63-10)*self.draw_mag, self.center_adj + (62.5+10)*self.draw_mag, (63+10)*self.draw_mag, tag='recorder')
+            self.cv.create_oval(self.center_adj + (62.5-10)*self.draw_mag, (63-10)*self.draw_mag, self.center_adj + (62.5+10)*self.draw_mag, (63+10)*self.draw_mag, tag='recorder')
 
         #音を出す
         self.sound.sr_play(self.sound_data[sdi]['hole_data'], int(self.sound_data[sdi]['volume']))
@@ -165,7 +165,7 @@ class NormalPlay:
         # volumeの枠作成
         self.cv.create_polygon(self.center_adj + 360*self.draw_mag,40*self.draw_mag, self.center_adj + 360*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,40*self.draw_mag, tag='sd_volume', fill='', outline='black')
         # volumeの量表示
-        self.cv.create_polygon(self.center_adj + 360*self.draw_mag,(280-int(self.sound_data[sdi]['volume'])*280/3095)*self.draw_mag, self.center_adj + 360*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,(280-int(self.sound_data[sdi]['volume'])*280/3095)*self.draw_mag, fill="blue", tag='sd_volume')
+        self.cv.create_polygon(self.center_adj + 360*self.draw_mag,(280-int(self.sound_data[sdi]['volume'])*200/3095)*self.draw_mag, self.center_adj + 360*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,(280-int(self.sound_data[sdi]['volume'])*200/3095)*self.draw_mag, fill="blue", tag='sd_volume')
         # 値表示
         self.cv.create_text(self.center_adj + 400*self.draw_mag, (280-int(self.sound_data[sdi]['volume'])/2)*self.draw_mag, text=self.sound_data[sdi]['volume'], tag='sd_volume')
     
