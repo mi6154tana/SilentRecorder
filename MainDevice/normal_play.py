@@ -165,7 +165,7 @@ class NormalPlay:
         # volumeの枠作成
         self.cv.create_polygon(self.center_adj + 360*self.draw_mag,40*self.draw_mag, self.center_adj + 360*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,40*self.draw_mag, tag='sd_volume', fill='', outline='black')
         # volumeの量表示
-        self.cv.create_polygon(self.center_adj + 360*self.draw_mag,(280-int(self.sound_data[sdi]['volume']))*self.draw_mag, self.center_adj + 360*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,(280-int(self.sound_data[sdi]['volume']))*self.draw_mag, fill="blue", tag='sd_volume')
+        self.cv.create_polygon(self.center_adj + 360*self.draw_mag,(280-int(self.sound_data[sdi]['volume'])*280/3095)*self.draw_mag, self.center_adj + 360*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,(280-int(self.sound_data[sdi]['volume'])*280/3095)*self.draw_mag, fill="blue", tag='sd_volume')
         # 値表示
         self.cv.create_text(self.center_adj + 400*self.draw_mag, (280-int(self.sound_data[sdi]['volume'])/2)*self.draw_mag, text=self.sound_data[sdi]['volume'], tag='sd_volume')
     
