@@ -220,7 +220,7 @@ class DrawScore:
         else:
             self.last_seek_point = self.seek_point
             self.seek_point = (5 + 500.0)*float(interval/self.seek_limit)
-            self.root.after(40, self._draw_score_line)
+            self.root.after(30, self._draw_score_line)
 
     def _read_scale_kana(self):
         nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
