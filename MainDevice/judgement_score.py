@@ -39,7 +39,7 @@ def judgement_score():
     U_s_d_line = User_sound_data.read().split()
     del U_s_d_line[0:3]
 
-    for i in range(len(U_s_line)):
+    for i in range(len(U_s_d_line)):
         if i > len(S_d_line)-1:
             break
         fin_U_s_d_line = U_s_d_line[i].split(':')
