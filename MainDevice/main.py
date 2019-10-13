@@ -12,7 +12,7 @@ import json
 import os
 from collections import OrderedDict
 import codecs
-#from udp_com import UdpCom as uc #RaspberryPiでの動作確認 and 演奏デバイスと通信時
+from udp_com import UdpCom as uc #RaspberryPiでの動作確認 and 演奏デバイスと通信時
 
 root = None
 pages = []
