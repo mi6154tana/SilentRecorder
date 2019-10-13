@@ -122,7 +122,7 @@ class NormalPlay:
             self.cv.create_oval((self.center_adj + 62.5-10)*self.draw_mag, (63-10)*self.draw_mag, self.center_adj + (62.5+10)*self.draw_mag, (63+10)*self.draw_mag, tag='recorder')
 
         #音を出す
-        self.sound.sr_play(self.sound_data['hole_data'], int(self.sound_data'volume']))
+        self.sound.sr_play(self.sound_data['hole_data'], int(self.sound_data['volume']))
         #記録を残す
         if self.write_rec_flag:
             self.write_rec.write_recording(str(self.sound_data['volume']), str(self.sound_data['hole_data']))
