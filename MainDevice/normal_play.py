@@ -23,7 +23,9 @@ class NormalPlay:
         sys.setrecursionlimit(6000)
 
         # sound dataの読み込み_試験用
-        self.sound_data = self.__read_file()
+        # self.sound_data = self.__read_file()
+        self.sound_data = {'volume' : 0,
+                           'hole_data' : '00000000'}
 
         # 受信の準備
         if not self.damy_mode:
@@ -91,8 +93,8 @@ class NormalPlay:
             #受信　PaspberryPiでの動作確認　
             rcv_data = self.udp_data.rcv_input()
             rcv_data_s = rcv_data.split(':')
-            self.sound_data[sdi]['volume'] = rcv_data_s[0]
-            self.sound_data[sdi]['hole_data'] = rcv_data_s[1]
+            self.sound_data['volume'] = rcv_data_s[0]
+            self.sound_data['hole_data'] = rcv_data_s[1]
 
         # onfoo label表示
         self.__draw_onoff_label()
@@ -108,22 +110,22 @@ class NormalPlay:
         self.cv.create_polygon(self.center_adj + 30*self.draw_mag,40*self.draw_mag, self.center_adj + 30*self.draw_mag,280*self.draw_mag, self.center_adj + 100*self.draw_mag,280*self.draw_mag, self.center_adj + 100*self.draw_mag, 40*self.draw_mag, fill="#437ecc", tag='recorder')
         
         # リコーダー穴(表)
-        for i,hd in zip(range(7), self.sound_data[sdi]['hole_data'][0:7][::-1]):
+        for i,hd in zip(range(7), self.sound_data'hole_data'][0:7][::-1]):
             if hd == '1':
                 self.cv.create_oval(self.center_adj + (142.5-10)*self.draw_mag, (63+32*i-10)*self.draw_mag, self.center_adj + (142.5+10)*self.draw_mag, (63+32*i+10)*self.draw_mag, fill="black", tag='recorder')
             if hd == '0':
                 self.cv.create_oval(self.center_adj + (142.5-10)*self.draw_mag, (63+32*i-10)*self.draw_mag, self.center_adj + (142.5+10)*self.draw_mag, (63+32*i+10)*self.draw_mag, tag='recorder')
         # リコーダー穴(裏)
-        if self.sound_data[sdi]['hole_data'][7] == '1':
+        if self.sound_data['hole_data'][7] == '1':
             self.cv.create_oval(self.center_adj + (62.5-10)*self.draw_mag, (63-10)*self.draw_mag, self.center_adj + (62.5+10)*self.draw_mag, (63+10)*self.draw_mag, tag='recorder', fill='black')
-        if self.sound_data[sdi]['hole_data'][7] == '0':
+        if self.sound_data['hole_data'][7] == '0':
             self.cv.create_oval((self.center_adj + 62.5-10)*self.draw_mag, (63-10)*self.draw_mag, self.center_adj + (62.5+10)*self.draw_mag, (63+10)*self.draw_mag, tag='recorder')
 
         #音を出す
-        self.sound.sr_play(self.sound_data[sdi]['hole_data'], int(self.sound_data[sdi]['volume']))
+        self.sound.sr_play(self.sound_data['hole_data'], int(self.sound_data'volume']))
         #記録を残す
         if self.write_rec_flag:
-            self.write_rec.write_recording(str(self.sound_data[sdi]['volume']), str(self.sound_data[sdi]['hole_data']))
+            self.write_rec.write_recording(str(self.sound_data['volume']), str(self.sound_data['hole_data']))
 
         if self.flag == 0:
             self.root.after(30, self.__draw_recorder, sdi+1)#in udp_com sleep is 25
@@ -165,9 +167,9 @@ class NormalPlay:
         # volumeの枠作成
         self.cv.create_polygon(self.center_adj + 360*self.draw_mag,40*self.draw_mag, self.center_adj + 360*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,40*self.draw_mag, tag='sd_volume', fill='', outline='black')
         # volumeの量表示
-        self.cv.create_polygon(self.center_adj + 360*self.draw_mag,(280-int(self.sound_data[sdi]['volume'])*280/3095)*self.draw_mag, self.center_adj + 360*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,(280-int(self.sound_data[sdi]['volume'])*280/3095)*self.draw_mag, fill="blue", tag='sd_volume')
+        self.cv.create_polygon(self.center_adj + 360*self.draw_mag,(280-int(self.sound_data['volume'])*280/3095)*self.draw_mag, self.center_adj + 360*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,(280-int(self.sound_data['volume'])*280/3095)*self.draw_mag, fill="blue", tag='sd_volume')
         # 値表示
-        self.cv.create_text(self.center_adj + 400*self.draw_mag, (280-int(self.sound_data[sdi]['volume'])/2)*self.draw_mag, text=self.sound_data[sdi]['volume'], tag='sd_volume')
+        self.cv.create_text(self.center_adj + 400*self.draw_mag, (280-int(self.sound_data['volume'])/2)*self.draw_mag, text=self.sound_data['volume'], tag='sd_volume')
     
     def __draw_sound_musicscale(self, sdi):
         fingering_models = {
@@ -182,7 +184,7 @@ class NormalPlay:
             '00000100':'^レ',   # re8va
             '00111110':'^ミ'    # mi8va
         }
-        hole_data = self.sound_data[sdi]['hole_data']
+        hole_data = self.sound_data['hole_data']
         try:
             # 枠の表示
             self.cv.create_rectangle(self.center_adj + 230*self.draw_mag,130*self.draw_mag, self.center_adj + 290*self.draw_mag,170*self.draw_mag)
