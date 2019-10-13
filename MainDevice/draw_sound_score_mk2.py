@@ -139,6 +139,7 @@ class DrawScore:
                     self.write_rec.write_stop(self.music_name)
                     self.cv.create_text(self.center_adj + (242 + len(self.music_name)*2)*self.draw_mag, 225*self.draw_mag, font = ('Purisa', int(25*self.draw_mag)), text = '正確率 : ' + str(round(j_s.judgement_score(), 1)) + '%')
                     self.b_metro.metro_stop()
+                    self.udp_data.play_stop()
                 self.root.quit()
                 return
             self.last_time = now_time
