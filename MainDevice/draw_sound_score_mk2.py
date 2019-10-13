@@ -194,8 +194,8 @@ class DrawScore:
             if self.last_seek_point > self.seek_point:
                 self.cv.delete('in_score_line')
                 self.last_seek_point = 5*4
-            if self._data_conv(self.rcv_data_s[1]) != -1:
-                if self._data_conv(self.rcv_data_s[1]) == self.exa_music_datas[self.input_counter - 1]:
+            if self._new_data_conv(self.rcv_data_s[1]) != -1:
+                if self._new_data_conv(self.rcv_data_s[1]) == self.exa_music_datas[self.input_counter - 1]:
                     self.cv.create_polygon(self.center_adj + self.last_seek_point*self.draw_mag,self.m_p[self._new_data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,self.m_p[self._new_data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,(self.m_p[self._new_data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, self.center_adj + self.last_seek_point*self.draw_mag,(self.m_p[self._new_data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, fill = "blue", tag = "in_score_line")
                 else:
                     self.cv.create_polygon(self.center_adj + self.last_seek_point*self.draw_mag,self.m_p[self._new_data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,self.m_p[self._new_data_conv(self.rcv_data_s[1])]*self.draw_mag, self.center_adj + self.seek_point*self.draw_mag,(self.m_p[self._new_data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, self.center_adj + self.last_seek_point*self.draw_mag,(self.m_p[self._new_data_conv(self.rcv_data_s[1])] + 5)*self.draw_mag, fill = "red", tag = "in_score_line")
