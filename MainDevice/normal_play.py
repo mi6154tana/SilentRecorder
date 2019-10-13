@@ -110,7 +110,7 @@ class NormalPlay:
         self.cv.create_polygon(self.center_adj + 30*self.draw_mag,40*self.draw_mag, self.center_adj + 30*self.draw_mag,280*self.draw_mag, self.center_adj + 100*self.draw_mag,280*self.draw_mag, self.center_adj + 100*self.draw_mag, 40*self.draw_mag, fill="#437ecc", tag='recorder')
         
         # リコーダー穴(表)
-        for i,hd in zip(range(7), self.sound_data'hole_data'][0:7][::-1]):
+        for i,hd in zip(range(7), self.sound_data['hole_data'][0:7][::-1]):
             if hd == '1':
                 self.cv.create_oval(self.center_adj + (142.5-10)*self.draw_mag, (63+32*i-10)*self.draw_mag, self.center_adj + (142.5+10)*self.draw_mag, (63+32*i+10)*self.draw_mag, fill="black", tag='recorder')
             if hd == '0':
