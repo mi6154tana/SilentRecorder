@@ -24,8 +24,7 @@ class NormalPlay:
 
         # sound dataの読み込み_試験用
         # self.sound_data = self.__read_file()
-        self.sound_data = {'volume' : 0,
-                           'hole_data' : '00000000'}
+        self.sound_data = {}
 
         # 受信の準備
         if not self.damy_mode:
@@ -95,6 +94,7 @@ class NormalPlay:
             rcv_data_s = rcv_data.split(':')
             self.sound_data['volume'] = rcv_data_s[0]
             self.sound_data['hole_data'] = rcv_data_s[1]
+            print(self.sound_data)
 
         # onfoo label表示
         self.__draw_onoff_label()
