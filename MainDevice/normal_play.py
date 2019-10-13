@@ -11,7 +11,7 @@ from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 
 class NormalPlay:
     def __init__(self, cv, root):
-        self.damy_mode = 1 #演奏デバイスと通信せずに動かす
+        self.damy_mode = 0 #演奏デバイスと通信せずに動かす
         self.center_adj = 100 #中央寄せ調整用
         self.draw_mag = 2.0 #フルスクリーン時、表示するディスプレイに合わせるため
         self.cv = cv
@@ -126,7 +126,7 @@ class NormalPlay:
             self.write_rec.write_recording(str(self.sound_data[sdi]['volume']), str(self.sound_data[sdi]['hole_data']))
 
         if self.flag == 0:
-            self.root.after(50, self.__draw_recorder, sdi+1)#in udp_com sleep is 25
+            self.root.after(30, self.__draw_recorder, sdi+1)#in udp_com sleep is 25
         elif self.flag == 1:
             del self.sound
             if not self.damy_mode:
@@ -165,7 +165,7 @@ class NormalPlay:
         # volumeの枠作成
         self.cv.create_polygon(self.center_adj + 360*self.draw_mag,40*self.draw_mag, self.center_adj + 360*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,40*self.draw_mag, tag='sd_volume', fill='', outline='black')
         # volumeの量表示
-        self.cv.create_polygon(self.center_adj + 360*self.draw_mag,(280-int(self.sound_data[sdi]['volume']))*self.draw_mag, self.center_adj + 360*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,(280-int(self.sound_data[sdi]['volume']))*self.draw_mag, fill="blue", tag='sd_volume')
+        self.cv.create_polygon(self.center_adj + 360*self.draw_mag,(280-int(self.sound_data[sdi]['volume'])*280/3095)*self.draw_mag, self.center_adj + 360*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,280*self.draw_mag, self.center_adj + 440*self.draw_mag,(280-int(self.sound_data[sdi]['volume'])*280/3095)*self.draw_mag, fill="blue", tag='sd_volume')
         # 値表示
         self.cv.create_text(self.center_adj + 400*self.draw_mag, (280-int(self.sound_data[sdi]['volume'])/2)*self.draw_mag, text=self.sound_data[sdi]['volume'], tag='sd_volume')
     
