@@ -11,7 +11,7 @@ from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 
 class NormalPlay:
     def __init__(self, cv, root):
-        self.damy_mode = 1 #演奏デバイスと通信せずに動かす
+        self.damy_mode = 0 #演奏デバイスと通信せずに動かす
         self.center_adj = 100 #中央寄せ調整用
         self.draw_mag = 2.0 #フルスクリーン時、表示するディスプレイに合わせるため
         self.cv = cv
@@ -126,7 +126,7 @@ class NormalPlay:
             self.write_rec.write_recording(str(self.sound_data[sdi]['volume']), str(self.sound_data[sdi]['hole_data']))
 
         if self.flag == 0:
-            self.root.after(50, self.__draw_recorder, sdi+1)#in udp_com sleep is 25
+            self.root.after(40, self.__draw_recorder, sdi+1)#in udp_com sleep is 25
         elif self.flag == 1:
             del self.sound
             if not self.damy_mode:

@@ -18,7 +18,7 @@ from send_damy_input import DamyInput as di #PCでの動作確認
 
 class DrawScore:
     def __init__(self, music_name, cv, p_frame, mode_name):
-        self.damy_mode = 1 #演奏デバイスと通信せずに動かす
+        self.damy_mode = 0 #演奏デバイスと通信せずに動かす
         self.center_adj = 100 #中央寄せ調整用
         self.draw_mag = 2.0 #フルスクリーン時、表示するディスプレイに合わせるため
         self.cv = cv
@@ -220,7 +220,7 @@ class DrawScore:
         else:
             self.last_seek_point = self.seek_point
             self.seek_point = (5 + 500.0)*float(interval/self.seek_limit)
-            self.root.after(10, self._draw_score_line)
+            self.root.after(40, self._draw_score_line)
 
     def _read_scale_kana(self):
         nowDirectoryPath = os.path.dirname(os.path.abspath(__file__)) + "/"
