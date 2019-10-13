@@ -77,7 +77,7 @@ class NormalPlay:
             with open(nowDirectoryPath + "config.json","w") as json_file:
                 json.dump(config_dict,json_file)
        
-        if sdi >= len(self.sound_data) and self.flag == 0:
+        if self.flag == 0:
             sdi = sdi - 1
             self.flag = 1
 
