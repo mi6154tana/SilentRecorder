@@ -63,6 +63,7 @@ class NormalPlay:
                 self.udp_data.play_stop()
             if self.write_rec_flag == 1:
                 self.write_rec.write_stop('user')
+            self.flag = 1
             self.root.quit()
             return
         
@@ -77,9 +78,9 @@ class NormalPlay:
             with open(nowDirectoryPath + "config.json","w") as json_file:
                 json.dump(config_dict,json_file)
        
-        if self.flag == 0:
-            sdi = sdi - 1
-            self.flag = 1
+        # if self.flag == 0:
+        #     sdi = sdi - 1
+        #     self.flag = 1
 
         # 描画していたリコーダーを削除
         self.cv.delete('recorder')
@@ -119,7 +120,7 @@ class NormalPlay:
         if self.sound_data['hole_data'][7] == '1':
             self.cv.create_oval(self.center_adj + (62.5-10)*self.draw_mag, (63-10)*self.draw_mag, self.center_adj + (62.5+10)*self.draw_mag, (63+10)*self.draw_mag, tag='recorder', fill='black')
         if self.sound_data['hole_data'][7] == '0':
-            self.cv.create_oval((self.center_adj + 62.5-10)*self.draw_mag, (63-10)*self.draw_mag, self.center_adj + (62.5+10)*self.draw_mag, (63+10)*self.draw_mag, tag='recorder')
+            self.cv.create_oval(self.center_adj + (62.5-10)*self.draw_mag, (63-10)*self.draw_mag, self.center_adj + (62.5+10)*self.draw_mag, (63+10)*self.draw_mag, tag='recorder')
 
         #音を出す
         self.sound.sr_play(self.sound_data['hole_data'], int(self.sound_data['volume']))
