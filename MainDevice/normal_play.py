@@ -23,7 +23,10 @@ class NormalPlay:
         sys.setrecursionlimit(6000)
 
         # sound dataの読み込み_試験用
-        self.sound_data = self.__read_file()
+        if self.damy_mode:
+            self.sound_data = self.__read_file()
+        else:
+            self.sound_data = []
 
         # 受信の準備
         if not self.damy_mode:
