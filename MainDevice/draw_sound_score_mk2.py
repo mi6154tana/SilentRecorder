@@ -216,7 +216,7 @@ class DrawScore:
             self.last_time = time.time() + 5
             self.start_time = self.last_time
             self.last_input_time = self.last_time
-            self.root.after(5000, self._draw_score_line)        
+            self.root.after(3000, self._draw_score_line)        
         else:
             self.last_seek_point = self.seek_point
             self.seek_point = (5 + 500.0)*float(interval/self.seek_limit)
