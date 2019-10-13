@@ -9,6 +9,7 @@ from play_sound import PlaySound as ps
 from ope_recording import OpeRecording as o_re
 from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 
+'''
 fingering_models = {
     '11111111':'ド',    # do
     '01111111':'レ',    # re
@@ -21,6 +22,19 @@ fingering_models = {
     '00000100':'^レ',   # re8va
     '00111110':'^ミ'    # mi8va
     }
+'''
+fingering_models = [
+    '11111111',#do
+    '01111111',#re
+    '00111111',#mi
+    '00011111',#fa
+    '00001111',#sol
+    '00000111',#la
+    '00001011',#si
+    '00001101',#do8va
+    '00001100',#re8va
+    '00111110' #mi8va
+        ]
 
 class NormalPlay:
     def __init__(self, cv, root):
