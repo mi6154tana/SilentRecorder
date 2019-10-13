@@ -9,6 +9,19 @@ from play_sound import PlaySound as ps
 from ope_recording import OpeRecording as o_re
 from gpio_in import GpioIn as gi #RaspberryPiでの動作確認
 
+fingering_models = {
+    '11111111':'ド',    # do
+    '01111111':'レ',    # re
+    '00111111':'ミ',    # mi
+    '00011111':'ファ',   # fa
+    '00001111':'ソ',    # sol
+    '00000111':'ラ',    # la
+    '00000011':'シ',    # si
+    '00000101':'^ド',   # do8va
+    '00000100':'^レ',   # re8va
+    '00111110':'^ミ'    # mi8va
+    }
+
 class NormalPlay:
     def __init__(self, cv, root):
         self.damy_mode = 0 #演奏デバイスと通信せずに動かす
@@ -109,10 +122,13 @@ class NormalPlay:
         
         # リコーダー穴(表)
         for i,hd in zip(range(7), self.sound_data[sdi]['hole_data'][0:7][::-1]):
+
             if hd == '1':
                 self.cv.create_oval(self.center_adj + (142.5-10)*self.draw_mag, (63+32*i-10)*self.draw_mag, self.center_adj + (142.5+10)*self.draw_mag, (63+32*i+10)*self.draw_mag, fill="black", tag='recorder')
             if hd == '0':
                 self.cv.create_oval(self.center_adj + (142.5-10)*self.draw_mag, (63+32*i-10)*self.draw_mag, self.center_adj + (142.5+10)*self.draw_mag, (63+32*i+10)*self.draw_mag, tag='recorder')
+            if fingering_models[self.sound_data[sdi]['hole_data'][0:7][::-1]] in ['ド','レ','ミ','ファ','ソ'] and i == 2:
+                self.cv.create_oval(self.center_adj + (142.5-10)*self.draw_mag, (63+32*i-10)*self.draw_mag, self.center_adj + (142.5+10)*self.draw_mag, (63+32*i+10)*self.draw_mag, fill="black", tag='recorder')
         # リコーダー穴(裏)
         if self.sound_data[sdi]['hole_data'][7] == '1':
             self.cv.create_oval(self.center_adj + (62.5-10)*self.draw_mag, (63-10)*self.draw_mag, self.center_adj + (62.5+10)*self.draw_mag, (63+10)*self.draw_mag, tag='recorder', fill='black')
@@ -170,18 +186,6 @@ class NormalPlay:
         self.cv.create_text(self.center_adj + 400*self.draw_mag, (280-int(self.sound_data[sdi]['volume'])/2)*self.draw_mag, text=self.sound_data[sdi]['volume'], tag='sd_volume')
     
     def __draw_sound_musicscale(self, sdi):
-        fingering_models = {
-            '11111111':'ド',    # do
-            '01111111':'レ',    # re
-            '00111111':'ミ',    # mi
-            '00011111':'ファ',   # fa
-            '00001111':'ソ',    # sol
-            '00000111':'ラ',    # la
-            '00000011':'シ',    # si
-            '00000101':'^ド',   # do8va
-            '00000100':'^レ',   # re8va
-            '00111110':'^ミ'    # mi8va
-        }
         hole_data = self.sound_data[sdi]['hole_data']
         try:
             # 枠の表示
