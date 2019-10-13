@@ -1,5 +1,5 @@
 import os
-def _new_data_conv(self, data):
+def _new_data_conv(data):
     new_model = [
         '11111111',#do
         '01111111',#re
@@ -13,17 +13,17 @@ def _new_data_conv(self, data):
         '00111110' #mi8va
     ]
     model = [
-            '11111111',#do
-            '01111111',#re
-            '00111111',#mi
-            '00011111',#fa
-            '00001111',#sol
-            '00000111',#la
-            '00000011',#si
-            '00000101',#do8va
-            '00000100',#re8va
-            '00111110' #mi8va
-        ]
+        '11111111',#do
+        '01111111',#re
+        '00111111',#mi
+        '00011111',#fa
+        '00001111',#sol
+        '00000111',#la
+        '00000011',#si
+        '00000101',#do8va
+        '00000100',#re8va
+        '00111110' #mi8va
+    ]
     for i in range(len(new_model)):
         if data == new_model[i]:
             return model[i]
