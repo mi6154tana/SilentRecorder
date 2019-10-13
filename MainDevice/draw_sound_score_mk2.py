@@ -104,6 +104,7 @@ class DrawScore:
         #中断して戻る
         if self.button.gpio_input() == 0:
             if self.mode_name == 'JUDGE_PLAY':
+                self.udp_data.play_stop()
                 self.write_rec.write_stop(self.music_name)
                 self.b_metro.metro_stop()
             self.root.quit()
